@@ -1,0 +1,5 @@
+La version du projet récupéré du drive de l'année 2019 nous pose quelques problèmes.
+En effet, on peut voir qu'il manque des packages entiers appelés par les différents CMakeFile dans les différents packages survivants.
+Notre théorie est que, puisque le build et le devel ont été mis sur git, il a pu exister des moments ou les personnes ayant participé au projet ont travaillé à moitié avec des fichiers déjà compilé.
+POur essayer de commencer à travailler sur une base propre, nous avons préféré récupérer le code de l'année précédente (2018), et de ne versionner que les dossiers source.
+

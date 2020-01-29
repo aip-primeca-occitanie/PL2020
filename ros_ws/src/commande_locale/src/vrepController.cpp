@@ -218,18 +218,19 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 
 // Launch of V-Rep
 	int count = 0 ;
-	int pos = 0 ;
-	while (count < 4)
+	int pos = executionPath.length()-1;
+	while (count < 5 || pos<0)
 	{
 		if(executionPath[pos] == '/') count++;
-		pos++;
+		pos--;
 	}
-	std::string VRepPath = executionPath.substr(0,pos)+ "V-Rep";
-	ROS_INFO ("$%s$", VRepPath.c_str()) ;
+	if(pos<0) ROS_ERROR("pos negative !!!");
+
+	std::string VRepPath = executionPath.substr(0,pos+2)+ "V-Rep";
 	
 	char final_command[1000];
 	sprintf(final_command, "cd %s &&(./vrep.sh -h ../sim/%s.ttt &)", VRepPath.c_str(), simulationFileName.c_str());
-	system(final_command); // On execute VREP sans afficher la fenetre
+	//system(final_command); // On execute VREP sans afficher la fenetre
 
 //Launch of the different services
 	sleep(2);

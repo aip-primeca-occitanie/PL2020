@@ -163,13 +163,15 @@ void Tache6::init(ros::NodeHandle noeud, std::string executionPath)
 
 
 	// Récupération du chemin vers le Working_Folder
-	int count = 0 ;
-	int pos = 0 ;
-	while (count < 4)
-		{
-		if(executionPath[pos] == '/') count++;
-		pos++;
-		}
+	int count = 0 ; 
+        int pos = executionPath.length()-1 ;
+        while (count < 5 || pos<0)
+        {
+                if(executionPath[pos] == '/') count++;
+                pos--;
+        }
+        if(pos<0) ROS_ERROR("pos negatif !!!");
+
 	std::string Working_Folder = executionPath.substr(0,pos);
 
 	

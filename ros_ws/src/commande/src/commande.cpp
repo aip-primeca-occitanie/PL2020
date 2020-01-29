@@ -138,13 +138,14 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 
 // Récupération du chemin vers le Working_Folder
 int count = 0 ;
-int pos = 0 ;
-while (count < 4)
-	{
+int pos = executionPath.length()-1 ;
+while (count < 5 || pos<0)
+{
 	if(executionPath[pos] == '/') count++;
-	pos++;
-	}
-std::string Working_Folder = executionPath.substr(0,pos);
+	pos--;
+}
+if(pos<0) ROS_ERROR("pos netagif !!!");
+std::string Working_Folder = executionPath.substr(0,pos+2);
 
 	
 //Initialisation des produits à l'aide du fichier de configuration

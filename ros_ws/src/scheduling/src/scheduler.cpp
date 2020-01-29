@@ -35,13 +35,14 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 
 	// Récupération du chemin vers le Working_Folder, permet de travailler en chemin relatif
 	int count = 0 ;
-	int pos = 0 ;
-	while (count < 4) // le chemin sous linux est normalement standard d'où la présence de la constante 4, il est possible qu'il faille faire évoluer ce point si ce n'est plus le cas
-		{
+	int pos = executionPath.length()-1 ;
+	while (count < 5 || pos<0)
+	{
 		if(executionPath[pos] == '/') count++;  // on cherche dans la chaine le 4ème '/' qui permet de récupérer le chemin absolu du Working Folder
-		pos++;					// Cela est normalement garanti par le faite que le setup install toujours dans le dossier racine de l'utilisateur
-		}
-	
+		pos--;
+	}
+	if(pos<0) ROS_ERROR("pos negatif !!!");
+
 	std::string Working_Folder = executionPath.substr(0,pos);
 	ROS_INFO ("$%s$", Working_Folder.c_str()) ;
 

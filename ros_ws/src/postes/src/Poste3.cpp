@@ -71,12 +71,13 @@ Poste3::Poste3(ros::NodeHandle nh,  std::string executionPath)
 
 // Récupération du chemin vers le Working_Folder
 int count = 0 ;
-int pos = 0 ;
-while (count < 4)
-	{
+int pos = executionPath.length()-1 ;
+while (count < 5 || pos<0)
+{
 	if(executionPath[pos] == '/') count++;
-	pos++;
-	}
+	pos--;
+}
+if(pos<0) ROS_ERROR("pos negatif !!!");
 std::string Working_Folder = executionPath.substr(0,pos);
 
 	

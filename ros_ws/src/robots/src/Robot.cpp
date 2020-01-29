@@ -1,16 +1,16 @@
-/**** Projet long N7 2017 ****/
+/**** Projet long N7 2020 ****/
 
-#include "robot4.h"
+#include "Robot.h"
 
 
 //Constructeur
-Robot4::Robot4()
+Robot::Robot(int num_du_robot)
 {
 	//Valeur de pi
 	pi=3.14159265359;
-	
+	num_robot=num_du_robot;
 	for (int i=0;i<7;i++)
-	{	
+	{
 		//ATTENTION : Ne pas changer la valeur d'initialisation
 		//l'ensemble des setModes doit être à 1 pour que les joints des robots soient commandés
 		mymodes[i]=1; 
@@ -20,7 +20,7 @@ Robot4::Robot4()
 
 
 //Destructeur
-Robot4::~Robot4()
+Robot::~Robot()
 {}
 
 
@@ -29,7 +29,7 @@ Robot4::~Robot4()
 
 /** Pour atteindre une position prédéfinie **/
 //Fonction permettant d'envoyer le robot dans une position prédéfinie
-void Robot4::EnvoyerRobot(int numposition)
+void Robot::EnvoyerRobot(int numposition)
 {
 	robotPosition.data=numposition;
 
@@ -37,7 +37,7 @@ void Robot4::EnvoyerRobot(int numposition)
 	switch(numposition)
 	{
 		case 1:
-			Rpos[0]=128*pi/180;
+			Rpos[0]=128*pi/180;       // attributs correspondant au position (7 axes du robot)
 			Rpos[1]=90*pi/180;
 			Rpos[2]=90*pi/180;
 			Rpos[3]=80*pi/180;
@@ -92,7 +92,7 @@ void Robot4::EnvoyerRobot(int numposition)
 	//Vérification après l'appel du service
 	if(srv_simRosSetJoint.response.result==-1)
 	{
-		ROS_INFO("Position predefinie %d pour le robot 4 non atteinte", numposition);
+		ROS_INFO("Position predefinie %d pour le robot %d non atteinte", numposition,num_robot);
 
 		//Retour vers la commande 
 		retour.data = 1;
@@ -121,7 +121,7 @@ void Robot4::EnvoyerRobot(int numposition)
 			}
 		}
 
-		ROS_INFO("Position atteinte");
+		ROS_INFO("Position atteinte robot %d", num_robot);
 
 		//Retour vers la commande
 		retour.data = 2;
@@ -137,7 +137,7 @@ void Robot4::EnvoyerRobot(int numposition)
 
 /** Pour atteindre une position définie manuellement **/
 //Fonction permettant d'envoyer le robot dans une position définie manuellement
-void Robot4::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int joint5, int joint6, int joint7)
+void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int joint5, int joint6, int joint7)
 {
 	//Récupération des angles choisis par l'utilisateur
 	Rpos[0]=(joint1)*pi/180;
@@ -163,7 +163,7 @@ void Robot4::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int j
 	//Vérification après l'appel du service
 	if(srv_simRosSetJoint.response.result==-1)
 	{
-		ROS_INFO("Position definie manuellement pour le robot 4 non atteinte");
+		ROS_INFO("Position definie manuellement pour le robot %d non atteinte", num_robot);
 
 		//Retour vers la commande
 		retour.data = 1;
@@ -192,7 +192,7 @@ void Robot4::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int j
 			}
 		}
 
-		ROS_INFO("Position atteinte");
+		ROS_INFO("Position atteinte %d", num_robot);
 
 		//Retour vers la commande
 		retour.data = 2;
@@ -204,7 +204,7 @@ void Robot4::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int j
 
 /** Pour descendre ou monter le bras **/
 //Fonction permettant de mettre le bras en position basse
-void Robot4::DescendreBras()
+void Robot::DescendreBras()
 {
 	//Récupération et modification de la position actuelle
 	Rpos[0]=Rpos[0]+2*pi/180;
@@ -229,7 +229,7 @@ void Robot4::DescendreBras()
 	//Vérification après l'appel du service
 	if(srv_simRosSetJoint.response.result==-1)
 	{
-		ROS_INFO("Bras non descendu pour le robot 4");
+		ROS_INFO("Bras non descendu pour le robot %d", num_robot);
 
 		//Retour vers la commande
 		retour.data = 3;
@@ -258,7 +258,7 @@ void Robot4::DescendreBras()
 			}
 		}
 
-		ROS_INFO("Bras descendu pour le robot 4");
+		ROS_INFO("Bras descendu pour le robot %d", num_robot);
 
 		//Retour vers la commande
 		retour.data = 4;
@@ -273,7 +273,7 @@ void Robot4::DescendreBras()
 
 
 //Fonction permettant de mettre le bras en position haute 
-void Robot4::MonterBras()
+void Robot::MonterBras()
 {
 	//Récupération et modification de la position actuelle
 	Rpos[0]=Rpos[0]-2*pi/180;
@@ -299,7 +299,7 @@ void Robot4::MonterBras()
 	//Vérification après l'appel du service
 	if(srv_simRosSetJoint.response.result==-1)
 	{
-		ROS_INFO("Bras non monte pour le robot 4");
+		ROS_INFO("Bras non monte pour le robot %d", num_robot);
 
 		//Retour vers la commande
 		retour.data = 3;
@@ -328,7 +328,7 @@ void Robot4::MonterBras()
 			}
 		}
 
-		ROS_INFO("Bras monte pour le robot 4");
+		ROS_INFO("Bras monte pour le robot %d",num_robot);
 
 		//Retour vers la commande
 		retour.data = 5;
@@ -344,7 +344,7 @@ void Robot4::MonterBras()
 
 /** Pour fermer ou ouvrir la pince **/
 //Fonction permettant de fermer la pince du robot en envoyant une commande sur le topic correspondant
-void Robot4::FermerPince()
+void Robot::FermerPince()
 {
 	//Message de commande de fermeture de la pince (1 pour fermer, 0 pour ouvrir)
 	std_msgs::Int32 cmd;
@@ -379,7 +379,7 @@ void Robot4::FermerPince()
 
 
 //Fonction permettant d'ouvrir la pince du robot en envoyant une commande sur le topic correspondant
-void Robot4::OuvrirPince()
+void Robot::OuvrirPince()
 {
 	//Message de commande d'ouverture de la pince (1 pour fermer, 0 pour ouvrir)
 	std_msgs::Int32 cmd;
@@ -420,7 +420,7 @@ void Robot4::OuvrirPince()
 
 /** Envoyer le robot automatiquement **/
 //Fonction Callback permettant d'envoyer le robot dans une position prédéfinie à la réception du message de Commande 
-void Robot4::SendPositionCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::SendPositionCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	//Récupération des données du message : numéro de la position prédéfinie
 	int pos;
@@ -434,7 +434,7 @@ void Robot4::SendPositionCallback(const std_msgs::Int32::ConstPtr& msg)
 
 /** Envoyer le robot manuellement **/
 //Fonction Callback permettant d'envoyer le robot dans une position choisie par l'utilisateur à la réception du message de Commande 
-void Robot4::SendJointsCallback(const robots::RobotJoints::ConstPtr& msg)
+void Robot::SendJointsCallback(const robots::RobotJoints::ConstPtr& msg)
 {
 	EnvoyerJoints(msg->joint1, msg->joint2, msg->joint3, msg->joint4, msg->joint5, msg->joint6, msg->joint7);
 }
@@ -443,7 +443,7 @@ void Robot4::SendJointsCallback(const robots::RobotJoints::ConstPtr& msg)
 
 /** Fermer la pince **/
 //Fonction Callback permettant de fermer la pince du robot à la réception du message de Commande 
-void Robot4::FermerPinceCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::FermerPinceCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	FermerPince();
 }
@@ -452,7 +452,7 @@ void Robot4::FermerPinceCallback(const std_msgs::Int32::ConstPtr& msg)
 
 /** Ouvrir la pince **/
 //Fonction Callback permettant d'ouvrir la pince du robot à la réception du message de Commande 
-void Robot4::OuvrirPinceCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::OuvrirPinceCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	OuvrirPince();	
 }
@@ -461,7 +461,7 @@ void Robot4::OuvrirPinceCallback(const std_msgs::Int32::ConstPtr& msg)
 
 /** Descendre le bras **/
 //Fonction Callback permettant de mettre le bras en position basse à la réception du message de Commande 
-void Robot4::DescendreBrasCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::DescendreBrasCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	DescendreBras();
 }
@@ -470,7 +470,7 @@ void Robot4::DescendreBrasCallback(const std_msgs::Int32::ConstPtr& msg)
 
 /** Monter le bras **/
 //Fonction Callback permettant de mettre le bras en position haute à la réception du message de Commande 
-void Robot4::MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	MonterBras();
 }
@@ -478,7 +478,7 @@ void Robot4::MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg)
 
 /** Contrôler le robot entièrement **/
 //Fonction Callback permettant de contrôler l'ensemble des mouvements du robot à la réception du message de Commande
-void Robot4::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
+void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 {
 	//Envoi du robot dans la position souhaitée
 	EnvoyerRobot(msg->position);
@@ -514,8 +514,36 @@ void Robot4::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 /*** Initialisation ***/
 
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
-void Robot4::init(ros::NodeHandle noeud)
+void Robot::init(ros::NodeHandle noeud)
 {
+
+
+  std::string num_str;
+  switch(num_robot){ 
+
+	case 1: 
+	num_str="1";
+	break;
+
+  	case 2: 
+        num_str="2";
+	break;
+
+ 	case 3: 
+	num_str="3";
+	break;
+
+  	case 4:
+	num_str="4";
+	break;
+	
+   	default: 
+	ROS_INFO("CHOIX ROBOT INCORRECT");
+	break;
+
+
+	}
+	
 	//Déclaration service simRosGetObjectHandle
 	client_simRosGetHandle = noeud.serviceClient<vrep_common::simRosGetObjectHandle>("/vrep/simRosGetObjectHandle");
 
@@ -530,37 +558,36 @@ void Robot4::init(ros::NodeHandle noeud)
 
 
 	//Subscribers
-	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot4",10,&Robot4::SendPositionCallback,this);
+	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot"+num_str,10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots 
 
-	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot4",10,&Robot4::SendJointsCallback,this);
+	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot"+num_str,10,&Robot::SendJointsCallback,this);
 	
- 	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot4",10,&Robot4::FermerPinceCallback,this);
+ 	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot"+num_str,10,&Robot::FermerPinceCallback,this);
 
-	planifOuvrirPince = noeud.subscribe("/commande/Simulation/OuvrirPinceRobot4",10,&Robot4::OuvrirPinceCallback,this);
+	planifOuvrirPince = noeud.subscribe("/commande/Simulation/OuvrirPinceRobot"+num_str,10,&Robot::OuvrirPinceCallback,this);
 	
-	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras4",10,&Robot4::DescendreBrasCallback,this);
+	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras"+num_str,10,&Robot::DescendreBrasCallback,this);
 
-	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras4",10,&Robot4::MonterBrasCallback,this);
+	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras"+num_str,10,&Robot::MonterBrasCallback,this);
 
-	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras4",10,&Robot4::ControlerRobotCallback,this);
+	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras"+num_str,10,&Robot::ControlerRobotCallback,this);
 
 
 	//Publishers
-	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot4", 10);
+	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+num_str, 10);
+	
+	pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+num_str,10);
+	pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+num_str,10);
+	pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
 
-	pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot4",10);
-	pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot4",10);
-	pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot4",10);
-
-	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande4", 10);
-
-
-	//Utilisation du service simRosGetObjectHandle pour obtenir les handles du robot 4
+	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande"+num_str, 10);
+	
+	//Utilisation du service simRosGetObjectHandle pour obtenir les handles du robot 
 	for (int i=1;i<8;i++)
 	{
 		std::stringstream sr;	
 		sr << i;
-		srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str() + "#2";
+		srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str();
 
 		client_simRosGetHandle.call(srv_simRosGetHandle);
 		
@@ -568,19 +595,22 @@ void Robot4::init(ros::NodeHandle noeud)
 		
 		if(Rints[i-1]==-1)
 		{
-			ROS_INFO("Robot 4 : Handle non obtenu pour joint %d",i);
+			ROS_INFO("Robot %d : Handle non obtenu pour joint %d",num_robot,i);
 		}
 		else
 		{
 			if(i==7)
 			{
-				ROS_INFO("Robot 4 OK");
+				ROS_INFO("Robot %d OK",num_robot);
 				//Retour vers la commande
 				retour.data = 0;
 				pub_retourCommande.publish(retour);
 			}
 		} 
-	}		
+	}	
+	
+	
+	
 }
 
 

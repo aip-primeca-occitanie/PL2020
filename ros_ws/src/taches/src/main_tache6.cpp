@@ -13,9 +13,10 @@ int main(int argc, char **argv)
 
 	Tache6 Tache6;
 	Tache6.init(nh,argv[0]);
-
-	while(ros::ok())
-	{
-		ros::spinOnce();
-	}
+	ros::Rate loop_rate(25);
+        while(ros::ok())
+        {   
+                ros::spinOnce();
+                loop_rate.sleep();
+        }
 }

@@ -50,10 +50,11 @@ int main(int argc, char **argv)
 			// Pause pour laisser à l'utilisateur le soin de lancer la simu avec le boutton Play
 			VREPController.pause();
 
-
+			ros::Rate loop_rate(30);
 			while (ros::ok()) // Tant que ROS est actif,
 			{
 				ros::spinOnce(); // on lance les callback correspondant aux messages entrants.
+				loop_rate.sleep();
 			}				
 				
 			userInterface.close(); // Si Ctrl+C -> On ferme la fenetre de l'UI et on quitte la simulation

@@ -1,5 +1,5 @@
 #!/bin/bash          
-#
+# 
 # Final launcher of the simulation
 # Projet Long 2017 
 # Authors: J.B. Blanc / C. Delage / E. Maldonado / M. Maurin / C. Tomé

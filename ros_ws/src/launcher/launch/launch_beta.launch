@@ -1,6 +1,10 @@
 <launch>
+	<arg name="simFile" default="Simulation" doc="Name of the simulation file"/>
 
- 	<node name="commande" pkg="commande" type="run" output="screen" launch-prefix="gnome-terminal --command"/>
+	<node name="commande_locale" pkg="commande_locale" type="simulation" output="screen" launch-prefix="xterm -e" args="$(arg simFile)" />
+
+
+ 	<node name="commande" pkg="commande" type="run" output="screen" launch-prefix="xterm -e"/>
 
 	<node name="aiguillage_3" pkg="aiguillages" type="run_A3" output="screen" launch-prefix="xterm -e" /> 
 	<node name="aiguillage_10" pkg="aiguillages" type="run_A10" output="screen" launch-prefix="xterm -e" /> 

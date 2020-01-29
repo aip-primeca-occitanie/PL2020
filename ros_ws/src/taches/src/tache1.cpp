@@ -170,7 +170,7 @@ void Tache1::init(ros::NodeHandle noeud, std::string executionPath)
 		pos--;
 	}
 	if(pos<0) ROS_ERROR("pos negatif !!!");
-	std::string Working_Folder = executionPath.substr(0,pos);
+	std::string Working_Folder = executionPath.substr(0,pos+2);
 
 	
 	//Initialisation des produits à l'aide du fichier de configuration

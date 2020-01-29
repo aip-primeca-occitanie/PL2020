@@ -78,7 +78,7 @@ while (count < 5 || pos<0)
 	pos--;
 }
 if(pos<0) ROS_ERROR("pos negatif !!!");
-std::string Working_Folder = executionPath.substr(0,pos);
+std::string Working_Folder = executionPath.substr(0,pos+2);
 
 	
 //Initialisation des produits à l'aide du fichier de configuration

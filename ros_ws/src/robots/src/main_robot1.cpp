@@ -1,6 +1,6 @@
 /**** Projet long N7 2017 ****/
 
-#include "robot1.h"
+#include "Robot.h"
 
 #include <ros/ros.h>
 
@@ -12,13 +12,11 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 
 	//CmdRobot
-	Robot1 Robot1;
-	Robot1.init(nh);
+	Robot robot1(1);
+	robot1.init(nh);
 
-	ros::Rate loop_rate(25);
 	while(ros::ok())
 	{
 		ros::spinOnce();
-		loop_rate.sleep();
 	}
 }

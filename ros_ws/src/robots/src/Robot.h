@@ -1,7 +1,7 @@
-/**** Projet long N7 2017 ****/
+/**** Projet long N7 2020 ****/
 
-#ifndef ROBOT1
-#define ROBOT1
+#ifndef ROBOT
+#define ROBOT
 
 #include <ros/ros.h>
 
@@ -22,10 +22,11 @@
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
+#include <string>
+#include <string.h>
 
 
-
-class Robot1
+class Robot
 {
 private:
 
@@ -65,6 +66,8 @@ private:
 	unsigned char mymodes[7];
 	float Rpos[7];
 	int Rints[7];
+	// numero du robot
+	int num_robot;
 
 	/** Messages **/
 	std_msgs::Int32 robotPosition;
@@ -75,9 +78,10 @@ private:
 
 public:
 
-	Robot1();
-	~Robot1();
+	Robot(int num_du_robot);
+	~Robot();
 
+	
 	//Initialisation
 	void init(ros::NodeHandle noeud);
 

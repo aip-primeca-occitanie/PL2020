@@ -6,6 +6,7 @@ A12::A12(ros::NodeHandle nh)
 {
 	cout<<"Initialisation"<<endl;
 
+	loop_rate=new ros::Rate(25);
 
 	client_get_vrep_time = nh.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 
@@ -56,7 +57,10 @@ A12::A12(ros::NodeHandle nh)
 	
 }
  
-
+A12::~A12()
+{
+	delete loop_rate;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -180,8 +184,6 @@ void A12::START_GAUCHE(){
 
 void A12::Gauche()
 {
-	
-	
 	if(!Aig_G)
 	{
 		//Deverouillage de l'aiguillage	
@@ -196,9 +198,9 @@ void A12::Gauche()
 		//Attente...
 		while(!Aig_G)
 		{
-		
 			ros::spinOnce();
 			if(Aig_D) AigGauche.publish(num_AIG);
+			loop_rate->sleep();
 		}
 
 		//Verouillage de l'aiguillage	
@@ -227,7 +229,7 @@ void A12::Droit()
 		
 			ros::spinOnce();
 			if(Aig_G) AigDroit.publish(num_AIG);
-			usleep(100000);
+			loop_rate->sleep();
 		}	
 
 		//Verouillage de l'aiguillage
@@ -265,9 +267,8 @@ void A12::Aiguille_Navette()
 			// Attente que la navette passe jusqu'à ce que PS6 s'active
 			while(!Nav_PS)
 			{
-			
 				ros::spinOnce();
-
+				loop_rate->sleep();
 			}
 			wait_vrep(0.5);
 			// Remise à zéro PS1
@@ -295,6 +296,7 @@ void A12::Aiguille_Navette()
 			while(!Nav_PS)
 			{
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 			
 			// Remise à zéro PS1
@@ -370,10 +372,10 @@ float A12::get_time()
 void A12::wait_vrep(float dt)
 {
 	float t=this->get_time();
-	while(this->get_time()-t<dt)
-	{
-		ros::spinOnce();
-	}
-
+        while(this->get_time()-t<dt)
+        {   
+                ros::spinOnce();
+                loop_rate->sleep();
+        }   
 }
 

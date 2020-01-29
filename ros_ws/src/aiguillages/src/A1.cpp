@@ -9,6 +9,8 @@ A1::A1(ros::NodeHandle nh)
 {
 	cout<<"Initialisation : "<<endl;
 
+	loop_rate=new ros::Rate(25);
+
 	client_get_vrep_time = nh.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 	client_SetShuttleState = nh.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
 
@@ -59,6 +61,11 @@ A1::A1(ros::NodeHandle nh)
 
 	
 
+}
+
+A1::~A1()
+{
+	delete loop_rate;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -183,8 +190,7 @@ void A1::Gauche()
 		{
 			ros::spinOnce();
 			if(Aig_D) AigGauche.publish(num_AIG);	
-			usleep(100000);
-			
+			loop_rate->sleep();
 		}
 
 
@@ -219,8 +225,7 @@ void A1::Droit()
 		{
 			ros::spinOnce();
 			if(Aig_G) AigDroit.publish(num_AIG);
-			usleep(100000);
-			
+			loop_rate->sleep();	
 		}
 
 		
@@ -265,7 +270,7 @@ void A1::Aiguille_Navette()
 			while(!Nav_CPD)
 			{
 				ros::spinOnce();
-				usleep(100000);
+				loop_rate->sleep();
 			}
 			
 			// Remise à zéro de CP1
@@ -289,6 +294,7 @@ void A1::Aiguille_Navette()
 			while(!Nav_CPG)
 			{
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 
 			// Remise à zéro de CP2
@@ -371,10 +377,13 @@ float A1::get_time()
 void A1::wait_vrep(float dt)
 {
 	float t=this->get_time();
-	while(this->get_time()-t<dt)
-	{
-		ros::spinOnce();
-	}
+        while(this->get_time()-t<dt)
+        {   
+                ros::spinOnce();
+                loop_rate->sleep();
+        }   
+
+
 
 }
 

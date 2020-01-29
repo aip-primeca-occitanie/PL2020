@@ -6,6 +6,7 @@ A3::A3(ros::NodeHandle nh)
 {
 	cout<<"Initialisation du callback"<<endl;
 
+	loop_rate=new ros::Rate(25);
 
 	VREPsubStopSensor = nh.subscribe("vrep/StopSensor", 10, &A3::StopSensorCallback, this);
 	VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 10, &A3::SwitchSensorCallback, this);
@@ -67,7 +68,10 @@ A3::A3(ros::NodeHandle nh)
 	
 }
  
-
+A3::~A3()
+{
+	delete loop_rate;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -203,6 +207,7 @@ void A3::Droit()
 				usleep(100000);
 			}
 			ros::spinOnce();
+			loop_rate->sleep();
 		}
 
 	//Verouillage de l'aiguillage	
@@ -230,8 +235,8 @@ void A3::Gauche()
 		while(!Aig_G || (A10_ok!=1))
 		{
 			if(Aig_D) AigGauche.publish(num_AIG);
-			usleep(100000);
 			ros::spinOnce();
+			loop_rate->sleep();
 		}
 
 	//Verouillage des aiguillages	
@@ -280,9 +285,8 @@ void A3::Aiguille_Navette()
 			
 			while(!Nav_CPb)
 			{
-				
 				ros::spinOnce();
-				
+				loop_rate->sleep();
 			}
 			Send_Sh(1);
 			Nav_CPb=0;
@@ -299,9 +303,8 @@ void A3::Aiguille_Navette()
 			Send_Sh(-1);
 			while(!Nav_PSh)
 			{
-				
 				ros::spinOnce();
-				
+				loop_rate->sleep();
 			}
 			Nav_PSh=0;
 		}
@@ -419,10 +422,13 @@ float A3::get_time()
 void A3::wait_vrep(float dt)
 {
 	float t=this->get_time();
-	while(this->get_time()-t<dt)
-	{
-		ros::spinOnce();
-	}
+        while(this->get_time()-t<dt)
+        {   
+                ros::spinOnce();
+                loop_rate->sleep();
+        }   
+
+
 
 }
 

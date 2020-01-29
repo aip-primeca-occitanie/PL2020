@@ -9,6 +9,8 @@ A11::A11(ros::NodeHandle nh)
 {
 	cout<<"Initialisation"<<endl;
 
+	loop_rate=new ros::Rate(25);
+
 	client_get_vrep_time = nh.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 	client_SetShuttleState = nh.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
 
@@ -62,6 +64,10 @@ A11::A11(ros::NodeHandle nh)
 
 }
 
+A11::~A11()
+{
+	delete loop_rate;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////Callback////////////////////////////////////////////
@@ -186,8 +192,8 @@ void A11::Gauche()
 		while(!Aig_G)
 		{
 			ros::spinOnce();
-			usleep(100000);
 			if(Aig_D) AigGauche.publish(num_AIG);
+			loop_rate->sleep();
 		}
 
 
@@ -220,8 +226,8 @@ void A11::Droit()
 		while(!Aig_D)
 		{
 			ros::spinOnce();
-			usleep(100000);
 			if(Aig_G) AigDroit.publish(num_AIG);
+			loop_rate->sleep();
 		}
 
 		//Verouillage de l'aiguillage
@@ -257,6 +263,7 @@ void A11::Aiguille_Navette()
 			while(!Nav_CPG)
 			{
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 
 			// Remise à zéro de CP10
@@ -282,6 +289,7 @@ void A11::Aiguille_Navette()
 			while(!Nav_CPD)
 			{
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 
 			// Remise à zéro de CP9
@@ -313,6 +321,7 @@ void A11::Aiguille_Navette()
 			while(!Nav_CPD)
 			{
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 
 			// Remise à zéro de CP9
@@ -336,6 +345,7 @@ void A11::Aiguille_Navette()
 			while(!Nav_CPG)
 			{
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 
 			// Remise à zéro de CP10
@@ -419,6 +429,7 @@ void A11::wait_vrep(float dt)
 	while(this->get_time()-t<dt)
 	{
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 
 }

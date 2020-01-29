@@ -14,6 +14,8 @@ using namespace std;
 Poste4::Poste4(ros::NodeHandle nh,  std::string executionPath)
 {
 	cout<<"Initialisation du poste 4"<<endl;
+
+	loop_rate=new ros::Rate(25);
 	
 // Pour connaitre l'état des capteurs
 	VREPsubStopSensor = nh.subscribe("vrep/StopSensor", 10, &Poste4::StopSensorCallback, this);
@@ -192,6 +194,10 @@ else ROS_ERROR("Impossible d'ouvrir le fichier ProductConfiguration.txt !");
 }
 // Fin de l'initialisation
 
+Poste4::~Poste4()
+{
+	delete loop_rate;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////Callback////////////////////////////////////////////
@@ -287,6 +293,7 @@ void Poste4::StartShuttleCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS3_past && PS3){
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 
 	num_handle.handle = handlesShuttles.front();
@@ -352,6 +359,7 @@ void Poste4::ProductPutOnShuttleCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS3_past && PS3){
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 			
 	PS3_past = PS3;
@@ -398,6 +406,7 @@ void Poste4::ProductTakenByRobotCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS3_past && PS3){
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 			
 	PS3_past = PS3;

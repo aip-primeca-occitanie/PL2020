@@ -6,6 +6,8 @@ A2::A2(ros::NodeHandle nh)
 {
 	cout<<"Initialisation"<<endl;
 
+	loop_rate=new ros::Rate(25);
+
 	client_get_vrep_time = nh.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 
 	VREPsubSensor = nh.subscribe("vrep/StopSensor", 1000, &A2::SensorCallback, this);
@@ -56,7 +58,10 @@ A2::A2(ros::NodeHandle nh)
 
 }
  
-
+A2::~A2()
+{
+	delete loop_rate;
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -200,8 +205,7 @@ void A2::Gauche()
 		
 			ros::spinOnce();
 			if(Aig_D) AigGauche.publish(num_AIG);
-			usleep(100000);
-			
+			loop_rate->sleep();
 		}
 		
 
@@ -230,12 +234,9 @@ void A2::Droit()
 		//Attente...
 		while(!Aig_D)
 		{
-		
 			ros::spinOnce();
 			if(Aig_G) AigDroit.publish(num_AIG);
-			usleep(100000);
-			
-			
+			loop_rate->sleep();	
 		}	
 		
 
@@ -278,9 +279,8 @@ void A2::Aiguille_Navette()
 			// Attente que la navette passe jusqu'à ce que PS6 s'active
 			while(!Nav_PS)
 			{
-			
 				ros::spinOnce();
-
+				loop_rate->sleep();
 			}
 
 			// Remise à zéro PS6
@@ -309,6 +309,7 @@ void A2::Aiguille_Navette()
 			while(!Nav_PS)
 			{
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 
 			// Remise à zéro PS6
@@ -388,9 +389,12 @@ float A2::get_time()
 void A2::wait_vrep(float dt)
 {
 	float t=this->get_time();
-	while(this->get_time()-t<dt)
-	{
-		ros::spinOnce();
-	}
+        while(this->get_time()-t<dt)
+        {   
+                ros::spinOnce();
+                loop_rate->sleep();
+        }   
+
+
 
 }

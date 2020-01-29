@@ -57,7 +57,6 @@ if(myScheduler.init(nh,argv[0]))
 			//ROS_INFO(" Ordo Start ");			
 			myScheduler.launchNextSchedule();
 			ros::spinOnce();
-			loop_rate.sleep();
 			}
 
 		if (TERon && sth == 0) //Mode TER activé
@@ -75,8 +74,9 @@ if(myScheduler.init(nh,argv[0]))
 			{ 
 			//ROS_INFO(" Ordo Stop ");
 			ros::spinOnce();
-			loop_rate.sleep(); 
 			}
+
+			loop_rate.sleep(); 
   		}
 	}
 else

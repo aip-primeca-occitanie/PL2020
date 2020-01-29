@@ -40,6 +40,7 @@ private:
 	//time
 	ros::ServiceClient client_get_vrep_time;
 	vrep_common::simRosGetInfo srv_get_time;
+	ros::Rate* loop_rate;
 
 	std::multimap<int,Sh*> ShuttlesMap;
 
@@ -92,6 +93,7 @@ private:
 
 public:
 	A3(ros::NodeHandle nh);
+	~A3();
 	
 	void StopSensorCallback(const std_msgs::Int32::ConstPtr& msg);
 	void RailSensorCallback(const std_msgs::Int32::ConstPtr& msg);

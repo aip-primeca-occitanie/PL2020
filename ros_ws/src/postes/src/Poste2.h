@@ -42,9 +42,11 @@ private:
 	//Subscribe Sensor
 	ros::Subscriber VREPsubStopSensor;
 
-public:
+	ros::Rate* loop_rate;
 
+public:
 	Poste2(ros::NodeHandle nh,  std::string executionPath);
+	~Poste2();
 	void StopSensorCallback(const std_msgs::Int32::ConstPtr& msg);
 	void NewShuttleCallback (const std_msgs::Int32::ConstPtr& msg);
 	void StartShuttleCallback(const std_msgs::Int32::ConstPtr& msg);

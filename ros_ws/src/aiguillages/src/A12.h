@@ -39,14 +39,13 @@ private:
 	//time
 	ros::ServiceClient client_get_vrep_time;
 	vrep_common::simRosGetInfo srv_get_time;
+	ros::Rate* loop_rate;
 
 	//transmission des handles des navettes
 	ros::Publisher SendShuttle;
 	ros::Subscriber ReceiveShuttle_g;
 	ros::Subscriber ReceiveShuttle_d;
 	aiguillages::ExchangeSh HandleShuttle;
-
-
 
 	bool PSG; // capteur PSG en entrée aiguillage gauche
 	
@@ -82,7 +81,7 @@ private:
  
 public:
 	A12(ros::NodeHandle nh);
-
+	~A12();
 
 	void NewShuttleCallBack_d(const aiguillages::ExchangeSh::ConstPtr& msg);
 	void NewShuttleCallBack_g(const aiguillages::ExchangeSh::ConstPtr& msg);

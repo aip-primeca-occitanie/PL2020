@@ -14,6 +14,8 @@ using namespace std;
 Poste2::Poste2(ros::NodeHandle nh,  std::string executionPath)
 {
 	cout<<"Initialisation du poste 2"<<endl;
+
+	loop_rate=new ros::Rate(25);
 	
 // Pour connaitre l'état des capteurs
 	VREPsubStopSensor = nh.subscribe("vrep/StopSensor", 10, &Poste2::StopSensorCallback, this);
@@ -192,6 +194,10 @@ else ROS_ERROR("Impossible d'ouvrir le fichier ProductConfiguration.txt !");
 
 // Fin de l'initialisation
 
+Poste2::~Poste2()
+{
+	delete loop_rate;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////Callback////////////////////////////////////////////
@@ -288,6 +294,7 @@ void Poste2::StartShuttleCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS22_past && PS22){
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 
 	num_handle.handle = handlesShuttles.front();
@@ -352,6 +359,7 @@ void Poste2::ProductPutOnShuttleCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS22_past && PS22){
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 			
 	PS22_past = PS22;
@@ -399,6 +407,7 @@ void Poste2::ProductTakenByRobotCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS22_past && PS22){
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 			
 	PS22_past = PS22;

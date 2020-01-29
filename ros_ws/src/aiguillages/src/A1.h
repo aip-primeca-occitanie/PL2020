@@ -33,6 +33,8 @@ private:
 	ros::ServiceClient client_get_vrep_time;
 	vrep_common::simRosGetInfo srv_get_time;
 
+	ros::Rate* loop_rate;
+
 
 	//Publisher
 	ros::Publisher ShStop;
@@ -87,6 +89,8 @@ private:
 
 public:
 	A1(ros::NodeHandle nh);
+	~A1();
+
 	void StopSensorCallback(const std_msgs::Int32::ConstPtr& msg);
 	void RailSensorCallback(const std_msgs::Int32::ConstPtr& msg);
 	void SwitchSensorCallback(const std_msgs::Int32::ConstPtr& msg);

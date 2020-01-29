@@ -15,6 +15,8 @@ Poste1::Poste1(ros::NodeHandle nh,  std::string executionPath)
 {
 	cout<<"Initialisation du poste 1"<<endl;
 	
+	loop_rate=new ros::Rate(25);
+	
 // Pour connaitre l'état des capteurs stop
 	VREPsubStopSensor = nh.subscribe("vrep/StopSensor", 10, &Poste1::StopSensorCallback, this);
 
@@ -193,6 +195,10 @@ else ROS_ERROR("Impossible d'ouvrir le fichier ProductConfiguration.config !");
 }
 // Fin de l'initialisation
 
+Poste1::~Poste1()
+{
+	delete loop_rate;
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////Callback////////////////////////////////////////////
@@ -291,6 +297,7 @@ void Poste1::StartShuttleCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS21_past && PS21){	// On attend le front descendant du capteur
 		ros::spinOnce();	// Permet aux fonction callback de ros dans les objets d'êtres appelées
+		loop_rate->sleep();
 	}
 
 	num_handle.data = handlesShuttles.front();	// On lie la première ligne de la liste contenant les identifiants des navettes (handle)
@@ -355,6 +362,7 @@ void Poste1::ProductPutOnShuttleCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS21_past && PS21){	// On attend le front descendant du capteur
 		ros::spinOnce();	// Permet aux fonction callback de ros dans les objets d'êtres appelées
+		loop_rate->sleep();
 	}
 			
 	PS21_past = PS21;	// Mise à jour des variables des capteurs
@@ -404,6 +412,7 @@ void Poste1::ProductTakenByRobotCallback(const std_msgs::Int32::ConstPtr& msg){
 
 	while(PS21_past && PS21){
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 			
 	PS21_past = PS21;

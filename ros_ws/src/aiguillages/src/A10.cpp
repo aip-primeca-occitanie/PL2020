@@ -6,7 +6,8 @@ using namespace std;
 A10::A10(ros::NodeHandle nh)
 {
 	cout<<"Initialisation du callback"<<endl;
-
+	
+	loop_rate=new ros::Rate(25);
 
 
 	VREPsubStopSensor = nh.subscribe("vrep/StopSensor", 10, &A10::StopSensorCallback, this);
@@ -60,7 +61,10 @@ A10::A10(ros::NodeHandle nh)
 	
 }
  
-
+A10::~A10()
+{
+	delete loop_rate;
+}
 
 
 
@@ -201,6 +205,7 @@ void A10::Droit()
 				usleep(100000);
 			}
 			ros::spinOnce();
+			loop_rate->sleep();
 		}
 
 		//Verouillage des aiguillages	
@@ -233,6 +238,7 @@ void A10::Gauche()
 				usleep(100000);
 			}
 			ros::spinOnce();
+			loop_rate->sleep();
 		}
 
 		//Verouillage des aiguillages	
@@ -269,8 +275,8 @@ void A10::Aiguille_Navette()
 			Nav_A3=0;
 			while(!Nav_PS)
 			{
-				usleep(100000);
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 			topic.data = -1;
 
@@ -291,8 +297,8 @@ void A10::Aiguille_Navette()
 			Send_Sh(1);
 			while(!Nav_PS)
 			{
-				usleep(100000);
 				ros::spinOnce();
+				loop_rate->sleep();
 			}
 			Nav_PS=0;
 		}
@@ -367,8 +373,8 @@ void A10::wait_vrep(float dt)
 	float t=this->get_time();
 	while(this->get_time()-t<dt)
 	{
-		
 		ros::spinOnce();
+		loop_rate->sleep();
 	}
 
 }

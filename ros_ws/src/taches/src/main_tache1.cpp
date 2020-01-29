@@ -1,6 +1,6 @@
 /**** Projet long N7 2017 ****/
 
-#include "tache1.h"
+#include "tache.h"
 
 #include <ros/ros.h>
 
@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 	ros::init(argc,argv,"tache1");
 	ros::NodeHandle nh;
 
-	Tache1 Tache1;
+	Tache Tache1(1);
 	Tache1.init(nh,argv[0]);
 
 	ros::Rate loop_rate(25);
@@ -20,4 +20,5 @@ int main(int argc, char **argv)
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
+
 }

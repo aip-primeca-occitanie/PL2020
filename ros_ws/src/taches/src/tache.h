@@ -1,7 +1,7 @@
 /**** Projet long N7 2017 ****/
 
-#ifndef TACHE5
-#define TACHE5
+#ifndef TACHE
+#define TACHE
 
 #include <ros/ros.h>
 
@@ -25,7 +25,7 @@
 #include "productTache.h"
 
 
-class Tache5
+class Tache
 {
 private:
 
@@ -36,7 +36,7 @@ private:
 
 	//Service simRosGetInfo
 	ros::ServiceClient client_simGetVrepTime;
-	vrep_common::simRosGetInfo srv_simGetVrepTime;		
+	vrep_common::simRosGetInfo srv_simGetVrepTime;	
 
 	/** Subscribers **/
 	ros::Subscriber robotPosition;
@@ -52,6 +52,8 @@ private:
 	int position;
 	int bras;
 	int pince;
+
+	int num_tache;
 	
 	float t0, time;
 
@@ -70,8 +72,8 @@ private:
 
 public:
 
-	Tache5();
-	~Tache5();
+	Tache(int num);
+	~Tache();
 
 	//Initialisation
 	void init(ros::NodeHandle noeud, std::string executionPath);

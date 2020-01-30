@@ -14,13 +14,13 @@
     	<node name="Poste3" pkg="postes" type="run_Poste3" output="screen" launch-prefix="xterm -e"/>
     	<node name="Poste4" pkg="postes" type="run_Poste4" output="screen" launch-prefix="xterm -e"/>
 
-	<node name="Tache1" pkg="taches" type="tache1" />
-    	<node name="Tache2" pkg="taches" type="tache2" />
-    	<node name="Tache3" pkg="taches" type="tache3" />
-    	<node name="Tache4" pkg="taches" type="tache4" />
+	<node name="Tache1" pkg="taches" type="tache1" output="screen" launch-prefix="xterm -e"/>
+    	<node name="Tache2" pkg="taches" type="tache2" output="screen" launch-prefix="xterm -e"/>
+    	<node name="Tache3" pkg="taches" type="tache3" output="screen" launch-prefix="xterm -e"/>
+    	<node name="Tache4" pkg="taches" type="tache4" output="screen" launch-prefix="xterm -e"/>
 
-	<node name="Robot1" pkg="robots" type="robot1" /> 
-	<node name="Robot2" pkg="robots" type="robot2" /> 
+	<node name="Robot1" pkg="robots" type="robot1" output="screen" launch-prefix="xterm -e"/> 
+	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -e"/> 
 
 
     	<node name="shuttleManager" pkg="shuttles" type="shuttlesManager" output="screen" launch-prefix="xterm -e"/>

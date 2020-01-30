@@ -9,6 +9,7 @@ Robot::Robot(int num_du_robot)
 	//Valeur de pi
 	pi=3.14159265359;
 	num_robot=num_du_robot;
+	ROS_INFO("le numero du robot est %d ", num_robot);
 	for (int i=0;i<7;i++)
 	{
 		//ATTENTION : Ne pas changer la valeur d'initialisation
@@ -587,7 +588,24 @@ void Robot::init(ros::NodeHandle noeud)
 	{
 		std::stringstream sr;	
 		sr << i;
-		srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str();
+		switch(num_robot){
+			case 1:
+				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str();
+			break;
+
+			case 2:
+				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str()+"#0";
+			break;
+
+			case 3:
+				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str()+"#1";
+			break;
+
+			case 4:
+				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str()+"#2";
+			break;
+		}
+
 
 		client_simRosGetHandle.call(srv_simRosGetHandle);
 		

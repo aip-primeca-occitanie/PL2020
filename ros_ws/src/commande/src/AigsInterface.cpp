@@ -21,7 +21,7 @@ AigsInterface::AigsInterface(ros::NodeHandle noeud)
 {
 	msg.data=1;
 
-	/** Publishers **/	 
+	/** Publishers **/
 	 pub_aig_droit1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit1",1);
 	 pub_aig_droit2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit2",1);
 	 pub_aig_droit3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit3",1);
@@ -65,11 +65,11 @@ void AigsInterface::Droit(int num_Aig)
 
 	switch(num_Aig)
 	{
-	
-		case 1: 
+
+		case 1:
 			pub_aig_droit1.publish(msg);
 			break;
-		case 2: 
+		case 2:
 			pub_aig_droit2.publish(msg);
 			break;
 		case 3:
@@ -78,16 +78,16 @@ void AigsInterface::Droit(int num_Aig)
 		case 4:
 			pub_aig_droit4.publish(msg);
 			break;
-		case 5: 
+		case 5:
 			pub_aig_droit5.publish(msg);
 			break;
 		case 6:
 			pub_aig_droit6.publish(msg);
 			break;
-		case 7: 
+		case 7:
 			pub_aig_droit7.publish(msg);
 			break;
-		case 8: 
+		case 8:
 			pub_aig_droit8.publish(msg);
 			break;
 		case 9:
@@ -96,7 +96,7 @@ void AigsInterface::Droit(int num_Aig)
 		case 10:
 			pub_aig_droit10.publish(msg);
 			break;
-		case 11: 
+		case 11:
 			pub_aig_droit11.publish(msg);
 			break;
 		case 12:
@@ -109,11 +109,11 @@ void AigsInterface::Virage(int num_Aig)
 {
 	switch(num_Aig)
 	{
-	
-		case 1: 
+
+		case 1:
 			pub_aig_virage1.publish(msg);
 			break;
-		case 2: 
+		case 2:
 			pub_aig_virage2.publish(msg);
 			break;
 		case 3:
@@ -122,16 +122,16 @@ void AigsInterface::Virage(int num_Aig)
 		case 4:
 			pub_aig_virage4.publish(msg);
 			break;
-		case 5: 
+		case 5:
 			pub_aig_virage5.publish(msg);
 			break;
 		case 6:
 			pub_aig_virage6.publish(msg);
 			break;
-		case 7: 
+		case 7:
 			pub_aig_virage7.publish(msg);
 			break;
-		case 8: 
+		case 8:
 			pub_aig_virage8.publish(msg);
 			break;
 		case 9:
@@ -140,7 +140,7 @@ void AigsInterface::Virage(int num_Aig)
 		case 10:
 			pub_aig_virage10.publish(msg);
 			break;
-		case 11: 
+		case 11:
 			pub_aig_virage11.publish(msg);
 			break;
 		case 12:

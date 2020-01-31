@@ -15,8 +15,10 @@ int main(int argc, char **argv)
 	Robot robot4(4);
 	robot4.init(nh);
 
+	ros::Rate loop_rate(25);
 	while(ros::ok())
 	{
 		ros::spinOnce();
+		loop_rate.sleep();
 	}
 }

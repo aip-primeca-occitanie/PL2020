@@ -25,7 +25,7 @@ private:
 	//ros::Subscriber VREPsubRailSensor;
 	ros::Subscriber VREPsubSwitchSensor;
 
-	ros::Subscriber sub_cmd_droit;
+	ros::Subscriber sub_cmd_Droite;
 	ros::Subscriber sub_cmd_Gauche;
 
 
@@ -42,7 +42,7 @@ private:
 	ros::Publisher AigDev;
 	ros::Publisher AigVer;
 	ros::Publisher AigGauche;
-	ros::Publisher AigDroit;
+	ros::Publisher AigDroite;
 
 
 	//std::multimap<int,Sh*> ShuttlesMap;
@@ -101,7 +101,7 @@ public:
 	//void STOP();
 	//void START();
 	void GaucheCallback(const std_msgs::Int32::ConstPtr& msg);
-	void DroitCallback(const std_msgs::Int32::ConstPtr& msg);
+	void DroiteCallback(const std_msgs::Int32::ConstPtr& msg);
 	//void Aiguille_Navette();
 
 	//int get_Sh_Handle();

@@ -66,8 +66,8 @@ Aiguillage::Aiguillage(ros::NodeHandle nh, int id_aiguillage)
 	//VREPsubRailSensor = nh.subscribe("vrep/RailSensor", 1000, &Aiguillage::RailSensorCallback, this);
 	VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1000, &Aiguillage::SwitchSensorCallback, this);//Info sur position aiguillage
 
-	sub_cmd_droit = nh.subscribe("/commande/Simulation/AiguillageDroit"+num_str,1000,&Aiguillage::DroitCallback,this);
-	sub_cmd_virage = nh.subscribe("/commande/Simulation/AiguillageVirage"+num_str,1000,&Aiguillage::VirageCallback,this);
+	sub_cmd_Droite = nh.subscribe("/commande/Simulation/AiguillageDroite"+num_str,1000,&Aiguillage::DroiteCallback,this);
+	sub_cmd_Gauche = nh.subscribe("/commande/Simulation/AiguillageGauche"+num_str,1000,&Aiguillage::GaucheCallback,this);
 
 	//SendShuttle_g = nh.advertise<aiguillages::ExchangeSh>("/IOShuttle/Aiguillage_A2", 1000);
 	//SendShuttle_d = nh.advertise<aiguillages::ExchangeSh>("/IOShuttle/Aiguillage_P3", 1000);
@@ -79,8 +79,8 @@ Aiguillage::Aiguillage(ros::NodeHandle nh, int id_aiguillage)
 	//ShStart = nh.advertise<std_msgs::Int32>("/commande/DemarrerNavette", 1000);
 	AigDev = nh.advertise<std_msgs::Int32>("/commande/DeverouilleAiguillage", 1000);
 	AigVer = nh.advertise<std_msgs::Int32>("/commande/VerouilleAiguillage", 1000);
-	AigVirage = nh.advertise<std_msgs::Int32>("/commande/AiguillageGauche", 1000);
-	AigDroit = nh.advertise<std_msgs::Int32>("/commande/AiguillageDroit", 1000);
+	AigGauche = nh.advertise<std_msgs::Int32>("/commande/AiguillageGauche", 1000);
+	AigDroite = nh.advertise<std_msgs::Int32>("/commande/AiguillageDroite", 1000);
 
 	cout<<"time : "<<this->get_time()<<endl;
 
@@ -209,7 +209,7 @@ void Aiguillage::START()
 
 
 
-void Aiguillage::VirageCallback(const std_msgs::Int32::ConstPtr& msg)
+void Aiguillage::GaucheCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	if(!Aig_V)
 	{
@@ -217,13 +217,13 @@ void Aiguillage::VirageCallback(const std_msgs::Int32::ConstPtr& msg)
 		AigDev.publish(num_AIG);
 		usleep(100000);
 		//Envoie ordre mouvement à gauche
-		AigVirage.publish(num_AIG);
+		AigGauche.publish(num_AIG);
 
 		//Attente...
 		while(!Aig_V)
 		{
 			ros::spinOnce();
-			if(Aig_D) AigVirage.publish(num_AIG);
+			if(Aig_D) AigGauche.publish(num_AIG);
 			loop_rate->sleep();
 		}
 
@@ -234,7 +234,7 @@ void Aiguillage::VirageCallback(const std_msgs::Int32::ConstPtr& msg)
 }
 
 
-void Aiguillage::DroitCallback(const std_msgs::Int32::ConstPtr& msg)
+void Aiguillage::DroiteCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	if(!Aig_D)
 	{
@@ -242,13 +242,13 @@ void Aiguillage::DroitCallback(const std_msgs::Int32::ConstPtr& msg)
 		AigDev.publish(num_AIG);
 		usleep(100000);
 		//Envoie ordre mouvement à droite
-		AigDroit.publish(num_AIG);
+		AigDroite.publish(num_AIG);
 
 		//Attente...
 		while(!Aig_D)
 		{
 			ros::spinOnce();
-			if(Aig_V) AigDroit.publish(num_AIG);
+			if(Aig_V) AigDroite.publish(num_AIG);
 			loop_rate->sleep();
 		}
 

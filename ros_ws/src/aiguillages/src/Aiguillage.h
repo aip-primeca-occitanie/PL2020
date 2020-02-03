@@ -26,7 +26,7 @@ private:
 	ros::Subscriber VREPsubSwitchSensor;
 
 	ros::Subscriber sub_cmd_droit;
-	ros::Subscriber sub_cmd_virage;
+	ros::Subscriber sub_cmd_Gauche;
 
 
 	//time
@@ -41,7 +41,7 @@ private:
 	//ros::Publisher ShStart;
 	ros::Publisher AigDev;
 	ros::Publisher AigVer;
-	ros::Publisher AigVirage;
+	ros::Publisher AigGauche;
 	ros::Publisher AigDroit;
 
 
@@ -100,7 +100,7 @@ public:
 
 	//void STOP();
 	//void START();
-	void VirageCallback(const std_msgs::Int32::ConstPtr& msg);
+	void GaucheCallback(const std_msgs::Int32::ConstPtr& msg);
 	void DroitCallback(const std_msgs::Int32::ConstPtr& msg);
 	//void Aiguille_Navette();
 

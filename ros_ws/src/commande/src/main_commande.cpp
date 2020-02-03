@@ -1,15 +1,8 @@
-/*
- * ************************************* *
- * 	  Projet Long N7 2017  	         *
- * ************************************* *
-*/
-
-// PARTIE A GARDER POUR LES MODIFICATION DU RDP //
-
-#include "capteurs.h" 
-#include "actionneurs.h" 
+#include "capteurs.h"
+#include "actionneurs.h"
 #include "commande.h"
 #include "robots.h"
+#include "AigsInterface.h"
 #include <ros/ros.h>
 #include <unistd.h>
 #include <shuttles/srvGetEmptyShuttles.h>
@@ -23,21 +16,16 @@ using namespace std;
 #define Nb_Place 1000
 
 int main(int argc, char **argv)
-{	
-
-//initialisation du noeud ros et création d'un handle associé au noeud
-	ros::init(argc, argv, "commande");	
+{
+	ros::init(argc, argv, "commande");
 	ros::NodeHandle noeud;
 
-//création et initialisation des objets Capteur et Actionneurs
-
 	Commande cmd(noeud,argv[0]);
-	
-	
-	Robots Robots(noeud);
+	Robots robot(noeud);
+	AigsInterface aiguillage(noeud);
+	Capteurs capteur(noeud);
 
-	ros::Rate loop_rate(25); //fréquence de la boucle 
-
+	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	//Services shuttle
 	//ros::ServiceClient client_GetEmptyShuttle;
@@ -51,10 +39,10 @@ int main(int argc, char **argv)
 
 	int M[Nb_Place];
 	int Nb_Place_T1,Nb_Place_T2,Nb_Place_T3,Nb_Place_T4;
-	
+
 	for(int i=0;i<Nb_Place;i++) M[i]=0;
-	
-	
+
+
 	M[50]=1;//Robot 1 libre
 	M[250]=1;//Robot 2 libre
 
@@ -62,7 +50,6 @@ int main(int argc, char **argv)
 
 	while (ros::ok())
 	{
-		
 		if(cmd.NouvelleNavette()!=0)
 		{
 			modif=1;
@@ -78,8 +65,22 @@ int main(int argc, char **argv)
 		}
 
 
-		
+
 ////////////////////Poste 1//////////////////////////////
+
+	if (M[3]!=0 && capteur.PSx[20]==1)
+		{
+			aiguillage.Gauche(11);
+		}
+
+
+
+
+
+
+
+
+
 
 /*		//t1
 		if(M[1]!=0 && cmd.NavetteStoppeeVide(1)!=0)
@@ -90,17 +91,17 @@ int main(int argc, char **argv)
 		}
 */
 		//t2
-		if(M[3]!=0 && cmd.NavetteStoppee(1)!=0)
+		/*if(M[3]!=0 && cmd.NavetteStoppee(1)!=0)
 		{
 			modif=1;
 			M[4]=cmd.NavetteStoppee(1);
 			M[3]--;
 			cmd.NavettePartie(1);
-			
-		}
+
+		}*/
 
 /*		//t3
-		if(M[2]!=0 && M[50]==1 && cmd.ProduitSurNavette(M[2])==0) 
+		if(M[2]!=0 && M[50]==1 && cmd.ProduitSurNavette(M[2])==0)
 		{
 			modif=1;
 			M[5]=M[2];
@@ -138,7 +139,7 @@ int main(int argc, char **argv)
 		} */
 
 		//t7
-		if(M[4]!=0 && M[50]==1 && cmd.ProduitSurNavette(M[4])!=0)
+	/*	if(M[4]!=0 && M[50]==1 && cmd.ProduitSurNavette(M[4])!=0)
 		{
 			modif=1;
 			M[9]=M[4];
@@ -156,7 +157,7 @@ int main(int argc, char **argv)
 			M[9]=0;
 			Robots.MonterBras(1);
 		}
-	
+
 		//t9
 		if(M[10]!=0 && Robots.BrasEnPosition(1)==1)
 		{
@@ -169,7 +170,7 @@ int main(int argc, char **argv)
 			//M[0]++;
 			//Robots.ControlerRobot(1, 1, -1, -1);
 		}
-
+*/
 /*		//t10
 		if(M[11]!=0  &&   Robots.RobotEnPosition(1)==1 && Robots.BrasEnPosition(1)==-1 && Robots.PinceEnPosition(1)==-1)
 		{
@@ -178,7 +179,7 @@ int main(int argc, char **argv)
 			M[11]=0;
 			M[12]=1;
 			Robots.MonterBras(1);
-			
+
 		}
 
 		//t11
@@ -198,7 +199,7 @@ int main(int argc, char **argv)
 		if(M[8]!=0 && Robots.BrasEnPosition(1)==1)
 		{
 			modif=1;
-			
+
 			M[15]=M[8];
 			M[8]=0;
 			M[50]=1;
@@ -211,9 +212,9 @@ int main(int argc, char **argv)
 		if(M[12]!=0 && Robots.BrasEnPosition(1)==1)
 		{
 			modif=1;
-			
+
 			M[12]=0;
-			M[50]=1;			
+			M[50]=1;
 		}
 
 		//t14
@@ -258,11 +259,11 @@ int main(int argc, char **argv)
 
 		*/
 		Nb_Place_T1=15;
-/*				
+/*
 /////////////////////////Poste 2///////////////////////////////////////
 
 		//t101 M[101] : Navette vide ; M[103] : Navette occuppee
-		
+
 		if(M[101]!=0 && cmd.NavetteStoppeeVide(2)!=0)
 		{
 			modif=1;
@@ -284,7 +285,7 @@ int main(int argc, char **argv)
 		{
 			cout<<"Prodiot sur navette : "<<cmd.ProduitSurNavette(M[102])<<endl;
 		}
-		if(M[102]!=0 && M[50]==1 && cmd.ProduitSurNavette(M[104])==0) 
+		if(M[102]!=0 && M[50]==1 && cmd.ProduitSurNavette(M[104])==0)
 		{
 			modif=1;
 			M[105]=M[102];
@@ -342,7 +343,7 @@ int main(int argc, char **argv)
 			M[109]=0;
 			Robots.MonterBras(1);
 		}
-	
+
 		//t109
 		if(M[110]!=0 && Robots.BrasEnPosition(1)==1)
 		{
@@ -364,7 +365,7 @@ int main(int argc, char **argv)
 			M[111]=0;
 			M[112]=1;
 			Robots.MonterBras(1);
-			
+
 		}
 
 		//t111
@@ -384,22 +385,22 @@ int main(int argc, char **argv)
 		if(M[108]!=0 && Robots.BrasEnPosition(1)==1)
 		{
 			modif=1;
-			
+
 			M[115]=M[108];
 			M[108]=0;
 			M[50]=1;
 			cmd.NavettePartie(2);
 			cmd.PieceDeposee(2);
-			usleep(500000);		
+			usleep(500000);
 		}
 
 		//t113
 		if(M[112]!=0 && Robots.BrasEnPosition(1)==1)
 		{
 			modif=1;
-			
+
 			M[112]=0;
-			M[50]=1;			
+			M[50]=1;
 		}
 
 
@@ -470,7 +471,7 @@ int main(int argc, char **argv)
 
 
 		//t203
-		if(M[202]!=0 && M[250]==1 && cmd.ProduitSurNavette(M[202])==0) 
+		if(M[202]!=0 && M[250]==1 && cmd.ProduitSurNavette(M[202])==0)
 		{
 			modif=1;
 			M[205]=M[202];
@@ -528,7 +529,7 @@ int main(int argc, char **argv)
 			M[209]=0;
 			Robots.MonterBras(2);
 		}
-	
+
 		//t209
 		if(M[210]!=0 && Robots.BrasEnPosition(2)==1)
 		{
@@ -550,7 +551,7 @@ int main(int argc, char **argv)
 			M[211]=0;
 			M[212]=1;
 			Robots.MonterBras(2);
-			
+
 		}
 
 		//t211
@@ -570,7 +571,7 @@ int main(int argc, char **argv)
 		if(M[208]!=0 && Robots.BrasEnPosition(2)==1)
 		{
 			modif=1;
-			
+
 			M[215]=M[208];
 			M[208]=0;
 			M[250]=1;
@@ -583,9 +584,9 @@ int main(int argc, char **argv)
 		if(M[212]!=0 && Robots.BrasEnPosition(2)==1)
 		{
 			modif=1;
-			
+
 			M[212]=0;
-			M[250]=1;			
+			M[250]=1;
 		}
 
 		//t214
@@ -629,11 +630,11 @@ int main(int argc, char **argv)
 
 
 		Nb_Place_T3=15;
-				
+
 /////////////////////////Poste 4///////////////////////////////////////
 
 		//t301 M[101] : Navette vide ; M[103] : Navette occuppee
-		
+
 		if(M[301]!=0 && cmd.NavetteStoppeeVide(4)!=0)
 		{
 			modif=1;
@@ -651,10 +652,10 @@ int main(int argc, char **argv)
 		}
 
 
-		
+
 
 		//t303
-		if(M[302]!=0 && M[250]==1 && cmd.ProduitSurNavette(M[304])==0) 
+		if(M[302]!=0 && M[250]==1 && cmd.ProduitSurNavette(M[304])==0)
 		{
 			modif=1;
 			M[305]=M[302];
@@ -712,7 +713,7 @@ int main(int argc, char **argv)
 			M[309]=0;
 			Robots.MonterBras(2);
 		}
-	
+
 		//t309
 		if(M[310]!=0 && Robots.BrasEnPosition(2)==1)
 		{
@@ -734,7 +735,7 @@ int main(int argc, char **argv)
 			M[311]=0;
 			M[312]=1;
 			Robots.MonterBras(2);
-			
+
 		}
 
 		//t311
@@ -754,7 +755,7 @@ int main(int argc, char **argv)
 		if(M[308]!=0 && Robots.BrasEnPosition(2)==1)
 		{
 			modif=1;
-			
+
 			M[315]=M[308];
 			M[308]=0;
 			M[250]=1;
@@ -767,9 +768,9 @@ int main(int argc, char **argv)
 		if(M[312]!=0 && Robots.BrasEnPosition(2)==1)
 		{
 			modif=1;
-			
+
 			M[312]=0;
-			M[250]=1;			
+			M[250]=1;
 		}
 
 
@@ -870,7 +871,7 @@ int main(int argc, char **argv)
 					cout<<"M["<<i+300<<"] = "<<M[i+300]<<", ";
 				}
 			}
-			cout<<endl<<endl;	
+			cout<<endl<<endl;
 		}
 		modif=0;
 

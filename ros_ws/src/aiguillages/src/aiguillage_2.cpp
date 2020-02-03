@@ -7,7 +7,7 @@
 
 #include <ros/ros.h>
 #include <unistd.h>
-#include "A2.h"
+#include "Aiguillage.h"
 
 
 using namespace std;
@@ -18,38 +18,30 @@ using namespace std;
 #define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
 
 
-void SensorCallbackd()
+/*void SensorCallback()
 {
 	cout<<"~~~~~~~~Capteur actif~~~~~~~~~~"<<endl;
-}
+}*/
 
-void SensorCallbackg()
-{
-	cout<<"~~~~~~~~Capteur actif~~~~~~~~~~"<<endl;
-}
 
 int main(int argc, char **argv)
-{	
+{
 
 //initialisation du noeud ros et création d'un handle associé au noeud
+
 	ros::init(argc, argv, "aiguillage_2");	//numéro de l'aiguillage
 	ros::NodeHandle noeud;
 
-	A2 Aig(noeud);
+	Aiguillage Aig(noeud,2);//classe de l'aiguillage
 
-	ros::Rate loop_rate(25); //fréquence de la boucle 
-
-	
+	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	while (ros::ok())
 	{
-		Aig.Aiguille_Navette();
-		
+		//Aig1.Aiguille_Navette();
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées
 		loop_rate.sleep(); //permet de synchroniser la boucle while. Il attend le temps qu'il reste pour faire le 25Hz (ou la fréquence indiquée dans le loop_rate)
 	}
 
 	return 0;
-
-
 }

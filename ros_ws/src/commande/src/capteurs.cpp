@@ -1,7 +1,7 @@
 /**** Bruno DATO, Abdellah ELGOURAIN, Evgeny SHULGA M1 EEA ISTR Université Paul Sabatier Toulouse III 2016 ****/
 
 #include <ros/ros.h>
-#include "capteurs.h" 
+#include "capteurs.h"
 #include <commande_locale/Msg_SensorState.h>
 
 
@@ -9,17 +9,17 @@
 Capteurs::Capteurs(ros::NodeHandle noeud)
 {
 	// Subscriber
-	sub_capteurs_ligne = noeud.subscribe("/commande/Ligne_transitique/Capteurs", 1, &Capteurs::Callback_capteurs_ligne,this);
+	//sub_capteurs_ligne = noeud.subscribe("/commande/Ligne_transitique/Capteurs", 1, &Capteurs::Callback_capteurs_ligne,this);
 	sub_capteurs_simu = noeud.subscribe("/commande/Simulation/Capteurs", 1, &Capteurs::Callback_capteurs_simulation,this);
 
 	SIMULATION=false;
 	LIGNE=false;
-	
+
 	for(int i=0;i<25;i++) PSx[i]=0;
 	for(int i=0;i<13;i++) DxD[i]=0;
 	for(int i=0;i<13;i++) DxG[i]=0;
 	for(int i=0;i<11;i++) CPx[i]=0;
-	for(int i=0;i<9;i++) CPIx[i]=0;	
+	for(int i=0;i<9;i++) CPIx[i]=0;
 }
 
 
@@ -115,5 +115,3 @@ bool MASK(long int registre,int numero_bit)
 {
 	return (bool)((registre & (long int)(pow(2,numero_bit)))/pow(2,numero_bit));
 }
-
-

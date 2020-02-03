@@ -43,14 +43,14 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	SubDeverouilleAiguillages = noeud.subscribe("/commande/DeverouilleAiguillage", 1000, &Commande::DeverouilleAiguillages, this);
 	SubVerouilleAiguillages = noeud.subscribe("/commande/VerouilleAiguillage", 1000, &Commande::VerouilleAiguillages, this);
 	SubAiguillagesGauches = noeud.subscribe("/commande/AiguillageGauche", 1000, &Commande::Aiguillagesgauches, this);
-	SubAiguillagesDroits = noeud.subscribe("/commande/AiguillageDroit", 1000, &Commande::Aiguillagesdroits, this);
+	SubAiguillagesDroits = noeud.subscribe("/commande/AiguillageDroite", 1000, &Commande::Aiguillagesdroits, this);
 
 	// Publishers messages actionneurs
 	cout<<"Initialisation publisher"<<endl;
 	pub_navettes_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 1);
 	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 1);
         pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 10);
-	
+
 	// Publishers pour redémarrer une navette au niveau des postes
 	PubDemarrerNavetteP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/Demarrage", 10);
 	PubDemarrerNavetteP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/Demarrage", 10);
@@ -91,7 +91,7 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
 	subPinOff = noeud.subscribe("/Poste_Cmde/RentrerErgots", 10, &Commande::RentrerErgotCallback, this);
 
-	
+
 	client_GetShuttleState = noeud.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
 	client_GetEmptyShuttle = noeud.serviceClient<shuttles::srvGetEmptyShuttles>("/commande_navette/srvGetEmptyShuttles");
 	NewShuttle = noeud.subscribe("/commande_locale/New_Shuttle_Handle", 10, &Commande::NewShuttleCallBack, this);
@@ -110,7 +110,7 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 
 
 	//Initialisation des variables
-	
+
 	ProduitEnP1=0;
 	ProduitEnP1=0;
 	ProduitEnP1=0;
@@ -126,8 +126,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 
 	NewHandle=0;
 
-	
-	
+
+
 
 
 
@@ -147,7 +147,7 @@ while (count < 5 || pos<0)
 if(pos<0) ROS_ERROR("pos netagif !!!");
 std::string Working_Folder = executionPath.substr(0,pos+2);
 
-	
+
 //Initialisation des produits à l'aide du fichier de configuration
 
 
@@ -155,7 +155,7 @@ std::string Working_Folder = executionPath.substr(0,pos+2);
 std::string configFile = Working_Folder + "/ProductConfiguration.config";
 
 std::ifstream streamConfigFile(configFile.c_str(), std::ios::in);
-	
+
 	if (streamConfigFile)
 	{
 	std::string pNameFF,destinationPart,contents;
@@ -174,7 +174,7 @@ std::ifstream streamConfigFile(configFile.c_str(), std::ios::in);
 
 	//Configuration temps entre lancement
 	std::getline(streamConfigFile,contents);
-	
+
 	//GAMME/TEMPS
 	while (std::getline(streamConfigFile, contents))
 		{
@@ -183,15 +183,15 @@ std::ifstream streamConfigFile(configFile.c_str(), std::ios::in);
 			//ROS_INFO("%s",contents.c_str())	;
 			std::size_t pos2 = contents.find(":");
 			std::size_t pos3 = contents.find_last_of(":");
-		
+
 			pNameFF = contents.substr(0,pos2);
 			destinationPart = contents.substr(pos2+1,pos3-pos2-1);
-	
+
 			int destination[10];
-		
+
 			int manRSize = 0; //manufacturing range size of the produit = number of operation
 
-			char * cstr2 = new char [destinationPart.length()+1]; 
+			char * cstr2 = new char [destinationPart.length()+1];
 	  		std::strcpy (cstr2, destinationPart.c_str());	// création objet cstring
 
 	  		// cstr now contains a c-string copy of str
@@ -210,18 +210,18 @@ std::ifstream streamConfigFile(configFile.c_str(), std::ios::in);
 
 			char charName;
 			charName = char(pNameFF.c_str()[0]-16);
-			int pNumberBase = atoi(&charName) * 10 ; 
+			int pNumberBase = atoi(&charName) * 10 ;
 			int pNumber;
 			int nextDestination;
 
 
 	//  Pour gérer le n° de la prochaine destination d'un produit
-			for (int i = 0; i < manRSize+1; i++)	
-				{	
-				pNumber = pNumberBase + i; 		
-				if ( i+1 == manRSize+1 )  // Si i+1 est égal au nombre d'étapes de fabrication du produit 
+			for (int i = 0; i < manRSize+1; i++)
+				{
+				pNumber = pNumberBase + i;
+				if ( i+1 == manRSize+1 )  // Si i+1 est égal au nombre d'étapes de fabrication du produit
 					{
-					nextDestination = 5; 	// Destination qui correspond à la sortie 
+					nextDestination = 5; 	// Destination qui correspond à la sortie
 					}
 				else 	nextDestination = destination[i];
 				//ROS_INFO("pNumber : %d, nextdestination : %d",pNumber, nextDestination);
@@ -262,7 +262,7 @@ void Commande::ArretNavette(const std_msgs::Int32::ConstPtr& msg)
 	for(int i=0;i<25;i++) actionneurs_simulation_Stop.STOP[i]=!STx[i];
 	for(int i=0;i<25;i++) actionneurs_simulation_Stop.GO[i]=STx[i];
 	pub_navettes_stops.publish(actionneurs_simulation_Stop);
-	
+
 }
 
 void Commande::DemarreNavette(const std_msgs::Int32::ConstPtr& msg)
@@ -271,7 +271,7 @@ void Commande::DemarreNavette(const std_msgs::Int32::ConstPtr& msg)
 	for(int i=0;i<25;i++) actionneurs_simulation_Stop.STOP[i]=!STx[i];
 	for(int i=0;i<25;i++) actionneurs_simulation_Stop.GO[i]=STx[i];
 	pub_navettes_stops.publish(actionneurs_simulation_Stop);
-	
+
 }
 
 //////////////////////////////
@@ -410,8 +410,8 @@ void Commande::initProduct(int nDestination, int pNumber)
 
 	if (ret.second==false)	// Si un produit avec le même nom existe dèjà, celui-ci n'est pas ajouté à la collection
 	{
-    		ROS_WARN("Ordonnanceur : Un Produit de ce nom existe dèjà !"); 
-  	} 
+    		ROS_WARN("Ordonnanceur : Un Produit de ce nom existe dèjà !");
+  	}
 
 }
 
@@ -446,8 +446,8 @@ void Commande::PiecePrise(int numPoste)
 		case 4:
 			ProduitEnP4=0;
 			pubProductTakenByRobotP4.publish(msg);
-		break;	
-	}	
+		break;
+	}
 }
 
 
@@ -472,8 +472,8 @@ void Commande::PieceDeposee(int numPoste)
 
 		case 4:
 			pubProductPutOnShuttleP4.publish(msg);
-		break;	
-	}	
+		break;
+	}
 }
 
 
@@ -505,8 +505,8 @@ int Commande::ProduitSurNavette(int handle)
 
 		if (it != ProductsMap.end()) {		// Vrai si l'itérateur n'est pas hors de la liste
 			pointerProduct = it->second;
-			return pointerProduct->nextDestination;	
-		}			
+			return pointerProduct->nextDestination;
+		}
 	}
 }
 
@@ -531,7 +531,7 @@ int Commande::NavetteStoppee(int numPoste)
 		case 4:
 		return NavetteEnP4;
 		break;
-		
+
 	}
 }
 
@@ -555,7 +555,7 @@ int Commande::NavetteStoppeeVide(int numPoste)
 		case 4:
 		return NavetteVideEnP4;
 		break;
-		
+
 	}
 }
 
@@ -588,7 +588,7 @@ void Commande::NavettePartie(int numPoste)
 			NavetteVideEnP4=0;
 			ProduitEnP4=0;
 		break;
-		
+
 	}
 }
 
@@ -600,20 +600,20 @@ int Commande::NavetteDisponible()
 	int i=0;
 	int handle;
 	int destination;
-	
+
 	do
 	{
 		handle=srv_GetEmptyShuttle.response.handles[i];
 		srv_GetShuttleState.request.handle=handle;
-		
+
 		client_GetShuttleState.call(srv_GetShuttleState);
 		destination=srv_GetShuttleState.response.destination;
 		i++;
-	
+
 	}while(destination!=0 && i<10);
-	
+
 	return handle;
-			
+
 }
 
 
@@ -639,6 +639,3 @@ void Commande::DestroyShuttle(int handle)
 	cout << delmsg.data << endl;
 	pubDestroyShuttle.publish(delmsg);
 }
-
-
-

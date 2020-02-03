@@ -22,32 +22,32 @@ AigsInterface::AigsInterface(ros::NodeHandle noeud)
 	msg.data=1;
 
 	/** Publishers **/
-	 pub_aig_droit1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit1",1);
-	 pub_aig_droit2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit2",1);
-	 pub_aig_droit3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit3",1);
-	 pub_aig_droit4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit4",1);
-	 pub_aig_droit5=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit5",1);
-	 pub_aig_droit6=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit6",1);
-	 pub_aig_droit7=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit7",1);
-	 pub_aig_droit8=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit8",1);
-	 pub_aig_droit9=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit9",1);
-	 pub_aig_droit10=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit10",1);
-	 pub_aig_droit11=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit11",1);
-	 pub_aig_droit12=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroit12",1);
+	 pub_aig_Droite1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite1",1);
+	 pub_aig_Droite2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite2",1);
+	 pub_aig_Droite3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite3",1);
+	 pub_aig_Droite4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite4",1);
+	 pub_aig_Droite5=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite5",1);
+	 pub_aig_Droite6=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite6",1);
+	 pub_aig_Droite7=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite7",1);
+	 pub_aig_Droite8=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite8",1);
+	 pub_aig_Droite9=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite9",1);
+	 pub_aig_Droite10=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite10",1);
+	 pub_aig_Droite11=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite11",1);
+	 pub_aig_Droite12=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite12",1);
 
 
-	 pub_aig_virage1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage1",1);
-	 pub_aig_virage2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage2",1);
-	 pub_aig_virage3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage3",1);
-	 pub_aig_virage4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage4",1);
-	 pub_aig_virage5=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage5",1);
-	 pub_aig_virage6=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage6",1);
-	 pub_aig_virage7=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage7",1);
-	 pub_aig_virage8=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage8",1);
-	 pub_aig_virage9=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage9",1);
-	 pub_aig_virage10=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage10",1);
-	 pub_aig_virage11=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage11",1);
-	 pub_aig_virage12=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageVirage12",1);
+	 pub_aig_Gauche1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche1",1);
+	 pub_aig_Gauche2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche2",1);
+	 pub_aig_Gauche3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche3",1);
+	 pub_aig_Gauche4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche4",1);
+	 pub_aig_Gauche5=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche5",1);
+	 pub_aig_Gauche6=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche6",1);
+	 pub_aig_Gauche7=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche7",1);
+	 pub_aig_Gauche8=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche8",1);
+	 pub_aig_Gauche9=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche9",1);
+	 pub_aig_Gauche10=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche10",1);
+	 pub_aig_Gauche11=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche11",1);
+	 pub_aig_Gauche12=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche12",1);
 	/*** Subscribers ***/
 }
 
@@ -60,91 +60,91 @@ AigsInterface::~AigsInterface()
 }
 
 //Methodes
-void AigsInterface::Droit(int num_Aig)
+void AigsInterface::Droite(int num_Aig)
 {
 
 	switch(num_Aig)
 	{
 
 		case 1:
-			pub_aig_droit1.publish(msg);
+			pub_aig_Droite1.publish(msg);
 			break;
 		case 2:
-			pub_aig_droit2.publish(msg);
+			pub_aig_Droite2.publish(msg);
 			break;
 		case 3:
-			pub_aig_droit3.publish(msg);
+			pub_aig_Droite3.publish(msg);
 			break;
 		case 4:
-			pub_aig_droit4.publish(msg);
+			pub_aig_Droite4.publish(msg);
 			break;
 		case 5:
-			pub_aig_droit5.publish(msg);
+			pub_aig_Droite5.publish(msg);
 			break;
 		case 6:
-			pub_aig_droit6.publish(msg);
+			pub_aig_Droite6.publish(msg);
 			break;
 		case 7:
-			pub_aig_droit7.publish(msg);
+			pub_aig_Droite7.publish(msg);
 			break;
 		case 8:
-			pub_aig_droit8.publish(msg);
+			pub_aig_Droite8.publish(msg);
 			break;
 		case 9:
-			pub_aig_droit9.publish(msg);
+			pub_aig_Droite9.publish(msg);
 			break;
 		case 10:
-			pub_aig_droit10.publish(msg);
+			pub_aig_Droite10.publish(msg);
 			break;
 		case 11:
-			pub_aig_droit11.publish(msg);
+			pub_aig_Droite11.publish(msg);
 			break;
 		case 12:
-			pub_aig_droit12.publish(msg);
+			pub_aig_Droite12.publish(msg);
 			break;
 	}
 }
 
-void AigsInterface::Virage(int num_Aig)
+void AigsInterface::Gauche(int num_Aig)
 {
 	switch(num_Aig)
 	{
 
 		case 1:
-			pub_aig_virage1.publish(msg);
+			pub_aig_Gauche1.publish(msg);
 			break;
 		case 2:
-			pub_aig_virage2.publish(msg);
+			pub_aig_Gauche2.publish(msg);
 			break;
 		case 3:
-			pub_aig_virage3.publish(msg);
+			pub_aig_Gauche3.publish(msg);
 			break;
 		case 4:
-			pub_aig_virage4.publish(msg);
+			pub_aig_Gauche4.publish(msg);
 			break;
 		case 5:
-			pub_aig_virage5.publish(msg);
+			pub_aig_Gauche5.publish(msg);
 			break;
 		case 6:
-			pub_aig_virage6.publish(msg);
+			pub_aig_Gauche6.publish(msg);
 			break;
 		case 7:
-			pub_aig_virage7.publish(msg);
+			pub_aig_Gauche7.publish(msg);
 			break;
 		case 8:
-			pub_aig_virage8.publish(msg);
+			pub_aig_Gauche8.publish(msg);
 			break;
 		case 9:
-			pub_aig_virage9.publish(msg);
+			pub_aig_Gauche9.publish(msg);
 			break;
 		case 10:
-			pub_aig_virage10.publish(msg);
+			pub_aig_Gauche10.publish(msg);
 			break;
 		case 11:
-			pub_aig_virage11.publish(msg);
+			pub_aig_Gauche11.publish(msg);
 			break;
 		case 12:
-			pub_aig_virage12.publish(msg);
+			pub_aig_Gauche12.publish(msg);
 			break;
 	}
 }

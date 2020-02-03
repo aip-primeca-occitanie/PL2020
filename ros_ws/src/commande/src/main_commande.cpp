@@ -10,6 +10,7 @@
 #include "actionneurs.h" 
 #include "commande.h"
 #include "robots.h"
+#include "AigsInterface.h"
 #include <ros/ros.h>
 #include <unistd.h>
 #include <shuttles/srvGetEmptyShuttles.h>
@@ -35,6 +36,8 @@ int main(int argc, char **argv)
 	
 	
 	Robots Robots(noeud);
+	AigsInterface Aiguillages(noeud);
+
 
 	ros::Rate loop_rate(25); //fréquence de la boucle 
 

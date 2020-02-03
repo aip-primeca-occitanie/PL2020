@@ -13,7 +13,7 @@
 
 #include <ros/ros.h>
 #include "actionneurs.h"
-#include "capteurs.h" 
+#include "capteurs.h"
 #include "robots.h"
 #include <std_msgs/Bool.h>
 //#include "postes/productPost.h"
@@ -40,8 +40,8 @@ private:
 //Subscriber
 
 	// Start/Stop Navettes
-	ros::Subscriber SubArretNavette;
-	ros::Subscriber SubDemarreNavette;
+	//ros::Subscriber SubArretNavette;
+	//ros::Subscriber SubDemarreNavette;
 
 	// Aiguillages
 	ros::Subscriber SubDeverouilleAiguillages;
@@ -54,7 +54,7 @@ private:
 	ros::Subscriber subPinOff;
 
 	// Postes
-	ros::Subscriber subEmptyShuttleReadyP1;
+	/*ros::Subscriber subEmptyShuttleReadyP1;
 	ros::Subscriber subEmptyShuttleReadyP2;
 	ros::Subscriber subEmptyShuttleReadyP3;
 	ros::Subscriber subEmptyShuttleReadyP4;
@@ -63,22 +63,25 @@ private:
 	ros::Subscriber subProductInPostP2;
 	ros::Subscriber subProductInPostP3;
 	ros::Subscriber subProductInPostP4;
+  */
 
-	
+	ros::Subscriber NewShuttle;
+
+
 
 //Publisher
 
 	// Actionneurs
 	ros::Publisher pub_navettes_stops;
 	ros::Publisher pub_actionneurs_simu_aiguillages;
-        ros::Publisher pub_actionneurs_simu_pins;
+  ros::Publisher pub_actionneurs_simu_pins;
 
 	// Vers Postes
-	ros::Publisher PubDemarrerNavetteP1;
+	/*ros::Publisher PubDemarrerNavetteP1;
 	ros::Publisher PubDemarrerNavetteP2;
 	ros::Publisher PubDemarrerNavetteP3;
 	ros::Publisher PubDemarrerNavetteP4;
-
+*/
 	ros::Publisher pubProductTakenByRobotP1;
 	ros::Publisher pubProductTakenByRobotP2;
 	ros::Publisher pubProductTakenByRobotP3;
@@ -90,21 +93,20 @@ private:
 	ros::Publisher pubProductPutOnShuttleP4;
 
 	// Vers shuttles
-	ros::Publisher pubDeleteShuttleScheduler;
-	ros::Publisher pubDestinationChange;
-	shuttles::msgShuttleChange Newdestination;
+	//ros::Publisher pubDeleteShuttleScheduler;
+	//ros::Publisher pubDestinationChange;
+	//shuttles::msgShuttleChange Newdestination;
 	ros::Publisher pubDestroyShuttle;
-	ros::Publisher pubDeleteShuttle;
-	
-	ros::Subscriber NewShuttle;
+	//ros::Publisher pubDeleteShuttle;
+
 
 //Services
 	//Services shuttle
 	ros::ServiceClient client_GetShuttleState;
 	shuttles::srvGetShuttleStatus srv_GetShuttleState;
 
-	ros::ServiceClient client_GetEmptyShuttle;
-	shuttles::srvGetEmptyShuttles srv_GetEmptyShuttle;
+	//ros::ServiceClient client_GetEmptyShuttle;
+	//shuttles::srvGetEmptyShuttles srv_GetEmptyShuttle;
 
 
 //Variables
@@ -119,10 +121,10 @@ private:
 	std::map<int,ProductPost*> ProductsMap;
 
 
-// Initialisation 
+// Initialisation
 
 	/* Capteurs */
-	bool PSx[25],DxD[13],DxG[13],CPx[11],CPIx[9];  
+	bool PSx[25],DxD[13],DxG[13],CPx[11],CPIx[9];
 
 	/* Actionneurs */
 	bool STx[25],RxD[13],RxG[13],Vx[13],Dx[13],PIx[9];
@@ -131,15 +133,15 @@ public:
 	commande_locale::Msg_StopControl actionneurs_simulation_Stop;
 	commande_locale::Msg_SwitchControl actionneurs_simulation_Aiguillages;
 	commande_locale::Msg_PinControl actionneurs_simulation_Pin;
-	
+
 
 	Commande(ros::NodeHandle noeud, std::string executionPath);
-	
+
 
 	void Initialisation();
 
-	void ArretNavette(const std_msgs::Int32::ConstPtr& msg);
-	void DemarreNavette(const std_msgs::Int32::ConstPtr& msg);
+	void Stop_PS(int point_stop);
+	void Ouvrir_PS(int point_stop);
 
 	void DeverouilleAiguillages(const std_msgs::Int32::ConstPtr& msg);
 	void VerouilleAiguillages(const std_msgs::Int32::ConstPtr& msg);
@@ -164,11 +166,11 @@ public:
 	void initProduct(int nDestination, int pNumber);
 
 
-	//Fonctions haut niveau 
+	//Fonctions haut niveau
 	void PiecePrise(int numPoste);
 	void PieceDeposee(int numPoste);
 
-	void DefinirDestination(int handle, int destination);
+	//void DefinirDestination(int handle, int destination);
 
 	int ProduitSurNavette(int handle);		//Renvoie la destination du produit présent sur la navette
 	int NavetteStoppee(int numPoste); 		//Renvoie l'handle de la navette stoppée au niveau du poste numPoste si elle contient un produit, 0 sinon

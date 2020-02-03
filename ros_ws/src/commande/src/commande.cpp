@@ -36,8 +36,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 {
 
 	// Commande Stop/Start Navettes
-	SubArretNavette = noeud.subscribe("/commande/ArretNavette", 1000, &Commande::ArretNavette, this);
-	SubDemarreNavette = noeud.subscribe("/commande/DemarrerNavette", 1000, &Commande::DemarreNavette, this);
+	//SubArretNavette = noeud.subscribe("/commande/ArretNavette", 1000, &Commande::ArretNavette, this);
+	//SubDemarreNavette = noeud.subscribe("/commande/DemarrerNavette", 1000, &Commande::DemarreNavette, this);
 
 	//Commande aiguillages
 	SubDeverouilleAiguillages = noeud.subscribe("/commande/DeverouilleAiguillage", 1000, &Commande::DeverouilleAiguillages, this);
@@ -49,43 +49,43 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	cout<<"Initialisation publisher"<<endl;
 	pub_navettes_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 1);
 	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 1);
-        pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 10);
+  pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 10);
 
 	// Publishers pour redémarrer une navette au niveau des postes
-	PubDemarrerNavetteP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/Demarrage", 10);
-	PubDemarrerNavetteP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/Demarrage", 10);
-	PubDemarrerNavetteP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/Demarrage", 10);
-	PubDemarrerNavetteP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/Demarrage", 10);
+	//PubDemarrerNavetteP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/Demarrage", 10);
+	//PubDemarrerNavetteP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/Demarrage", 10);
+	//PubDemarrerNavetteP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/Demarrage", 10);
+	//PubDemarrerNavetteP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/Demarrage", 10);
 
 	// Publishers vers Postes - produit récupéré par robot
-	pubProductTakenByRobotP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/ProduitRecupere", 10);
-	pubProductTakenByRobotP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/ProduitRecupere", 10);
-	pubProductTakenByRobotP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/ProduitRecupere", 10);
-	pubProductTakenByRobotP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/ProduitRecupere", 10);
+	//pubProductTakenByRobotP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/ProduitRecupere", 10);
+	//pubProductTakenByRobotP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/ProduitRecupere", 10);
+	//pubProductTakenByRobotP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/ProduitRecupere", 10);
+	//pubProductTakenByRobotP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/ProduitRecupere", 10);
 
 	// Publishers vers Postes - produit posé sur navette
-	pubProductPutOnShuttleP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/ProduitPose", 10);
-	pubProductPutOnShuttleP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/ProduitPose", 10);
-	pubProductPutOnShuttleP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/ProduitPose", 10);
-	pubProductPutOnShuttleP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/ProduitPose", 10);
+	//pubProductPutOnShuttleP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/ProduitPose", 10);
+	//pubProductPutOnShuttleP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/ProduitPose", 10);
+	//pubProductPutOnShuttleP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/ProduitPose", 10);
+	//pubProductPutOnShuttleP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/ProduitPose", 10);
 
 	// Publisher pour changer les destinations
-	pubDestinationChange = noeud.advertise<shuttles::msgShuttleChange>("/commande_navette/ShuttleDChange", 10);
+	//pubDestinationChange = noeud.advertise<shuttles::msgShuttleChange>("/commande_navette/ShuttleDChange", 10);
 
 	// Publisher pour détruire les navettes
 	pubDestroyShuttle = noeud.advertise<std_msgs::Int32>("/commande_navette/Destroy_Shuttle",10);
 
 	// Subscribers quand navettes vides présentes aux postes
-	subEmptyShuttleReadyP1 = noeud.subscribe("/Cmde_P1/NavetteVidePrete", 10, &Commande::GestionNavetteVideP1Callback, this);
-	subEmptyShuttleReadyP2 = noeud.subscribe("/Cmde_P2/NavetteVidePrete", 10, &Commande::GestionNavetteVideP2Callback, this);
-	subEmptyShuttleReadyP3 = noeud.subscribe("/Cmde_P3/NavetteVidePrete", 10, &Commande::GestionNavetteVideP3Callback, this);
-	subEmptyShuttleReadyP4 = noeud.subscribe("/Cmde_P4/NavetteVidePrete", 10, &Commande::GestionNavetteVideP4Callback, this);
+	//subEmptyShuttleReadyP1 = noeud.subscribe("/Cmde_P1/NavetteVidePrete", 10, &Commande::GestionNavetteVideP1Callback, this);
+	//subEmptyShuttleReadyP2 = noeud.subscribe("/Cmde_P2/NavetteVidePrete", 10, &Commande::GestionNavetteVideP2Callback, this);
+	//subEmptyShuttleReadyP3 = noeud.subscribe("/Cmde_P3/NavetteVidePrete", 10, &Commande::GestionNavetteVideP3Callback, this);
+	//subEmptyShuttleReadyP4 = noeud.subscribe("/Cmde_P4/NavetteVidePrete", 10, &Commande::GestionNavetteVideP4Callback, this);
 
 	// Subscribers quand produit à récuperer aux postes
-	subProductInPostP1 = noeud.subscribe("/Cmde_P1/ProduitPresentP1", 10, &Commande::ProductInPostP1Callback, this);
-	subProductInPostP2 = noeud.subscribe("/Cmde_P2/ProduitPresentP2", 10, &Commande::ProductInPostP2Callback, this);
-	subProductInPostP3 = noeud.subscribe("/Cmde_P3/ProduitPresentP3", 10, &Commande::ProductInPostP3Callback, this);
-	subProductInPostP4 = noeud.subscribe("/Cmde_P4/ProduitPresentP4", 10, &Commande::ProductInPostP4Callback, this);
+	//subProductInPostP1 = noeud.subscribe("/Cmde_P1/ProduitPresentP1", 10, &Commande::ProductInPostP1Callback, this);
+	//subProductInPostP2 = noeud.subscribe("/Cmde_P2/ProduitPresentP2", 10, &Commande::ProductInPostP2Callback, this);
+	//subProductInPostP3 = noeud.subscribe("/Cmde_P3/ProduitPresentP3", 10, &Commande::ProductInPostP3Callback, this);
+	//subProductInPostP4 = noeud.subscribe("/Cmde_P4/ProduitPresentP4", 10, &Commande::ProductInPostP4Callback, this);
 
 	// Actionner ergots
 	subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
@@ -93,7 +93,7 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 
 
 	client_GetShuttleState = noeud.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
-	client_GetEmptyShuttle = noeud.serviceClient<shuttles::srvGetEmptyShuttles>("/commande_navette/srvGetEmptyShuttles");
+	//client_GetEmptyShuttle = noeud.serviceClient<shuttles::srvGetEmptyShuttles>("/commande_navette/srvGetEmptyShuttles");
 	NewShuttle = noeud.subscribe("/commande_locale/New_Shuttle_Handle", 10, &Commande::NewShuttleCallBack, this);
 
 	// Initialisation des Actionneurs
@@ -105,8 +105,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aiguillages.RD[i] = 0;
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aiguillages.RG[i] = 0;
 
-        for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = 0;
-        for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = 1;
+  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = 0;
+  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = 1;
 
 
 	//Initialisation des variables
@@ -256,22 +256,18 @@ void Commande::Initialisation()
 //////////////////////////////
 // 	Callback Stop/Start
 //////////////////////////////
-void Commande::ArretNavette(const std_msgs::Int32::ConstPtr& msg)
+void Commande::Stop_PS(int point_stop)
 {
-	STx[msg->data]=0;
-	for(int i=0;i<25;i++) actionneurs_simulation_Stop.STOP[i]=!STx[i];
-	for(int i=0;i<25;i++) actionneurs_simulation_Stop.GO[i]=STx[i];
+	actionneurs_simulation_Stop.STOP[point_stop]=1;
+	actionneurs_simulation_Stop.GO[point_stop]=0;
 	pub_navettes_stops.publish(actionneurs_simulation_Stop);
-
 }
 
-void Commande::DemarreNavette(const std_msgs::Int32::ConstPtr& msg)
+void Commande::Ouvrir_PS(int point_stop)
 {
-	STx[msg->data]=1;
-	for(int i=0;i<25;i++) actionneurs_simulation_Stop.STOP[i]=!STx[i];
-	for(int i=0;i<25;i++) actionneurs_simulation_Stop.GO[i]=STx[i];
+	actionneurs_simulation_Stop.STOP[point_stop]=0;
+	actionneurs_simulation_Stop.GO[point_stop]=1;
 	pub_navettes_stops.publish(actionneurs_simulation_Stop);
-
 }
 
 //////////////////////////////
@@ -479,13 +475,13 @@ void Commande::PieceDeposee(int numPoste)
 
 
 //Fonction qui permet de définir la destination d'une navette
-void Commande::DefinirDestination(int handle, int destination)
+/*void Commande::DefinirDestination(int handle, int destination)
 {
 	ROS_INFO("Definir destination : handle : %d, destination : %d",handle, destination);
 	Newdestination.handle =handle;
 	Newdestination.argument = destination;
 	pubDestinationChange.publish(Newdestination); // Renseigne la nouvelle destination au service
-}
+}*/
 
 
 //Fonction qui renvoie la destination du produit présent sur la navette
@@ -594,7 +590,7 @@ void Commande::NavettePartie(int numPoste)
 
 
 //Fonction pour savoir si une navette est disponible = présente dans D0
-int Commande::NavetteDisponible()
+/*int Commande::NavetteDisponible()
 {
 	client_GetEmptyShuttle.call(srv_GetEmptyShuttle);
 	int i=0;
@@ -613,8 +609,7 @@ int Commande::NavetteDisponible()
 	}while(destination!=0 && i<10);
 
 	return handle;
-
-}
+}*/
 
 
 //Fonction permettant d'obtenir le handle d'une navette qui vient d'être créée

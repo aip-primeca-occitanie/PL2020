@@ -7,7 +7,6 @@ project(aiguillages)
 find_package(catkin REQUIRED COMPONENTS
   message_generation
   roscpp
-  vrep_common
   rospy
   std_msgs
 )

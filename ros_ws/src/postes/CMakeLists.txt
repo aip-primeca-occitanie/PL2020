@@ -9,7 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   shuttles
-  vrep_common
   aiguillages
   commande_locale
 )

@@ -8,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   message_generation
-  vrep_common
 )
 
 
@@ -71,7 +70,6 @@ add_dependencies(robot3 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
 add_executable(robot4 src/main_robot4.cpp src/Robot.cpp)
 target_link_libraries(robot4 ${catkin_LIBRARIES})
 add_dependencies(robot4 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
 
 
 

@@ -8,9 +8,6 @@
 #ifndef COMMANDE_SIMU
 #define COMMANDE_SIMU
 
-#include "vrep_common/simRosEnablePublisher.h"
-#include "vrep_common/simRosEnableSubscriber.h"
-
 #include <ros/ros.h>
 #include "actionneurs.h"
 #include "capteurs.h"

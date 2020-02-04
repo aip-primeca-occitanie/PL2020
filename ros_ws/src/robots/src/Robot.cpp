@@ -16,13 +16,32 @@ Robot::Robot(int num_du_robot)
 		//l'ensemble des setModes doit être à 1 pour que les joints des robots soient commandés
 		mymodes[i]=1; 
 	}
+
+	repSim_getObjectHandle=false;
+        repSim_setJointState=false;
+        repSim_getJointState=false;
+        repSim_getTime=false;
+
+	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
+	msgSim_setJointState.layout.dim[0].label="handles";
+	msgSim_setJointState.layout.dim[0].size=7;
+	msgSim_setJointState.layout.dim[0].stride=1;
+	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
+	msgSim_setJointState.layout.dim[0].label="values";
+	msgSim_setJointState.layout.dim[0].size=7;
+	msgSim_setJointState.layout.dim[0].stride=1;
+	msgSim_setJointState.layout.data_offset=0;
+
+	loop_rate = new ros::Rate(25);
 }
 
 
 
 //Destructeur
 Robot::~Robot()
-{}
+{
+	delete loop_rate;
+}
 
 
 
@@ -79,59 +98,52 @@ void Robot::EnvoyerRobot(int numposition)
 	}
 	
 	
-	//Utilisation du service simRosSetJointState pour envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
-	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
-	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
+	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
+	msgSim_setJointState.data.clear();
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back((float)Rints[i]);
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back(Rpos[i]);
 
-	srv_simRosSetJoint.request.handles = myhandles;
-	srv_simRosSetJoint.request.setModes = mysetmodes;
-	srv_simRosSetJoint.request.values = myvalues;
+	pubSim_setJointState.publish(msgSim_setJointState);
 	
-	client_simRosSetJoint.call(srv_simRosSetJoint);
+	//Attente de la réponse
+	while(!repSim_setJointState) loop_rate->sleep();
+	repSim_setJointState=false;
 
-	//Vérification après l'appel du service
-	if(srv_simRosSetJoint.response.result==-1)
+
+	//Utilisation du topic GetJointState pour savoir si le mouvement du robot est terminé : 
+	//on considère que la position est atteinte si la position est à 0.001 de sa consigne
+	float Position;
+	for(int i=0;i<7;i++)
 	{
-		ROS_INFO("Position predefinie %d pour le robot %d non atteinte", numposition,num_robot);
+		Position=0;
 
-		//Retour vers la commande 
-		retour.data = 1;
-		pub_retourCommande.publish(retour);
-	}
-	else
-	{	
-		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé : 
-		//on considère que la position est atteinte si la position est à 0.001 de sa consigne
-		float Position;
-		for(int i=0;i<7;i++)
+		//Appel du topic pour connaître la position du robot
+		msgSim_getJointState.data = Rints[i];
+		pubSim_getJointState.publish(msgSim_getJointState);
+		while(!repSim_getJointState) loop_rate->sleep();
+		repSim_getJointState = false;
+		Position = valueSim_getJointState;
+
+		//Attente jusqu'à ce que la position soit atteinte
+		while(std::abs(Position-Rpos[i])>=0.001)
 		{
-			Position=0;
-
-			//Appel du service pour connaître la position du robot
-			srv_simRosGetJoint.request.handle = Rints[i];
-			client_simRosGetJoint.call(srv_simRosGetJoint);
-			Position = srv_simRosGetJoint.response.state.position[0];
-
-			//Attente jusqu'à ce que la position soit atteinte
-			while(std::abs(Position-Rpos[i])>=0.001)
-			{
-				srv_simRosGetJoint.request.handle = Rints[i];
-				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
-			}
+			pubSim_getJointState.publish(msgSim_getJointState);
+			while(!repSim_getJointState) loop_rate->sleep();
+			repSim_getJointState=false;
+			Position = valueSim_getJointState;
 		}
-
-		ROS_INFO("Position atteinte robot %d", num_robot);
-
-		//Retour vers la commande
-		retour.data = 2;
-		pub_retourCommande.publish(retour);
-		
-		//Retour de la position actuelle du robot
-		pub_robotPosition.publish(robotPosition);
 	}
 
+	ROS_INFO("Position atteinte robot %d", num_robot);
+
+	//Retour vers la commande
+	retour.data = 2;
+	pub_retourCommande.publish(retour);
+	
+	//Retour de la position actuelle du robot
+	pub_robotPosition.publish(robotPosition);
 }
 
 
@@ -150,55 +162,49 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 	Rpos[6]=(joint7)*pi/180;
 
 		
-	//Utilisation du service simRosSetJointState our envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
-	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
-	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
+	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
+	msgSim_setJointState.data.clear();
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back((float)Rints[i]);
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back(Rpos[i]);
 
-	srv_simRosSetJoint.request.handles = myhandles;
-	srv_simRosSetJoint.request.setModes = mysetmodes;
-	srv_simRosSetJoint.request.values = myvalues;
+	pubSim_setJointState.publish(msgSim_setJointState);
 	
-	client_simRosSetJoint.call(srv_simRosSetJoint);
+	//Attente de la réponse
+	while(!repSim_setJointState) loop_rate->sleep();
+	repSim_setJointState=false;
 
-	//Vérification après l'appel du service
-	if(srv_simRosSetJoint.response.result==-1)
+
+	//Utilisation du topic GetJointState pour savoir si le mouvement du robot est terminé
+	//On considère que la position est atteinte si la position est à 0.001 de sa consigne
+	float Position;
+	for(int i=0;i<7;i++)
 	{
-		ROS_INFO("Position definie manuellement pour le robot %d non atteinte", num_robot);
+		Position=0;
 
-		//Retour vers la commande
-		retour.data = 1;
-		pub_retourCommande.publish(retour);
-	}
-	else
-	{	
-		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé
-		//On considère que la position est atteinte si la position est à 0.001 de sa consigne
-		float Position;
-		for(int i=0;i<7;i++)
+		//Appel du topic pour connaître la position du robot
+		msgSim_getJointState.data = Rints[i];
+		pubSim_getJointState.publish(msgSim_getJointState);
+		while(!repSim_getJointState) loop_rate->sleep();
+		repSim_getJointState = false;
+		Position = valueSim_getJointState;
+
+		//Attente jusqu'à ce que la position soit atteinte
+		while(std::abs(Position-Rpos[i])>=0.001)
 		{
-			Position=0;
-
-			//Appel du service pour connaître la position du robot
-			srv_simRosGetJoint.request.handle = Rints[i];
-			client_simRosGetJoint.call(srv_simRosGetJoint);
-			Position = srv_simRosGetJoint.response.state.position[0];
-
-			//Attente jusqu'à ce que la position soit atteinte
-			while(std::abs(Position-Rpos[i])>=0.001)
-			{
-				srv_simRosGetJoint.request.handle = Rints[i];
-				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
-			}
+			pubSim_getJointState.publish(msgSim_getJointState);
+			while(!repSim_getJointState) loop_rate->sleep();
+			repSim_getJointState=false;
+			Position = valueSim_getJointState;
 		}
-
-		ROS_INFO("Position atteinte %d", num_robot);
-
-		//Retour vers la commande
-		retour.data = 2;
-		pub_retourCommande.publish(retour);
 	}
+
+	ROS_INFO("Position atteinte %d", num_robot);
+
+	//Retour vers la commande
+	retour.data = 2;
+	pub_retourCommande.publish(retour);
 }
 
 
@@ -216,59 +222,54 @@ void Robot::DescendreBras()
 	Rpos[5]=Rpos[5]+3*pi/180;
 	Rpos[6]=Rpos[6]+6*pi/180;
 
-	//Utilisation du service simRosSetJointState pour envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
-	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
-	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
 
-	srv_simRosSetJoint.request.handles = myhandles;
-	srv_simRosSetJoint.request.setModes = mysetmodes;
-	srv_simRosSetJoint.request.values = myvalues;
+	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
+	msgSim_setJointState.data.clear();
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back((float)Rints[i]);
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back(Rpos[i]);
+
+	pubSim_setJointState.publish(msgSim_setJointState);
 	
-	client_simRosSetJoint.call(srv_simRosSetJoint);
+	//Attente de la réponse
+	while(!repSim_setJointState) loop_rate->sleep();
+	repSim_setJointState=false;
 
-	//Vérification après l'appel du service
-	if(srv_simRosSetJoint.response.result==-1)
+	//Utilisation du topic GetJointState pour savoir si le mouvement du robot est terminé
+	//On considère que la position est atteinte si la position est à 0.001 de sa consigne
+	float Position;
+	for(int i=0;i<7;i++)
 	{
-		ROS_INFO("Bras non descendu pour le robot %d", num_robot);
+		Position=0;
 
-		//Retour vers la commande
-		retour.data = 3;
-		pub_retourCommande.publish(retour);
-	}
-	else
-	{	
-		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé
-		//On considère que la position est atteinte si la position est à 0.001 de sa consigne
-		float Position;
-		for(int i=0;i<7;i++)
+		//Appel du topic pour connaître la position du robot
+		msgSim_getJointState.data = Rints[i];
+		pubSim_getJointState.publish(msgSim_getJointState);
+		while(!repSim_getJointState) loop_rate->sleep();
+		repSim_getJointState = false;
+		Position = valueSim_getJointState;
+
+		//Attente jusqu'à ce que la position soit atteinte
+		while(std::abs(Position-Rpos[i])>=0.001)
 		{
-			Position=0;
-			
-			//Appel du service pour connaître la position du robot
-			srv_simRosGetJoint.request.handle = Rints[i];
-			client_simRosGetJoint.call(srv_simRosGetJoint);
-			Position = srv_simRosGetJoint.response.state.position[0];
-
-			//Attente jusqu'à ce que la position soit atteinte
-			while(std::abs(Position-Rpos[i])>=0.001)
-			{
-				srv_simRosGetJoint.request.handle = Rints[i];
-				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
-			}
+			pubSim_getJointState.publish(msgSim_getJointState);
+			while(!repSim_getJointState) loop_rate->sleep();
+			repSim_getJointState=false;
+			Position = valueSim_getJointState;
 		}
-
-		ROS_INFO("Bras descendu pour le robot %d", num_robot);
-
-		//Retour vers la commande
-		retour.data = 4;
-		pub_retourCommande.publish(retour);
-
-		//Retour de l'état actuel du bras
-		robotBras.data = 0;
-		pub_robotBras.publish(robotBras);
 	}
+
+
+	ROS_INFO("Bras descendu pour le robot %d", num_robot);
+
+	//Retour vers la commande
+	retour.data = 4;
+	pub_retourCommande.publish(retour);
+
+	//Retour de l'état actuel du bras
+	robotBras.data = 0;
+	pub_robotBras.publish(robotBras);
 }
 
 
@@ -285,60 +286,54 @@ void Robot::MonterBras()
 	Rpos[5]=Rpos[5]-3*pi/180;
 	Rpos[6]=Rpos[6]-6*pi/180;
 
-	//Utilisation du service simRosSetJointState pour envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
-	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
-	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
 
-	srv_simRosSetJoint.request.handles = myhandles;
-	srv_simRosSetJoint.request.setModes = mysetmodes;
-	srv_simRosSetJoint.request.values = myvalues;
+	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
+	msgSim_setJointState.data.clear();
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back((float)Rints[i]);
+	for(int i=0; i++; i<7)
+		msgSim_setJointState.data.push_back(Rpos[i]);
+
+	pubSim_setJointState.publish(msgSim_setJointState);
 	
-	client_simRosSetJoint.call(srv_simRosSetJoint);
+	//Attente de la réponse
+	while(!repSim_setJointState) loop_rate->sleep();
+	repSim_setJointState=false;
 
-
-	//Vérification après l'appel du service
-	if(srv_simRosSetJoint.response.result==-1)
+	//Utilisation du topic GetJointState pour savoir si le mouvement du robot est terminé
+	//On considère que la position est atteinte si la position est à 0.001 de sa consigne
+	float Position;
+	for(int i=0;i<7;i++)
 	{
-		ROS_INFO("Bras non monte pour le robot %d", num_robot);
+		Position=0;
 
-		//Retour vers la commande
-		retour.data = 3;
-		pub_retourCommande.publish(retour);	
-	}
-	else
-	{	
-		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé 
-		//On considère que la position est atteinte si la position est à 0.001 de sa consigne
-		float Position;
-		for(int i=0;i<7;i++)
+		//Appel du topic pour connaître la position du robot
+		msgSim_getJointState.data = Rints[i];
+		pubSim_getJointState.publish(msgSim_getJointState);
+		while(!repSim_getJointState) loop_rate->sleep();
+		repSim_getJointState = false;
+		Position = valueSim_getJointState;
+
+		//Attente jusqu'à ce que la position soit atteinte
+		while(std::abs(Position-Rpos[i])>=0.001)
 		{
-			Position=0;
-
-			//Appel du service pour connaître la position du robot
-			srv_simRosGetJoint.request.handle = Rints[i];
-			client_simRosGetJoint.call(srv_simRosGetJoint);
-			Position = srv_simRosGetJoint.response.state.position[0];
-
-			//Attente jusqu'à ce que la position soit atteinte
-			while(std::abs(Position-Rpos[i])>=0.001)
-			{
-				srv_simRosGetJoint.request.handle = Rints[i];
-				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
-			}
+			pubSim_getJointState.publish(msgSim_getJointState);
+			while(!repSim_getJointState) loop_rate->sleep();
+			repSim_getJointState=false;
+			Position = valueSim_getJointState;
 		}
-
-		ROS_INFO("Bras monte pour le robot %d",num_robot);
-
-		//Retour vers la commande
-		retour.data = 5;
-		pub_retourCommande.publish(retour);
-
-		//Retour de l'état actuel du bras
-		robotBras.data = 1;
-		pub_robotBras.publish(robotBras);
 	}
+
+
+	ROS_INFO("Bras monte pour le robot %d",num_robot);
+
+	//Retour vers la commande
+	retour.data = 5;
+	pub_retourCommande.publish(retour);
+
+	//Retour de l'état actuel du bras
+	robotBras.data = 1;
+	pub_robotBras.publish(robotBras);
 }
 
 
@@ -358,13 +353,19 @@ void Robot::FermerPince()
 	{
 		//Attente pour que la pince se ferme
 		float t0, time;
-		client_simGetVrepTime.call(srv_simGetVrepTime);
-		t0 = srv_simGetVrepTime.response.simulationTime;
+
+		pubSim_getTime.publish(msgSim_getTime);
+		while(!repSim_getTime) loop_rate->sleep();
+		repSim_getTime=false;
+		t0 = valueSim_getTime;
+
 		time = t0;
 		while(time - t0 < 2)
 		{
-			client_simGetVrepTime.call(srv_simGetVrepTime);
-			time = srv_simGetVrepTime.response.simulationTime;
+			pubSim_getTime.publish(msgSim_getTime);
+			while(!repSim_getTime) loop_rate->sleep();
+			repSim_getTime=false;
+			time = valueSim_getTime;
 		}
 	
 		//Retour vers la commande
@@ -394,13 +395,19 @@ void Robot::OuvrirPince()
 	{
 		//Attente pour que la pince s'ouvre
 		float t0, time;
-		client_simGetVrepTime.call(srv_simGetVrepTime);
-		t0 = srv_simGetVrepTime.response.simulationTime;
+
+		pubSim_getTime.publish(msgSim_getTime);
+		while(!repSim_getTime) loop_rate->sleep();
+		repSim_getTime=false;
+		t0 = valueSim_getTime;
+
 		time = t0;
 		while(time - t0 < 1)
 		{
-			client_simGetVrepTime.call(srv_simGetVrepTime);
-			time = srv_simGetVrepTime.response.simulationTime;
+			pubSim_getTime.publish(msgSim_getTime);
+			while(!repSim_getTime) loop_rate->sleep();
+			repSim_getTime=false;
+			time = valueSim_getTime;
 		}
 	
 		//Retour vers la commande
@@ -510,6 +517,32 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 }
 
 
+/** Callbacks pour V-Rep **/
+void Robot::simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	valueSim_getObjectHandle=msg->data;
+
+	repSim_getObjectHandle=true;
+}
+
+void Robot::simSetJointStateCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+        repSim_setJointState=true;
+}
+
+void Robot::simGetJointStateCallback(const std_msgs::Float32::ConstPtr& msg)
+{
+	valueSim_getJointState=msg->data;
+
+        repSim_getJointState=true;
+}
+
+void Robot::simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
+{
+	valueSim_getTime=msg->data;
+
+        repSim_getTime=true;
+}
 
 
 /*** Initialisation ***/
@@ -517,45 +550,42 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
 {
+	std::string num_str;
+	switch(num_robot){ 
 
+		case 1: 
+		num_str="1";
+		break;
 
-  std::string num_str;
-  switch(num_robot){ 
+		case 2: 
+		num_str="2";
+		break;
 
-	case 1: 
-	num_str="1";
-	break;
+		case 3: 
+		num_str="3";
+		break;
 
-  	case 2: 
-        num_str="2";
-	break;
-
- 	case 3: 
-	num_str="3";
-	break;
-
-  	case 4:
-	num_str="4";
-	break;
-	
-   	default: 
-	ROS_INFO("CHOIX ROBOT INCORRECT");
-	break;
-
-
+		case 4:
+		num_str="4";
+		break;
+		
+		default: 
+		ROS_INFO("CHOIX ROBOT INCORRECT");
+		break;
 	}
 	
-	//Déclaration service simRosGetObjectHandle
-	client_simRosGetHandle = noeud.serviceClient<vrep_common::simRosGetObjectHandle>("/vrep/simRosGetObjectHandle");
+	// Topic pour V-Rep
+	pubSim_getObjectHandle = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/GetObjectHandle",100);
+	subSim_getObjectHandle = noeud.subscribe("/sim_ros_interface/services/response/GetObjectHandle",100,&Robot::simGetObjectHandleCallback,this);
+	
+	pubSim_setJointState = noeud.advertise<std_msgs::Float32MultiArray>("/sim_ros_interface/services/SetJointState",100);
+	subSim_setJointState = noeud.subscribe("/sim_ros_interface/services/response/SetJointState",100,&Robot::simSetJointStateCallback,this);
 
-	//Déclaration service simRosSetJointState
-	client_simRosSetJoint = noeud.serviceClient<vrep_common::simRosSetJointState>("/vrep/simRosSetJointState");
+	pubSim_getJointState = noeud.advertise<std_msgs::Int32>("/sim_ros_interface/services/GetJointState",100);
+	subSim_getJointState = noeud.subscribe("/sim_ros_interface/services/response/GetJointState",100,&Robot::simGetJointStateCallback,this);
 
-	//Déclaration service simRosGetJointState
-	client_simRosGetJoint = noeud.serviceClient<vrep_common::simRosGetJointState>("/vrep/simRosGetJointState");
-
-	//Déclaration service simRosGetInfo
-	client_simGetVrepTime = noeud.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
+	pubSim_getTime = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/getTime",100);
+	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/getTime",100,&Robot::simGetTimeCallback,this);
 
 
 	//Subscribers
@@ -590,26 +620,28 @@ void Robot::init(ros::NodeHandle noeud)
 		sr << i;
 		switch(num_robot){
 			case 1:
-				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str();
+				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str();
 			break;
 
 			case 2:
-				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str()+"#0";
+				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str()+"#0";
 			break;
 
 			case 3:
-				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str()+"#1";
+				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str()+"#1";
 			break;
 
 			case 4:
-				srv_simRosGetHandle.request.objectName="LBR_iiwa_14_R820_joint" + sr.str()+"#2";
+				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str()+"#2";
 			break;
 		}
 
 
-		client_simRosGetHandle.call(srv_simRosGetHandle);
-		
-		Rints[i-1]=srv_simRosGetHandle.response.handle;
+		pubSim_getObjectHandle.publish(msgSim_getObjectHandle);
+		while(!repSim_getObjectHandle) loop_rate->sleep() ;
+		repSim_getObjectHandle = false;
+
+		Rints[i-1]=valueSim_getObjectHandle;
 		
 		if(Rints[i-1]==-1)
 		{
@@ -626,9 +658,6 @@ void Robot::init(ros::NodeHandle noeud)
 			}
 		} 
 	}	
-	
-	
-	
 }
 
 

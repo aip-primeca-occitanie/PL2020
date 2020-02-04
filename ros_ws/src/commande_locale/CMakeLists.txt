@@ -6,7 +6,6 @@ find_package(catkin REQUIRED COMPONENTS
 	std_msgs 
 	sensor_msgs
 	image_transport 
-	vrep_common 
 	cv_bridge 
 	genmsg
 	message_generation

@@ -7,7 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs 
   genmsg
   message_generation
-  vrep_common
   shuttles
 )
 

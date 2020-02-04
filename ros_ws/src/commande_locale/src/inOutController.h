@@ -23,8 +23,6 @@
 #include "commande_locale/Msg_SensorState.h"
  
 #include <scheduling/Msg_LoadShuttle.h>
-#include <vrep_common/simRosEnablePublisher.h>
-#include <vrep_common/simRosEnableSubscriber.h>
 
 #include <std_msgs/Int32.h>
 

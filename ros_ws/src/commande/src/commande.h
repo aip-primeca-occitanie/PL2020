@@ -20,6 +20,8 @@
 
 #include <std_msgs/Int32.h>
 #include <commande_locale/Msg_StopControl.h>
+#include "shuttles/msgShuttleCreate.h"
+
 //#include <shuttles/msgShuttleChange.h>
 //#include <shuttles/srvGetShuttleStatus.h>
 //#include <shuttles/srvGetEmptyShuttles.h>
@@ -66,6 +68,7 @@ private:
   */
 
 	ros::Subscriber NewShuttle;
+	ros::Subscriber SubNouvelleNavette;
 
 
 
@@ -113,9 +116,9 @@ private:
 
 	bool ProduitEnP1, ProduitEnP2, ProduitEnP3, ProduitEnP4;
 	int NavetteVideEnP1, NavetteVideEnP2, NavetteVideEnP3, NavetteVideEnP4;
-
+  int produitNavette;
 	int NavetteEnP1,NavetteEnP2,NavetteEnP3,NavetteEnP4;
-
+	int arrivee_navette;
 	int NewHandle;
 
 	std::map<int,ProductPost*> ProductsMap;
@@ -139,6 +142,7 @@ public:
 
 	void Initialisation();
 
+  void NouvelleNavette(const shuttles::msgShuttleCreate::ConstPtr& msg);
 	void Stop_PS(int point_stop);
 	void Ouvrir_PS(int point_stop);
 
@@ -160,6 +164,9 @@ public:
 	void ProductInPostP3Callback(const std_msgs::Int32::ConstPtr& msg);
 	void ProductInPostP4Callback(const std_msgs::Int32::ConstPtr& msg);
 
+	int get_arrivee_navette();
+	int get_produit_navette();
+  void ReinitialiserArriveeNavette();
 	//void NewShuttleCallBack(const aiguillages::ExchangeSh::ConstPtr& msg);
 
 	void initProduct(int nDestination, int pNumber);

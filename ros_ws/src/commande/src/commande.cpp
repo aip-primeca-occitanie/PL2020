@@ -39,6 +39,10 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	//SubArretNavette = noeud.subscribe("/commande/ArretNavette", 1000, &Commande::ArretNavette, this);
 	//SubDemarreNavette = noeud.subscribe("/commande/DemarrerNavette", 1000, &Commande::DemarreNavette, this);
 
+	SubNouvelleNavette = noeud.subscribe("/commande_navette/AddShuttle", 1000, &Commande::NouvelleNavette, this);
+
+
+
 	//Commande aiguillages
 	SubDeverouilleAiguillages = noeud.subscribe("/commande/DeverouilleAiguillage", 1000, &Commande::DeverouilleAiguillages, this);
 	SubVerouilleAiguillages = noeud.subscribe("/commande/VerouilleAiguillage", 1000, &Commande::VerouilleAiguillages, this);
@@ -239,6 +243,26 @@ void Commande::Initialisation()
 	for(int i=0;i<9;i++) PIx[i]=0;
 }
 
+void Commande::NouvelleNavette(const shuttles::msgShuttleCreate::ConstPtr& msg)
+{
+	produitNavette=msg->product;
+	arrivee_navette=1;
+}
+
+int Commande::get_arrivee_navette()
+{
+	return arrivee_navette;
+}
+
+int Commande::get_produit_navette()
+{
+	return produitNavette;
+}
+
+void Commande::ReinitialiserArriveeNavette()
+{
+  arrivee_navette=0;
+}
 //////////////////////////////
 // 	Callback Stop/Start
 //////////////////////////////

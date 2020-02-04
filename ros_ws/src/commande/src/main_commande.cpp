@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 // Initialisation variables //
 
 	cmd.Initialisation();
-
+  int NouvelleDestination;
 	int M[Nb_Place];
 	int Nb_Place_T1,Nb_Place_T2,Nb_Place_T3,Nb_Place_T4;
 
@@ -50,31 +50,67 @@ int main(int argc, char **argv)
 
 	while (ros::ok())
 	{
-		//if(cmd.NouvelleNavette()!=0)
-		if (1)
+		NouvelleDestination = cmd.get_produit_navette();
+		if(cmd.get_arrivee_navette())
 		{
 			modif=1;
-			//int NouvelleDestination = cmd.ProduitSurNavette(cmd.NouvelleNavette());
-			int temp;
-			temp=1;
-			switch(temp)
+			switch(NouvelleDestination)
 			{
-				case 1 : M[3]++;break;
-				case 2 : M[103]++;break;
-				case 3 : M[203]++;break;
-				case 4 : M[303]++;break;
+				case 10 : M[3]++;break;//si un produit A apparait
+				case 20 : M[103]++;break;//si un produit B apparait
+				case 30 : M[203]++;break;//si un produit C apparait
+				case 40 : M[303]++;break;//si un produit D apparait
+				case 50 : M[403]++;break;//si un produit E apparait
 			}
-			//cmd.ReinitialiserNouvelleNavette();
-		}
+			cmd.ReinitialiserArriveeNavette();
+  	}
 
 ////////////////////Poste 1//////////////////////////////
 
-	if (M[3]!=0 && capteur.PSx[20]==1)
+	if (M[3]!=0 && capteur.PSx[20]==1) // faire arreter la navette devant le robot 1
 		{
-			aiguillage.Gauche(11);
+			modif=1;
+			M[3]--;
+			cmd.Stop_PS(21);
+			ROS_INFO("TRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALALALA");
+			M[4]++;
 		}
 
+		if (M[4]!=0 && capteur.PSx[21]==1) //Robot 1 fait la manip sur la navette
+			{
+				modif=1;
+				M[4]--;
+				robot.EnvoyerPosition(1,2);
+				sleep(3);
+				robot.DescendreBras(1);
+				sleep(3);
+				robot.FermerPince(1);
+				sleep(3);
+				robot.MonterBras(1);
+				sleep(3);
+				robot.EnvoyerPosition(1,1);
+				sleep(3);
+				robot.DescendreBras(1);
+				sleep(3);
+				robot.OuvrirPince(1);
+				sleep(3);
+				robot.MonterBras(1);
+				sleep(3);
+				cmd.Ouvrir_PS(21);
+				M[5]++;
+			}
 
+
+			if (M[5]!=0 && capteur.PSx[24]==1) //orientation des aiguillages pour la boucle principale
+				{
+					M[5]--;
+
+					aiguillage.Gauche(1);
+					aiguillage.Gauche(2);
+					aiguillage.Gauche(3);
+					aiguillage.Gauche(10);
+					M[6]++;
+				}
 
 
 

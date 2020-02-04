@@ -50,21 +50,22 @@ int main(int argc, char **argv)
 
 	while (ros::ok())
 	{
-		if(cmd.NouvelleNavette()!=0)
+		//if(cmd.NouvelleNavette()!=0)
+		if (1)
 		{
 			modif=1;
-			int NouvelleDestination = cmd.ProduitSurNavette(cmd.NouvelleNavette());
-			switch(NouvelleDestination)
+			//int NouvelleDestination = cmd.ProduitSurNavette(cmd.NouvelleNavette());
+			int temp;
+			temp=1;
+			switch(temp)
 			{
 				case 1 : M[3]++;break;
 				case 2 : M[103]++;break;
 				case 3 : M[203]++;break;
 				case 4 : M[303]++;break;
 			}
-			cmd.ReinitialiserNouvelleNavette();
+			//cmd.ReinitialiserNouvelleNavette();
 		}
-
-
 
 ////////////////////Poste 1//////////////////////////////
 

@@ -1,9 +1,7 @@
 /**** Bruno DATO, Abdellah ELGOURAIN, Evgeny SHULGA M1 EEA ISTR Université Paul Sabatier Toulouse III 2016 ****/
-
 #include <ros/ros.h>
 #include "capteurs.h"
 #include <commande_locale/Msg_SensorState.h>
-
 
 // Constructeur
 Capteurs::Capteurs(ros::NodeHandle noeud)
@@ -22,12 +20,10 @@ Capteurs::Capteurs(ros::NodeHandle noeud)
 	for(int i=0;i<9;i++) CPIx[i]=0;
 }
 
-
 // Destructeur
 Capteurs::~Capteurs()
 {
 }
-
 
 void Capteurs::Callback_capteurs_ligne(const commande::Capteurs msg)
 {

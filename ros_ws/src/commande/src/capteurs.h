@@ -10,12 +10,11 @@
 
 class Capteurs
 {
-private:
-
+	private:
 	ros::Subscriber sub_capteurs_ligne,sub_capteurs_simu;
 
-public:
-	
+	public:
+
 	bool PSx[25],DxD[13],DxG[13],CPx[11],CPIx[9];
 	bool SIMULATION, LIGNE ; // Indicateurs simulation ou ligne
 	Capteurs(ros::NodeHandle noeud);
@@ -31,21 +30,9 @@ public:
 	void Actualiser_DxG(long int CAPTEURS);
 	void Actualiser_CPx(long int CAPTEURS);
 	void Actualiser_CPIx(long int CAPTEURS);
-
-
 };
 
-
 // Outils divers //
-
 bool MASK(long int registre,int numero_bit);
-
-
-
-
-
-
-
-
 
 #endif

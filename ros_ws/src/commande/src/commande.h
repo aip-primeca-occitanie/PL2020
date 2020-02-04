@@ -20,9 +20,9 @@
 
 #include <std_msgs/Int32.h>
 #include <commande_locale/Msg_StopControl.h>
-#include <shuttles/msgShuttleChange.h>
-#include <shuttles/srvGetShuttleStatus.h>
-#include <shuttles/srvGetEmptyShuttles.h>
+//#include <shuttles/msgShuttleChange.h>
+//#include <shuttles/srvGetShuttleStatus.h>
+//#include <shuttles/srvGetEmptyShuttles.h>
 #include <fstream>
 #include <iostream>
 #include <cstring>
@@ -96,14 +96,14 @@ private:
 	//ros::Publisher pubDeleteShuttleScheduler;
 	//ros::Publisher pubDestinationChange;
 	//shuttles::msgShuttleChange Newdestination;
-	ros::Publisher pubDestroyShuttle;
+	//ros::Publisher pubDestroyShuttle;
 	//ros::Publisher pubDeleteShuttle;
 
 
 //Services
 	//Services shuttle
-	ros::ServiceClient client_GetShuttleState;
-	shuttles::srvGetShuttleStatus srv_GetShuttleState;
+	//ros::ServiceClient client_GetShuttleState;
+	//shuttles::srvGetShuttleStatus srv_GetShuttleState;
 
 	//ros::ServiceClient client_GetEmptyShuttle;
 	//shuttles::srvGetEmptyShuttles srv_GetEmptyShuttle;
@@ -120,17 +120,16 @@ private:
 
 	std::map<int,ProductPost*> ProductsMap;
 
-
-// Initialisation
-
 	/* Capteurs */
 	bool PSx[25],DxD[13],DxG[13],CPx[11],CPIx[9];
 
 	/* Actionneurs */
 	bool STx[25],RxD[13],RxG[13],Vx[13],Dx[13],PIx[9];
 
-public:
 	commande_locale::Msg_StopControl actionneurs_simulation_Stop;
+
+public:
+
 	commande_locale::Msg_SwitchControl actionneurs_simulation_Aiguillages;
 	commande_locale::Msg_PinControl actionneurs_simulation_Pin;
 
@@ -161,7 +160,7 @@ public:
 	void ProductInPostP3Callback(const std_msgs::Int32::ConstPtr& msg);
 	void ProductInPostP4Callback(const std_msgs::Int32::ConstPtr& msg);
 
-	void NewShuttleCallBack(const aiguillages::ExchangeSh::ConstPtr& msg);
+	//void NewShuttleCallBack(const aiguillages::ExchangeSh::ConstPtr& msg);
 
 	void initProduct(int nDestination, int pNumber);
 
@@ -172,15 +171,14 @@ public:
 
 	//void DefinirDestination(int handle, int destination);
 
-	int ProduitSurNavette(int handle);		//Renvoie la destination du produit présent sur la navette
-	int NavetteStoppee(int numPoste); 		//Renvoie l'handle de la navette stoppée au niveau du poste numPoste si elle contient un produit, 0 sinon
-	int NavetteStoppeeVide(int numPoste); 		//Renvoie l'handle de la navette stoppée au niveau du poste numPoste si elle est vide, 0 sinon
-	void NavettePartie(int numPoste);		//Remet la variable Navette en Pi à 0;
-	int NavetteDisponible();			//Renvoie le handle d'une navette vide dans d0
-	int NouvelleNavette(); 				//Renvoie le handle de la navette qui est créée par le noeud Ordonnancement
-	void ReinitialiserNouvelleNavette();		//Réinitialise le handle de la navette nouvellement créée
-	void DestroyShuttle(int handle);		//Détruit la navette qui porte le shuttle
-
+	//int ProduitSurNavette(int handle);		//Renvoie la destination du produit présent sur la navette
+	//int NavetteStoppee(int numPoste); 		//Renvoie l'handle de la navette stoppée au niveau du poste numPoste si elle contient un produit, 0 sinon
+	//int NavetteStoppeeVide(int numPoste); 		//Renvoie l'handle de la navette stoppée au niveau du poste numPoste si elle est vide, 0 sinon
+	//void NavettePartie(int numPoste);		//Remet la variable Navette en Pi à 0;
+	//int NavetteDisponible();			//Renvoie le handle d'une navette vide dans d0
+	//int NouvelleNavette(); 				//Renvoie le handle de la navette qui est créée par le noeud Ordonnancement
+	//void ReinitialiserNouvelleNavette();		//Réinitialise le handle de la navette nouvellement créée
+	//void DestroyShuttle(int handle);		//Détruit la navette qui porte le shuttle
 
 };
 

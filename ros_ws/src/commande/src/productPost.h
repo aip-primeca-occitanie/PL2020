@@ -1,4 +1,4 @@
-/*
+/*    Fichier inutile pour le moment
  * ************************************* *
  * 	  Projet Long N7 2017  	         *
  * ************************************* *
@@ -14,7 +14,7 @@
 class ProductPost
 {
 public:
-	
+
 	int nextDestination;
 	int productNumber;
 

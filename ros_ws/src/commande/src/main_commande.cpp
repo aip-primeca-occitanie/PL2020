@@ -5,7 +5,7 @@
 #include "AigsInterface.h"
 #include <ros/ros.h>
 #include <unistd.h>
-#include <shuttles/srvGetEmptyShuttles.h>
+//#include <shuttles/srvGetEmptyShuttles.h>
 
 using namespace std;
 

@@ -3,7 +3,6 @@
  * 	  Projet Long N7 2017  	         *
  * ************************************* *
 */
-
 #include "commande.h"
 #include <ros/ros.h>
 #include <iostream>
@@ -30,18 +29,14 @@ using namespace std;
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDWHITE   "\033[1m\033[37m"      /* Bold White */
 
-
-
 Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 {
-
-	// Commande Stop/Start Navettes
-	//SubArretNavette = noeud.subscribe("/commande/ArretNavette", 1000, &Commande::ArretNavette, this);
-	//SubDemarreNavette = noeud.subscribe("/commande/DemarrerNavette", 1000, &Commande::DemarreNavette, this);
-
+  //Pour être informé de la création d'une navette et de son contenu
 	SubNouvelleNavette = noeud.subscribe("/commande_navette/AddShuttle", 1000, &Commande::NouvelleNavette, this);
 
-
+	// Actionner ergots
+	subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
+	subPinOff = noeud.subscribe("/Poste_Cmde/RentrerErgots", 10, &Commande::RentrerErgotCallback, this);
 
 	//Commande aiguillages
 	SubDeverouilleAiguillages = noeud.subscribe("/commande/DeverouilleAiguillage", 1000, &Commande::DeverouilleAiguillages, this);
@@ -55,14 +50,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 1);
   pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 10);
 
-	// Publishers pour redémarrer une navette au niveau des postes
-	//PubDemarrerNavetteP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/Demarrage", 10);
-	//PubDemarrerNavetteP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/Demarrage", 10);
-	//PubDemarrerNavetteP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/Demarrage", 10);
-	//PubDemarrerNavetteP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/Demarrage", 10);
-
 	// Publishers vers Postes - produit récupéré par robot
-	pubProductTakenByRobotP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/ProduitRecupere", 10);
+	/*pubProductTakenByRobotP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/ProduitRecupere", 10);
 	pubProductTakenByRobotP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/ProduitRecupere", 10);
 	pubProductTakenByRobotP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/ProduitRecupere", 10);
 	pubProductTakenByRobotP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/ProduitRecupere", 10);
@@ -72,6 +61,13 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	pubProductPutOnShuttleP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/ProduitPose", 10);
 	pubProductPutOnShuttleP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/ProduitPose", 10);
 	pubProductPutOnShuttleP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/ProduitPose", 10);
+  */
+	
+	// Publishers pour redémarrer une navette au niveau des postes
+	//PubDemarrerNavetteP1 = noeud.advertise<std_msgs::Int32>("/Cmde_P1/Demarrage", 10);
+	//PubDemarrerNavetteP2 = noeud.advertise<std_msgs::Int32>("/Cmde_P2/Demarrage", 10);
+	//PubDemarrerNavetteP3 = noeud.advertise<std_msgs::Int32>("/Cmde_P3/Demarrage", 10);
+	//PubDemarrerNavetteP4 = noeud.advertise<std_msgs::Int32>("/Cmde_P4/Demarrage", 10);
 
 	// Publisher pour changer les destinations
 	//pubDestinationChange = noeud.advertise<shuttles::msgShuttleChange>("/commande_navette/ShuttleDChange", 10);
@@ -91,10 +87,9 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	//subProductInPostP3 = noeud.subscribe("/Cmde_P3/ProduitPresentP3", 10, &Commande::ProductInPostP3Callback, this);
 	//subProductInPostP4 = noeud.subscribe("/Cmde_P4/ProduitPresentP4", 10, &Commande::ProductInPostP4Callback, this);
 
-	// Actionner ergots
-	subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
-	subPinOff = noeud.subscribe("/Poste_Cmde/RentrerErgots", 10, &Commande::RentrerErgotCallback, this);
-
+	//Commande Stop/Start Navettes
+	//SubArretNavette = noeud.subscribe("/commande/ArretNavette", 1000, &Commande::ArretNavette, this);
+	//SubDemarreNavette = noeud.subscribe("/commande/DemarrerNavette", 1000, &Commande::DemarreNavette, this);
 
 	//client_GetShuttleState = noeud.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
 	//client_GetEmptyShuttle = noeud.serviceClient<shuttles::srvGetEmptyShuttles>("/commande_navette/srvGetEmptyShuttles");
@@ -112,26 +107,26 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
   for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = 1;
 
 	//Initialisation des variables
-	ProduitEnP1=0;
-	ProduitEnP1=0;
-	ProduitEnP1=0;
-	ProduitEnP1=0;
-	NavetteVideEnP1=0;
-	NavetteVideEnP2=0;
-	NavetteVideEnP3=0;
-	NavetteVideEnP4=0;
-	NavetteEnP1=0;
-	NavetteEnP2=0;
-	NavetteEnP3=0;
-	NavetteEnP4=0;
+	//ProduitEnP1=0;
+	//ProduitEnP2=0;
+	//ProduitEnP3=0;
+	//ProduitEnP4=0;
+	//NavetteVideEnP1=0;
+	//NavetteVideEnP2=0;
+	//NavetteVideEnP3=0;
+	//NavetteVideEnP4=0;
+	//NavetteEnP1=0;
+	//NavetteEnP2=0;
+	//NavetteEnP3=0;
+	//NavetteEnP4=0;
 
-	NewHandle=0;
+	//NewHandle=0;
 
 ////////////////////////////////////////////////////////////////////
 //Initialisation des produits à l'aide d'un fichier de configuration
 ////////////////////////////////////////////////////////////////////
 // Récupération du chemin vers le Working_Folder
-int count = 0 ;
+/*int count = 0 ;
 int pos = executionPath.length()-1 ;
 while (count < 5 || pos<0)
 {
@@ -140,8 +135,6 @@ while (count < 5 || pos<0)
 }
 if(pos<0) ROS_ERROR("pos netagif !!!");
 std::string Working_Folder = executionPath.substr(0,pos+2);
-
-
 
 	//Définition du chemin du fichier de config
 std::string configFile = Working_Folder + "/ProductConfiguration.config";
@@ -223,7 +216,7 @@ std::ifstream streamConfigFile(configFile.c_str(), std::ios::in);
 		}
 	streamConfigFile.close(); //fermeture du fichier ProductConfiguration.txt ouvert en lecture//
 
-	}
+  }*/
 }
 
 void Commande::Initialisation()
@@ -401,10 +394,8 @@ void Commande::ProductInPostP4Callback(const std_msgs::Int32::ConstPtr& msg)
 	NewHandle=msg->handle;
 }*/
 
-
-
 //Fonction init du fichier configuration pour créer un produit
-void Commande::initProduct(int nDestination, int pNumber)
+/*void Commande::initProduct(int nDestination, int pNumber)
 {
 		// Création dynamique de l'object product
 	ProductPost* newProductPost = new ProductPost(nDestination,pNumber);
@@ -418,16 +409,14 @@ void Commande::initProduct(int nDestination, int pNumber)
 	{
     		ROS_WARN("Ordonnanceur : Un Produit de ce nom existe dèjà !");
   }
-}
-
-
+}*/
 
 //////////////////////////////////////////////////
 // Fonctions haut niveau
 //////////////////////////////////////////////////
 
 //Fonction pour savoir si le produit a été pris par le robot
-void Commande::PiecePrise(int numPoste)
+/*void Commande::PiecePrise(int numPoste)
 {
 	std_msgs::Int32 msg;
 	msg.data = 1;
@@ -479,7 +468,7 @@ void Commande::PieceDeposee(int numPoste)
 			pubProductPutOnShuttleP4.publish(msg);
 		break;
 	}
-}
+}*/
 
 
 

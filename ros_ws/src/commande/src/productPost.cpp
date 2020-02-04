@@ -1,4 +1,4 @@
-/*
+/*    Fichier inutile pour le moment
  * ************************************* *
  * 	  Projet Long N7 2017  	         *
  * ************************************* *
@@ -17,5 +17,3 @@ ProductPost::ProductPost( int productNextDestination, int ProductNumber)
 
 // Destructeur
 ProductPost::~ProductPost(){}
-
-

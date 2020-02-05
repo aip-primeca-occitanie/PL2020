@@ -24,9 +24,7 @@
 #include <shuttles/msgShuttleChange.h>
 #include <shuttles/msgShuttleCreate.h>
 #include <aiguillages/ExchangeSh.h>
-#include <vrep_common/simRosSetIntegerSignal.h>
-#include <vrep_common/simRosEnablePublisher.h>
-#include <vrep_common/simRosEnableSubscriber.h>
+
 #include <commande_locale/Msg_Color.h>
 
 #include "productPost.h"

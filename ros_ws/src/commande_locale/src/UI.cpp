@@ -207,79 +207,80 @@ void onMouse(int event, int x, int y, int, void* userdata)
 et changer l'etat des boutons, en fonction de la position de la souris, contrôle aussi le bouton pour ajouter une plateforme à la simu */
 void UI::onMouse_internal( int event, int x, int y)
 {
-	static vrep_common::simRosStartSimulation srv_StartSimulation;		
-	static vrep_common::simRosPauseSimulation srv_PauseSimulation;
-	static vrep_common::simRosLoadModel srv_LoadModel;
-
 	switch(event) {
 		case cv::EVENT_LBUTTONDOWN :   // Event lorsque l'on clique sur le bouton gauche de la souris 
-   		if(y>playButton_y_0 && y < playButton_y_0+playButton_y_size && x>playButton_x_0 && x < playButton_x_0 + playButton_x_size && mode!= 1) {
-					playButton_Down.copyTo(imageTot.rowRange(playButton_y_0,playButton_y_0+playButton_y_size).colRange(playButton_x_0,playButton_x_0+playButton_x_size));
-					pauseButton.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));
-					VREPController->play();  //On lance la simu si on clique sur le bouton play
-					mode = 1; }
-    		else if(y>pauseButton_y_0 && y < pauseButton_y_0+pauseButton_y_size && x>pauseButton_x_0 && x < pauseButton_x_0 + pauseButton_x_size  && mode !=0) {
-					playButton.copyTo(imageTot.rowRange(playButton_y_0,playButton_y_0+playButton_y_size).colRange(playButton_x_0,playButton_x_0+playButton_x_size));
-					pauseButton_Down.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));
-					shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
-					VREPController->pause(); // On met la simu en pause si on clique sur le bouton pause
-					mode = 0; }
-		else if(y>shuttleButton_y_0 && y < shuttleButton_y_0+shuttleButton_y_size && x>shuttleButton_x_0 && x < shuttleButton_x_0 + shuttleButton_x_size && mode!= 0 && modeShuttle !=1 && modeShuttle !=0) {
-					shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
-					configuration->ProductAdd('F', typeNextShuttle);
-					}
+   		if(y>playButton_y_0 && y < playButton_y_0+playButton_y_size && x>playButton_x_0 && x < playButton_x_0 + playButton_x_size && mode!= 1) 
+		{
+			playButton_Down.copyTo(imageTot.rowRange(playButton_y_0,playButton_y_0+playButton_y_size).colRange(playButton_x_0,playButton_x_0+playButton_x_size));
+			pauseButton.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));
+			VREPController->play();  //On lance la simu si on clique sur le bouton play
+			mode = 1; 
+		}
+    		else if(y>pauseButton_y_0 && y < pauseButton_y_0+pauseButton_y_size && x>pauseButton_x_0 && x < pauseButton_x_0 + pauseButton_x_size  && mode !=0) 
+		{
+			playButton.copyTo(imageTot.rowRange(playButton_y_0,playButton_y_0+playButton_y_size).colRange(playButton_x_0,playButton_x_0+playButton_x_size));
+			pauseButton_Down.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));
+			shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
+			VREPController->pause(); // On met la simu en pause si on clique sur le bouton pause
+			mode = 0; 
+		}
+		else if(y>shuttleButton_y_0 && y < shuttleButton_y_0+shuttleButton_y_size && x>shuttleButton_x_0 && x < shuttleButton_x_0 + shuttleButton_x_size && mode!= 0 && modeShuttle !=1 && modeShuttle !=0) 
+		{
+			shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
+			configuration->ProductAdd('F', typeNextShuttle);
+		}
 
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 0 && mode!=1 && modeTER == 0)
 		{
-				modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-				shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
-				modeShuttle = 1;
-				std_msgs::Bool modeMsg;
-				modeMsg.data = true;
-				pubStateButton.publish(modeMsg);
+			modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
+			shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
+			modeShuttle = 1;
+			std_msgs::Bool modeMsg;
+			modeMsg.data = true;
+			pubStateButton.publish(modeMsg);
 		}		
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 1 && mode!=1 && modeTER == 0)
 		{
-				modeManuButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-				modeShuttle = 2;
-				
-				std_msgs::Bool modeMsg;
-				modeMsg.data = false;
-				pubStateButton.publish(modeMsg);
+			modeManuButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
+			modeShuttle = 2;
+			
+			std_msgs::Bool modeMsg;
+			modeMsg.data = false;
+			pubStateButton.publish(modeMsg);
 		}
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 2 && mode!=1 && modeTER == 0)
 		{
-				modeRandButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-				modeShuttle = 3;
-				typeNextShuttle = -1 ;
-				std_msgs::Bool modeMsg;
-				modeMsg.data = false;
-				pubStateButton.publish(modeMsg);
+			modeRandButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
+			modeShuttle = 3;
+			typeNextShuttle = -1 ;
+			std_msgs::Bool modeMsg;
+			modeMsg.data = false;
+			pubStateButton.publish(modeMsg);
 		}
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 3 && mode!=1 && modeTER == 0)
 		{
-				modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-				shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
-				modeShuttle = 1;
-				std_msgs::Bool modeMsg;
-				modeMsg.data = true;
-				pubStateButton.publish(modeMsg);
+			modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
+			shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
+			modeShuttle = 1;
+			std_msgs::Bool modeMsg;
+			modeMsg.data = true;
+			pubStateButton.publish(modeMsg);
 		}
 		else if(y>TERbutton_y_0 && y < TERbutton_y_0+TERbutton_y_size && x>TERbutton_x_0 && x < TERbutton_x_0+TERbutton_x_size && modeTER == 0)
 		{
-				TERbutton_on.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
-				modeTER = 1;
-				std_msgs::Bool modeTERmsg;
-				modeTERmsg.data = true;
-				pubStateTERbutton.publish(modeTERmsg);
+			TERbutton_on.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
+			modeTER = 1;
+			std_msgs::Bool modeTERmsg;
+			modeTERmsg.data = true;
+			pubStateTERbutton.publish(modeTERmsg);
 		}
 		else if(y>TERbutton_y_0 && y < TERbutton_y_0+TERbutton_y_size && x>TERbutton_x_0 && x < TERbutton_x_0+TERbutton_x_size && modeTER == 1)
 		{
-				TERbutton.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
-				modeTER = 0;
-				std_msgs::Bool modeTERmsg;
-				modeTERmsg.data = false;
-				pubStateTERbutton.publish(modeTERmsg);
+			TERbutton.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
+			modeTER = 0;
+			std_msgs::Bool modeTERmsg;
+			modeTERmsg.data = false;
+			pubStateTERbutton.publish(modeTERmsg);
 		}	
 		
 		break;

@@ -7,6 +7,8 @@
 #include <string>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Byte.h>
+#include <std_msgs/Float32.h>
 #include <cstdlib>
 #include <stdlib.h>
 #include <map>
@@ -14,7 +16,6 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
-#include <vrep_common/simRosGetInfo.h>
 
 #include "product.h"
 #include "vrepController.h"
@@ -24,19 +25,22 @@
 class Configuration
 {
 private:
+	int maxShuttleNumber;
+	vrepController* vrepCAcces;
 
-int maxShuttleNumber;
-vrepController* vrepCAcces;
+	std::string configFile, logFile;
 
-std::string configFile, logFile;
+	std::map<std::string,Product*>::iterator iteratorPMap;
+	std::map<std::string,Product*> ProductsMap;
 
-std::map<std::string,Product*>::iterator iteratorPMap;
-std::map<std::string,Product*> ProductsMap;
+	ros::Publisher pubSim_GetTime;
+	ros::Subscriber subSim_GetTime;
+	bool repSim_GetTime;
+	float valueSim_GetTime;
 
-ros::ServiceClient client_simRosGetInfo;
-vrep_common::simRosGetInfo srv_GetInfoVREP;
+	ros::Publisher pubManualProduct;
 
-ros::Publisher pubManualProduct;
+	ros::Rate* loop_rate;
 
 
 public:
@@ -51,6 +55,8 @@ public:
 	
 	void initProduct(std::string pName, int pFirstDestination, int initProductNumber, int pManRSize);
 	void ProductAdd(char shuttleLetter, int product);
+
+	void SimGetTimeCallback(const std_msgs::Float32::ConstPtr& msg);
 	
 };
 

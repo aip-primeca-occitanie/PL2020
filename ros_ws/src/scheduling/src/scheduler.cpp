@@ -15,13 +15,18 @@ Scheduler::Scheduler()
 	for(int i=0; i<100; i++) {
 		nom_produits[i]= "NULL";
 	}
+	
+	loop_rate = new ros::Rate(25);
 }
 
 // Initialisation de l'objet 
 bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 {
+	pubSim_GetTime = nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/GetTime", 100);
+	subSim_GetTime = nh.subscribe("/sim_ros_interface/services/response/GetTime", 100, &Scheduler::SimGetTimeCallback, this);
+	repSim_GetTime = false;
+
 	// Services Initialisation
-	client_simRosGetInfo = nh.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 	client_GetShuttleStatus = nh.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
 	// Subscribers Initialisation
 	subEndOfProductManufacture = nh.subscribe("/A3/ShuttleOut", 10 , &Scheduler::productOutCallBack,this);
@@ -181,9 +186,13 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 	ROS_INFO("Number of Product = %d", numberOfProduct);
 	iteratorPMap = ProductsMap.begin(); // initilise l'iterateur sur la collection de produit
 	nextCount = numberOfProduct-1; // Permet de bien placer les delays dans launch next schedule, on va effectuer le délays entre le dernier et le premier produit avant la lancement du premier produit
-	client_simRosGetInfo.call(srv_GetInfoVREP); //Recupération des infos sur la simulation Vrep ( temps de simulation notamment)
-	lastLaunchDate = srv_GetInfoVREP.response.simulationTime; //Initialise le temps de simulation
-	
+
+	std_msgs::Byte msgGetTime;
+	pubSim_GetTime.publish(msgGetTime);
+	while(!repSim_GetTime) loop_rate->sleep();
+	repSim_GetTime=false;
+	lastLaunchDate = valueSim_GetTime;
+
 	streamConfigFile.close(); //fermeture du fichier ProductConfiguration.txt ouvert en lecture//
 
 	
@@ -212,11 +221,19 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 	}
 	else ROS_ERROR("Impossible d'ouvrir le fichier ProductConfiguration.txt !");
 	return false;
-	}
+}
+
+void Scheduler::SimGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
+{
+	valueSim_GetTime=msg->data;
+
+	repSim_GetTime=true;
+}
 
 // Destructor
 Scheduler::~Scheduler()
 {
+	delete loop_rate;
 }
 
 
@@ -244,8 +261,13 @@ void Scheduler::launchNextSchedule(){
 
 	// Récupération temps VREP ////////////// SERVICE simRosGetInfo de VREP ////////////
 
-		client_simRosGetInfo.call(srv_GetInfoVREP);
-		float timeDelta = srv_GetInfoVREP.response.simulationTime - lastLaunchDate;
+		std_msgs::Byte msgGetTime;
+		pubSim_GetTime.publish(msgGetTime);
+		while(!repSim_GetTime) loop_rate->sleep();
+		repSim_GetTime=false;
+		float time = valueSim_GetTime;
+
+		float timeDelta = time - lastLaunchDate;
 		
 	////////////////////////////////////////////////////////////////////////////////////
 
@@ -253,7 +275,7 @@ void Scheduler::launchNextSchedule(){
 		{
 
 		ROS_INFO("Execution de launchNextSchedule (launch date reach)");
-		lastLaunchDate = srv_GetInfoVREP.response.simulationTime;	// récupération temps de simulation
+		lastLaunchDate = time;	// récupération temps de simulation
 		
 		if (iteratorPMap == ProductsMap.end()) // permet de replacer l'iterateur en début de map si celui-ci se trouve en end ( après le dernier élément)
 			{
@@ -285,8 +307,8 @@ void Scheduler::launchNextSchedule(){
 			//ROS_INFO("Statistic.txt file ok");
 			char logLine[1000];
 			// Construction Ligne avec notamment la date de lancement 
-			sprintf(logLine, "Produit %s lance a temps Vrep = %f s\n",productPointer->name.c_str(), srv_GetInfoVREP.response.simulationTime);
-			ROS_INFO("Produit %s lance a temps Vrep = %f s",productPointer->name.c_str(), srv_GetInfoVREP.response.simulationTime);
+			sprintf(logLine, "Produit %s lance a temps Vrep = %f s\n",productPointer->name.c_str(), time);
+			ROS_INFO("Produit %s lance a temps Vrep = %f s",productPointer->name.c_str(), time);
 			StatsFile << logLine; // Ecriture dans le fichier 
 		       	StatsFile.close();  // on referme le fichier Statistic.txt
 
@@ -329,16 +351,22 @@ void Scheduler::initProduct(std::string pName, int pFirstDestination, int initPr
 
 // Subscribers Callback (Product end of manifacture)
 
-	void Scheduler::productOutCallBack(const std_msgs::Int32::ConstPtr& msg) // on recoit le handle de la navette qui sort de la cellule
-	{
-		srv_GetShuttleStatus.request.handle = msg->data;	// 
-		client_GetShuttleStatus.call(srv_GetShuttleStatus);	// recupération des infos sur la navette ( service du noeud shuttles)
-		client_simRosGetInfo.call(srv_GetInfoVREP);		// récupération info sur la simulation Vrep
+void Scheduler::productOutCallBack(const std_msgs::Int32::ConstPtr& msg) // on recoit le handle de la navette qui sort de la cellule
+{
+	srv_GetShuttleStatus.request.handle = msg->data;	// 
+	client_GetShuttleStatus.call(srv_GetShuttleStatus);	// recupération des infos sur la navette ( service du noeud shuttles)
 
-		std::string finalProductName;	// nom produit fini
-		Product* productPointer;	// pointer pour recherche dans la collection
-		
-		//ROS_INFO ( "srv_GetShuttleStatus.response.product = %d " ,srv_GetShuttleStatus.response.product);	
+	std_msgs::Byte msgGetTime;
+	pubSim_GetTime.publish(msgGetTime);
+	while(!repSim_GetTime) loop_rate->sleep();
+	repSim_GetTime=false;
+	float time = valueSim_GetTime;
+
+
+	std::string finalProductName;	// nom produit fini
+	Product* productPointer;	// pointer pour recherche dans la collection
+	
+	//ROS_INFO ( "srv_GetShuttleStatus.response.product = %d " ,srv_GetShuttleStatus.response.product);	
 
 	for (iteratorPMapOut=ProductsMap.begin(); iteratorPMapOut!=ProductsMap.end(); ++iteratorPMapOut)	// On parcours l'ensemble de la collection
 	{
@@ -359,8 +387,8 @@ void Scheduler::initProduct(std::string pName, int pFirstDestination, int initPr
 		char logLine[1000];
 		// Construction Ligne avec notamment la date de lancement 
 
-		sprintf(logLine, "Produit %s termine a temps Vrep = %f s\n",finalProductName.c_str(), srv_GetInfoVREP.response.simulationTime);
-		ROS_INFO("Produit %s termine a temps Vrep = %f s\n",finalProductName.c_str(), srv_GetInfoVREP.response.simulationTime);
+		sprintf(logLine, "Produit %s termine a temps Vrep = %f s\n",finalProductName.c_str(), time);
+		ROS_INFO("Produit %s termine a temps Vrep = %f s\n",finalProductName.c_str(), time);
 
 		StatsFile << logLine; // Ecriture dans le fichier 
 		StatsFile.close();  // on referme le fichier Statistic.txt

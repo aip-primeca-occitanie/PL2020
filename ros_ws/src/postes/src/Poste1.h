@@ -38,7 +38,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
-#include <vrep_common/simRosGetInfo.h>
+
 #include <shuttles/srvGetShuttleStatus.h>
 
 

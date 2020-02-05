@@ -23,19 +23,12 @@
 #include <cstdlib>
 #include <stdlib.h>
 #include <map>
-//#include "aiguillages/ExchangeSh.h"
-//#include "postes/productPost.h"
-//#include "productPost.h"
-//#include <shuttles/msgShuttleChange.h>
-//#include <shuttles/srvGetShuttleStatus.h>
-//#include <shuttles/srvGetEmptyShuttles.h>
 
 class Commande
 {
 	private:
 
 	//Subscriber
-
 	// Aiguillages
 	ros::Subscriber SubDeverouilleAiguillages;
 	ros::Subscriber SubVerouilleAiguillages;
@@ -49,59 +42,11 @@ class Commande
 	ros::Subscriber NewShuttle;
 	ros::Subscriber SubNouvelleNavette;
 
-	// Postes
-	/*ros::Subscriber subEmptyShuttleReadyP1;
-	ros::Subscriber subEmptyShuttleReadyP2;
-	ros::Subscriber subEmptyShuttleReadyP3;
-	ros::Subscriber subEmptyShuttleReadyP4;
-
-	ros::Subscriber subProductInPostP1;
-	ros::Subscriber subProductInPostP2;
-	ros::Subscriber subProductInPostP3;
-	ros::Subscriber subProductInPostP4;
-  */
-	// Start/Stop Navettes
-	//ros::Subscriber SubArretNavette;
-	//ros::Subscriber SubDemarreNavette;
-
-
 //Publisher
 	// Actionneurs
 	ros::Publisher pub_navettes_stops;
 	ros::Publisher pub_actionneurs_simu_aiguillages;
   ros::Publisher pub_actionneurs_simu_pins;
-
-	// Vers Postes
-	/*ros::Publisher PubDemarrerNavetteP1;
-	ros::Publisher PubDemarrerNavetteP2;
-	ros::Publisher PubDemarrerNavetteP3;
-	ros::Publisher PubDemarrerNavetteP4;
-*/
-	/*ros::Publisher pubProductTakenByRobotP1;
-	ros::Publisher pubProductTakenByRobotP2;
-	ros::Publisher pubProductTakenByRobotP3;
-	ros::Publisher pubProductTakenByRobotP4;
-
-	ros::Publisher pubProductPutOnShuttleP1;
-	ros::Publisher pubProductPutOnShuttleP2;
-	ros::Publisher pubProductPutOnShuttleP3;
-	ros::Publisher pubProductPutOnShuttleP4;
-  */
-
-	// Vers shuttles
-	//ros::Publisher pubDeleteShuttleScheduler;
-	//ros::Publisher pubDestinationChange;
-	//shuttles::msgShuttleChange Newdestination;
-	//ros::Publisher pubDestroyShuttle;
-	//ros::Publisher pubDeleteShuttle;
-
-
-//Services
-	//Services shuttle
-	//ros::ServiceClient client_GetShuttleState;
-	//shuttles::srvGetShuttleStatus srv_GetShuttleState;
-	//ros::ServiceClient client_GetEmptyShuttle;
-	//shuttles::srvGetEmptyShuttles srv_GetEmptyShuttle;
 
 //Variables
   int produitNavette;
@@ -114,13 +59,6 @@ class Commande
 	commande_locale::Msg_StopControl actionneurs_simulation_Stop;
 	commande_locale::Msg_SwitchControl actionneurs_simulation_Aiguillages;
 	commande_locale::Msg_PinControl actionneurs_simulation_Pin;
-
-	//int NavetteEnP1,NavetteEnP2,NavetteEnP3,NavetteEnP4;
-	//int NewHandle;
-	//bool ProduitEnP1, ProduitEnP2, ProduitEnP3, ProduitEnP4;
-	//int NavetteVideEnP1, NavetteVideEnP2, NavetteVideEnP3, NavetteVideEnP4;
-	//std::map<int,ProductPost*> ProductsMap;
-
 
 public:
 
@@ -144,30 +82,6 @@ public:
 	int get_arrivee_navette();
 	int get_produit_navette();
 	void ReinitialiserArriveeNavette();
-
-	/*void GestionNavetteVideP1Callback(const std_msgs::Int32::ConstPtr& msg);
-	void GestionNavetteVideP2Callback(const std_msgs::Int32::ConstPtr& msg);
-	void GestionNavetteVideP3Callback(const std_msgs::Int32::ConstPtr& msg);
-	void GestionNavetteVideP4Callback(const std_msgs::Int32::ConstPtr& msg);
-
-	void ProductInPostP1Callback(const std_msgs::Int32::ConstPtr& msg);
-	void ProductInPostP2Callback(const std_msgs::Int32::ConstPtr& msg);
-	void ProductInPostP3Callback(const std_msgs::Int32::ConstPtr& msg);
-	void ProductInPostP4Callback(const std_msgs::Int32::ConstPtr& msg);
-  */
-	//void NewShuttleCallBack(const aiguillages::ExchangeSh::ConstPtr& msg);
-	//void initProduct(int nDestination, int pNumber);
-	//void PiecePrise(int numPoste);
-	//void PieceDeposee(int numPoste);
-	//void DefinirDestination(int handle, int destination);
-	//int ProduitSurNavette(int handle);		//Renvoie la destination du produit présent sur la navette
-	//int NavetteStoppee(int numPoste); 		//Renvoie l'handle de la navette stoppée au niveau du poste numPoste si elle contient un produit, 0 sinon
-	//int NavetteStoppeeVide(int numPoste); 		//Renvoie l'handle de la navette stoppée au niveau du poste numPoste si elle est vide, 0 sinon
-	//void NavettePartie(int numPoste);		//Remet la variable Navette en Pi à 0;
-	//int NavetteDisponible();			//Renvoie le handle d'une navette vide dans d0
-	//int NouvelleNavette(); 				//Renvoie le handle de la navette qui est créée par le noeud Ordonnancement
-	//void ReinitialiserNouvelleNavette();		//Réinitialise le handle de la navette nouvellement créée
-	//void DestroyShuttle(int handle);		//Détruit la navette qui porte le shuttle
 };
 
 #endif

@@ -150,11 +150,11 @@ void inOutController::init(ros::NodeHandle nh)
 	subScheduler = nh.subscribe("/scheduling/NextProduct",10,&inOutController::SchedulerNextShuttleCallback,this);
 
 	// Publishers
-	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerRight", 1);
-	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerLeft", 1);
-	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerLock", 1);
-	VREPStopController = nh.advertise<std_msgs::Int32>("/commande_locale/StopController", 1);
-	VREPGoController = nh.advertise<std_msgs::Int32>("/commande_locale/GoController", 1);
+	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerRight", 1);
+	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLeft", 1);
+	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLock", 1);
+	VREPStopController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/StopController", 1);
+	VREPGoController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/GoController", 1);
 	planifRailSensorState = nh.advertise<commande_locale::Msg_SensorState>("/commande/Simulation/Capteurs", 1);
 	
 	// Initialisation des capteurs des Ergots

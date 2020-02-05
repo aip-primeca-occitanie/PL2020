@@ -70,10 +70,10 @@ public:
 	void Stop_PS(int point_stop);
 	void Ouvrir_PS(int point_stop);
 
-	void DeverouilleAiguillages(const std_msgs::Int32::ConstPtr& msg);
-	void VerouilleAiguillages(const std_msgs::Int32::ConstPtr& msg);
-	void Aiguillagesgauches(const std_msgs::Int32::ConstPtr& msg);
-	void Aiguillagesdroits(const std_msgs::Int32::ConstPtr& msg);
+	void DeverouilleAiguillagesCallback(const std_msgs::Int32::ConstPtr& msg);
+	void VerouilleAiguillagesCallback(const std_msgs::Int32::ConstPtr& msg);
+	void AiguillagesgauchesCallback(const std_msgs::Int32::ConstPtr& msg);
+	void AiguillagesdroitsCallback(const std_msgs::Int32::ConstPtr& msg);
 
 	void SortirErgotCallback(const std_msgs::Int32::ConstPtr& msg);
 	void RentrerErgotCallback(const std_msgs::Int32::ConstPtr& msg);

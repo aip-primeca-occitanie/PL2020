@@ -29,8 +29,6 @@ private:
 
 	//Subscribers
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
-	ros::Subscriber sub_retourTraitementRobot1, sub_retourTraitementRobot2, sub_retourTraitementRobot3, sub_retourTraitementRobot4, sub_retourTraitementRobot5, sub_retourTraitementRobot6, sub_retourTraitementRobot7, sub_retourTraitementRobot8;
-
 	//Variables
 	//retours des robots
 	int robotInit[4];
@@ -39,14 +37,7 @@ private:
 	int bras[4];
 	int robotPince[4];
 	int pince[4];
-	int couleur_prec;
-	int couleur;
 	robots::ColorMsg msgColor;
-
-	//retours des traitements
-	int tacheTraitement[8];
-
-
 
 public:
 	Robots(ros::NodeHandle noeud);
@@ -76,20 +67,9 @@ public:
 	int BrasEnPosition(int numRobot);  //retourne 1 si le bras du robot numRobot est monté, -1 si le bras du robot numRobot est descendu
 	int PinceEnPosition(int numRobot); //retourne 1 si la pince du robot numRobot est fermée, -1 si elle est ouverte
 
-	//Retour de traitement des tâches
-	void RetourTraitement1Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourTraitement2Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourTraitement3Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourTraitement4Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourTraitement5Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourTraitement6Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourTraitement7Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourTraitement8Callback(const std_msgs::Int32::ConstPtr& msg);
 	void Colorer(int num_robot, int position);
-	int TraitementFini(int numTache); //retourne 1 si la tache numTache est terminée
 
   void DeplacerPiece(int num_robot, int positionA, int positionB);
 };
-
 
 #endif

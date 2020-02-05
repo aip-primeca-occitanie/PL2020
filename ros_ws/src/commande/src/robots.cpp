@@ -34,12 +34,6 @@ Robots::Robots(ros::NodeHandle noeud)
 	}
 
 
-	for(int i=0;i<8;i++)
-	{
-		tacheTraitement[i]=0;
-	}
-
-
 	/** Publishers **/
 	//Positions prédéfinies
 	pub_robot_position1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/SendPositionRobot1",1);
@@ -91,19 +85,6 @@ Robots::Robots(ros::NodeHandle noeud)
 	sub_retourRobot2 = noeud.subscribe("/commande/Simulation/retourCommande2", 100, &Robots::RetourRobot2Callback,this);
 	sub_retourRobot3 = noeud.subscribe("/commande/Simulation/retourCommande3", 100, &Robots::RetourRobot3Callback,this);
 	sub_retourRobot4 = noeud.subscribe("/commande/Simulation/retourCommande4", 100, &Robots::RetourRobot4Callback,this);
-
-
-	//Retour du traitement des produits
-
-	sub_retourTraitementRobot1 = noeud.subscribe("/commande/Simulation/ProduitTraitement1", 10, &Robots::RetourTraitement1Callback,this);
-	sub_retourTraitementRobot2 = noeud.subscribe("/commande/Simulation/ProduitTraitement2", 10, &Robots::RetourTraitement2Callback,this);
-	sub_retourTraitementRobot3 = noeud.subscribe("/commande/Simulation/ProduitTraitement3", 10, &Robots::RetourTraitement3Callback,this);
-	sub_retourTraitementRobot4 = noeud.subscribe("/commande/Simulation/ProduitTraitement4", 10, &Robots::RetourTraitement4Callback,this);
-	sub_retourTraitementRobot5 = noeud.subscribe("/commande/Simulation/ProduitTraitement5", 10, &Robots::RetourTraitement5Callback,this);
-	sub_retourTraitementRobot6 = noeud.subscribe("/commande/Simulation/ProduitTraitement6", 10, &Robots::RetourTraitement6Callback,this);
-	sub_retourTraitementRobot7 = noeud.subscribe("/commande/Simulation/ProduitTraitement7", 10, &Robots::RetourTraitement7Callback,this);
-	sub_retourTraitementRobot8 = noeud.subscribe("/commande/Simulation/ProduitTraitement8", 10, &Robots::RetourTraitement8Callback,this);
-
 }
 
 
@@ -710,8 +691,6 @@ int Robots::PinceEnPosition(int numRobot)
 
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
-	couleur=0;
-
 	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0))
 	{
 		EnvoyerPosition(num_robot,positionA);
@@ -742,135 +721,9 @@ void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 	}
 }
 
-
 void Robots::Colorer(int num_robot,int position)
 {
 	msgColor.num_robot=num_robot;
 	msgColor.position=position;
 	pub_colorer.publish(msgColor);
-}
-
-/*** Retour du traitement ***/
-//Fonctions Callback pour le retour des traitements relatifs au robot 1
-void Robots::RetourTraitement1Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 1 fini" << RESET << endl;
-		tacheTraitement[0]=1;
-	}
-}
-
-void Robots::RetourTraitement2Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 1 fini" << RESET << endl;
-		tacheTraitement[1]=1;
-	}
-}
-
-//Fonctions Callback pour le retour des traitements relatifs au robot 2
-void Robots::RetourTraitement3Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 2 fini" << RESET << endl;
-		tacheTraitement[2]=1;
-	}
-}
-
-void Robots::RetourTraitement4Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 2 fini" << RESET << endl;
-		tacheTraitement[3]=1;
-	}
-}
-
-
-//Fonctions Callback pour le retour des traitements relatifs au robot 3
-void Robots::RetourTraitement5Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 3 fini" << RESET << endl;
-		tacheTraitement[4]=1;
-	}
-}
-
-void Robots::RetourTraitement6Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 3 fini" << RESET << endl;
-		tacheTraitement[5]=1;
-	}
-}
-
-
-
-//Fonctions Callback pour le retour des traitements relatifs au robot 4
-void Robots::RetourTraitement7Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 4 fini" << RESET << endl;
-		tacheTraitement[6]=1;
-	}
-}
-
-void Robots::RetourTraitement8Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	if(retour == 1)
-	{
-		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 4 fini" << RESET << endl;
-		tacheTraitement[7]=1;
-	}
-}
-
-
-//Fonction permettant de savoir si le traitement de la tache choisie est finie
-int Robots::TraitementFini(int numTache)
-{
-	int Traitement;
-
-	ros::spinOnce();
-
-	if(numTache<1 || numTache>8)
-	{
-		cout <<  BOLDMAGENTA << "Le numero de tache doit etre compris entre 1 et 8." << RESET << endl;
-	}
-	else
-	{
-		Traitement=tacheTraitement[numTache-1];
-		tacheTraitement[numTache-1]=-10;
-	}
-
-	return Traitement;
 }

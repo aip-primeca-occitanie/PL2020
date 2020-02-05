@@ -40,14 +40,14 @@ private:
 
 
 	//retours des traitements
-	int tacheTraitement[8]; 
+	int tacheTraitement[8];
 
 
 
 public:
 	Robots(ros::NodeHandle noeud);
 	~Robots();
-	
+
 	//Contrôles des robots
 	void EnvoyerPosition(int numRobot, int numPosition);
 	void EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int angle4, int angle5, int angle6, int angle7);
@@ -84,6 +84,7 @@ public:
 
 	int TraitementFini(int numTache); //retourne 1 si la tache numTache est terminée
 
+  void DeplacerPiece(int num_robot, int positionA, int positionB);
 };
 
 

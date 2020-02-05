@@ -1,7 +1,5 @@
 /**** Projet long N7 2020 ****/
-
 #include "Robot.h"
-
 
 //Constructeur
 Robot::Robot(int num_du_robot)
@@ -14,26 +12,19 @@ Robot::Robot(int num_du_robot)
 	{
 		//ATTENTION : Ne pas changer la valeur d'initialisation
 		//l'ensemble des setModes doit être à 1 pour que les joints des robots soient commandés
-		mymodes[i]=1; 
+		mymodes[i]=1;
 	}
 }
-
-
 
 //Destructeur
 Robot::~Robot()
 {}
-
-
-
-/*** Fonctions internes permettant le contrôle du robot ***/
 
 /** Pour atteindre une position prédéfinie **/
 //Fonction permettant d'envoyer le robot dans une position prédéfinie
 void Robot::EnvoyerRobot(int numposition)
 {
 	robotPosition.data=numposition;
-
 	//Choix de la position en fonction du numéro reçu
 	switch(numposition)
 	{
@@ -66,7 +57,7 @@ void Robot::EnvoyerRobot(int numposition)
 			Rpos[5]=-90*pi/180;
 			Rpos[6]=-65*pi/180;
 			break;
-	
+
 		case 4:
 			Rpos[0]=-53*pi/180;
 			Rpos[1]=90*pi/180;
@@ -77,17 +68,15 @@ void Robot::EnvoyerRobot(int numposition)
 			Rpos[6]=-40*pi/180;
 			break;
 	}
-	
-	
+
 	//Utilisation du service simRosSetJointState pour envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
+	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));
 	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
 	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
 
 	srv_simRosSetJoint.request.handles = myhandles;
 	srv_simRosSetJoint.request.setModes = mysetmodes;
 	srv_simRosSetJoint.request.values = myvalues;
-	
 	client_simRosSetJoint.call(srv_simRosSetJoint);
 
 	//Vérification après l'appel du service
@@ -95,13 +84,13 @@ void Robot::EnvoyerRobot(int numposition)
 	{
 		ROS_INFO("Position predefinie %d pour le robot %d non atteinte", numposition,num_robot);
 
-		//Retour vers la commande 
+		//Retour vers la commande
 		retour.data = 1;
 		pub_retourCommande.publish(retour);
 	}
 	else
-	{	
-		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé : 
+	{
+		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé :
 		//on considère que la position est atteinte si la position est à 0.001 de sa consigne
 		float Position;
 		for(int i=0;i<7;i++)
@@ -118,7 +107,7 @@ void Robot::EnvoyerRobot(int numposition)
 			{
 				srv_simRosGetJoint.request.handle = Rints[i];
 				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
+				Position = srv_simRosGetJoint.response.state.position[0];
 			}
 		}
 
@@ -127,14 +116,11 @@ void Robot::EnvoyerRobot(int numposition)
 		//Retour vers la commande
 		retour.data = 2;
 		pub_retourCommande.publish(retour);
-		
+
 		//Retour de la position actuelle du robot
 		pub_robotPosition.publish(robotPosition);
 	}
-
 }
-
-
 
 /** Pour atteindre une position définie manuellement **/
 //Fonction permettant d'envoyer le robot dans une position définie manuellement
@@ -149,16 +135,15 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 	Rpos[5]=(joint6)*pi/180;
 	Rpos[6]=(joint7)*pi/180;
 
-		
 	//Utilisation du service simRosSetJointState our envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
+	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));
 	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
 	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
 
 	srv_simRosSetJoint.request.handles = myhandles;
 	srv_simRosSetJoint.request.setModes = mysetmodes;
 	srv_simRosSetJoint.request.values = myvalues;
-	
+
 	client_simRosSetJoint.call(srv_simRosSetJoint);
 
 	//Vérification après l'appel du service
@@ -171,7 +156,7 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 		pub_retourCommande.publish(retour);
 	}
 	else
-	{	
+	{
 		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé
 		//On considère que la position est atteinte si la position est à 0.001 de sa consigne
 		float Position;
@@ -189,7 +174,7 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 			{
 				srv_simRosGetJoint.request.handle = Rints[i];
 				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
+				Position = srv_simRosGetJoint.response.state.position[0];
 			}
 		}
 
@@ -200,8 +185,6 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 		pub_retourCommande.publish(retour);
 	}
 }
-
-
 
 /** Pour descendre ou monter le bras **/
 //Fonction permettant de mettre le bras en position basse
@@ -217,14 +200,14 @@ void Robot::DescendreBras()
 	Rpos[6]=Rpos[6]+6*pi/180;
 
 	//Utilisation du service simRosSetJointState pour envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
+	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));
 	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
 	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
 
 	srv_simRosSetJoint.request.handles = myhandles;
 	srv_simRosSetJoint.request.setModes = mysetmodes;
 	srv_simRosSetJoint.request.values = myvalues;
-	
+
 	client_simRosSetJoint.call(srv_simRosSetJoint);
 
 	//Vérification après l'appel du service
@@ -237,14 +220,14 @@ void Robot::DescendreBras()
 		pub_retourCommande.publish(retour);
 	}
 	else
-	{	
+	{
 		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé
 		//On considère que la position est atteinte si la position est à 0.001 de sa consigne
 		float Position;
 		for(int i=0;i<7;i++)
 		{
 			Position=0;
-			
+
 			//Appel du service pour connaître la position du robot
 			srv_simRosGetJoint.request.handle = Rints[i];
 			client_simRosGetJoint.call(srv_simRosGetJoint);
@@ -255,7 +238,7 @@ void Robot::DescendreBras()
 			{
 				srv_simRosGetJoint.request.handle = Rints[i];
 				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
+				Position = srv_simRosGetJoint.response.state.position[0];
 			}
 		}
 
@@ -273,7 +256,7 @@ void Robot::DescendreBras()
 
 
 
-//Fonction permettant de mettre le bras en position haute 
+//Fonction permettant de mettre le bras en position haute
 void Robot::MonterBras()
 {
 	//Récupération et modification de la position actuelle
@@ -286,16 +269,15 @@ void Robot::MonterBras()
 	Rpos[6]=Rpos[6]-6*pi/180;
 
 	//Utilisation du service simRosSetJointState pour envoyer le robot dans la position souhaitée
-	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));	
+	std::vector<int> myhandles(Rints, Rints+sizeof(Rints)/sizeof(int));
 	std::vector<unsigned char> mysetmodes(mymodes, mymodes+sizeof(mymodes)/sizeof(unsigned char));
 	std::vector<float> myvalues(Rpos, Rpos+sizeof(Rpos)/sizeof(float));
 
 	srv_simRosSetJoint.request.handles = myhandles;
 	srv_simRosSetJoint.request.setModes = mysetmodes;
 	srv_simRosSetJoint.request.values = myvalues;
-	
-	client_simRosSetJoint.call(srv_simRosSetJoint);
 
+	client_simRosSetJoint.call(srv_simRosSetJoint);
 
 	//Vérification après l'appel du service
 	if(srv_simRosSetJoint.response.result==-1)
@@ -304,11 +286,11 @@ void Robot::MonterBras()
 
 		//Retour vers la commande
 		retour.data = 3;
-		pub_retourCommande.publish(retour);	
+		pub_retourCommande.publish(retour);
 	}
 	else
-	{	
-		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé 
+	{
+		//Utilisation du service simRosGetJointState pour savoir si le mouvement du robot est terminé
 		//On considère que la position est atteinte si la position est à 0.001 de sa consigne
 		float Position;
 		for(int i=0;i<7;i++)
@@ -325,7 +307,7 @@ void Robot::MonterBras()
 			{
 				srv_simRosGetJoint.request.handle = Rints[i];
 				client_simRosGetJoint.call(srv_simRosGetJoint);
-				Position = srv_simRosGetJoint.response.state.position[0];	
+				Position = srv_simRosGetJoint.response.state.position[0];
 			}
 		}
 
@@ -340,8 +322,6 @@ void Robot::MonterBras()
 		pub_robotBras.publish(robotBras);
 	}
 }
-
-
 
 /** Pour fermer ou ouvrir la pince **/
 //Fonction permettant de fermer la pince du robot en envoyant une commande sur le topic correspondant
@@ -366,7 +346,7 @@ void Robot::FermerPince()
 			client_simGetVrepTime.call(srv_simGetVrepTime);
 			time = srv_simGetVrepTime.response.simulationTime;
 		}
-	
+
 		//Retour vers la commande
 		retour.data = 6;
 		pub_retourCommande.publish(retour);
@@ -377,8 +357,6 @@ void Robot::FermerPince()
 	pub_robotPince.publish(robotPince);
 }
 
-
-
 //Fonction permettant d'ouvrir la pince du robot en envoyant une commande sur le topic correspondant
 void Robot::OuvrirPince()
 {
@@ -387,7 +365,6 @@ void Robot::OuvrirPince()
 	cmd.data = 0;
 
 	pub_pince.publish(cmd);
-
 
 	//Si la pince n'est pas déjà ouverte, un retour est envoyé à la commande
 	if(retour.data != 7)
@@ -402,7 +379,7 @@ void Robot::OuvrirPince()
 			client_simGetVrepTime.call(srv_simGetVrepTime);
 			time = srv_simGetVrepTime.response.simulationTime;
 		}
-	
+
 		//Retour vers la commande
 		retour.data = 7;
 		pub_retourCommande.publish(retour);
@@ -413,14 +390,9 @@ void Robot::OuvrirPince()
 	pub_robotPince.publish(robotPince);
 }
 
-
-
-
-
 /*** Fonctions permettant de controler le robot avec des ordres du noeud commande ***/
-
 /** Envoyer le robot automatiquement **/
-//Fonction Callback permettant d'envoyer le robot dans une position prédéfinie à la réception du message de Commande 
+//Fonction Callback permettant d'envoyer le robot dans une position prédéfinie à la réception du message de Commande
 void Robot::SendPositionCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	//Récupération des données du message : numéro de la position prédéfinie
@@ -431,51 +403,40 @@ void Robot::SendPositionCallback(const std_msgs::Int32::ConstPtr& msg)
 	EnvoyerRobot(pos);
 }
 
-
-
 /** Envoyer le robot manuellement **/
-//Fonction Callback permettant d'envoyer le robot dans une position choisie par l'utilisateur à la réception du message de Commande 
+//Fonction Callback permettant d'envoyer le robot dans une position choisie par l'utilisateur à la réception du message de Commande
 void Robot::SendJointsCallback(const robots::RobotJoints::ConstPtr& msg)
 {
 	EnvoyerJoints(msg->joint1, msg->joint2, msg->joint3, msg->joint4, msg->joint5, msg->joint6, msg->joint7);
 }
 
-
-
 /** Fermer la pince **/
-//Fonction Callback permettant de fermer la pince du robot à la réception du message de Commande 
+//Fonction Callback permettant de fermer la pince du robot à la réception du message de Commande
 void Robot::FermerPinceCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	FermerPince();
 }
 
-
-
 /** Ouvrir la pince **/
-//Fonction Callback permettant d'ouvrir la pince du robot à la réception du message de Commande 
+//Fonction Callback permettant d'ouvrir la pince du robot à la réception du message de Commande
 void Robot::OuvrirPinceCallback(const std_msgs::Int32::ConstPtr& msg)
 {
-	OuvrirPince();	
+	OuvrirPince();
 }
 
-
-
 /** Descendre le bras **/
-//Fonction Callback permettant de mettre le bras en position basse à la réception du message de Commande 
+//Fonction Callback permettant de mettre le bras en position basse à la réception du message de Commande
 void Robot::DescendreBrasCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	DescendreBras();
 }
 
-
-
 /** Monter le bras **/
-//Fonction Callback permettant de mettre le bras en position haute à la réception du message de Commande 
+//Fonction Callback permettant de mettre le bras en position haute à la réception du message de Commande
 void Robot::MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	MonterBras();
 }
-
 
 /** Contrôler le robot entièrement **/
 //Fonction Callback permettant de contrôler l'ensemble des mouvements du robot à la réception du message de Commande
@@ -495,7 +456,7 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 			MonterBras();
 			break;
 	}
-	
+
 	//Envoi de la pince dans l'état souhaité
 	switch(msg->pince)
 	{
@@ -509,84 +470,63 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 	}
 }
 
-
-
-
 /*** Initialisation ***/
-
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
 {
-
-
   std::string num_str;
-  switch(num_robot){ 
+  switch(num_robot){
 
-	case 1: 
-	num_str="1";
+	case 1:
+		num_str="1";
 	break;
 
-  	case 2: 
-        num_str="2";
+	case 2:
+    num_str="2";
 	break;
 
- 	case 3: 
-	num_str="3";
+ 	case 3:
+		num_str="3";
 	break;
 
-  	case 4:
-	num_str="4";
-	break;
-	
-   	default: 
-	ROS_INFO("CHOIX ROBOT INCORRECT");
+  case 4:
+		num_str="4";
 	break;
 
-
+  default:
+		ROS_INFO("CHOIX ROBOT INCORRECT");
+	break;
 	}
-	
+
 	//Déclaration service simRosGetObjectHandle
 	client_simRosGetHandle = noeud.serviceClient<vrep_common::simRosGetObjectHandle>("/vrep/simRosGetObjectHandle");
-
 	//Déclaration service simRosSetJointState
 	client_simRosSetJoint = noeud.serviceClient<vrep_common::simRosSetJointState>("/vrep/simRosSetJointState");
-
 	//Déclaration service simRosGetJointState
 	client_simRosGetJoint = noeud.serviceClient<vrep_common::simRosGetJointState>("/vrep/simRosGetJointState");
-
 	//Déclaration service simRosGetInfo
 	client_simGetVrepTime = noeud.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 
-
 	//Subscribers
-	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot"+num_str,10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots 
-
+	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot"+num_str,10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
 	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot"+num_str,10,&Robot::SendJointsCallback,this);
-	
  	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot"+num_str,10,&Robot::FermerPinceCallback,this);
-
 	planifOuvrirPince = noeud.subscribe("/commande/Simulation/OuvrirPinceRobot"+num_str,10,&Robot::OuvrirPinceCallback,this);
-	
 	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras"+num_str,10,&Robot::DescendreBrasCallback,this);
-
 	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras"+num_str,10,&Robot::MonterBrasCallback,this);
-
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras"+num_str,10,&Robot::ControlerRobotCallback,this);
-
 
 	//Publishers
 	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+num_str, 10);
-	
 	pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+num_str,10);
 	pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+num_str,10);
 	pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
-
 	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande"+num_str, 10);
-	
-	//Utilisation du service simRosGetObjectHandle pour obtenir les handles du robot 
+
+	//Utilisation du service simRosGetObjectHandle pour obtenir les handles du robot
 	for (int i=1;i<8;i++)
 	{
-		std::stringstream sr;	
+		std::stringstream sr;
 		sr << i;
 		switch(num_robot){
 			case 1:
@@ -606,11 +546,9 @@ void Robot::init(ros::NodeHandle noeud)
 			break;
 		}
 
-
 		client_simRosGetHandle.call(srv_simRosGetHandle);
-		
 		Rints[i-1]=srv_simRosGetHandle.response.handle;
-		
+
 		if(Rints[i-1]==-1)
 		{
 			ROS_INFO("Robot %d : Handle non obtenu pour joint %d",num_robot,i);
@@ -624,13 +562,6 @@ void Robot::init(ros::NodeHandle noeud)
 				retour.data = 0;
 				pub_retourCommande.publish(retour);
 			}
-		} 
-	}	
-	
-	
-	
+		}
+	}
 }
-
-
-
-

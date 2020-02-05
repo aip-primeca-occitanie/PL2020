@@ -80,22 +80,7 @@ int main(int argc, char **argv)
 			{
 				modif=1;
 				M[4]--;
-				robot.EnvoyerPosition(1,2);
-				sleep(3);
-				robot.DescendreBras(1);
-				sleep(3);
-				robot.FermerPince(1);
-				sleep(3);
-				robot.MonterBras(1);
-				sleep(3);
-				robot.EnvoyerPosition(1,1);
-				sleep(3);
-				robot.DescendreBras(1);
-				sleep(3);
-				robot.OuvrirPince(1);
-				sleep(3);
-				robot.MonterBras(1);
-				sleep(3);
+				robot.DeplacerPiece(1,2,4);
 				cmd.Ouvrir_PS(21);
 				M[5]++;
 			}

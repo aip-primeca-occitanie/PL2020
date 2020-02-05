@@ -45,7 +45,7 @@ private:
 
 	//Service simRosGetInfo
 	ros::ServiceClient client_simGetVrepTime;
-	vrep_common::simRosGetInfo srv_simGetVrepTime;	
+	vrep_common::simRosGetInfo srv_simGetVrepTime;
 
 	/** Subscribers aux topics de la commande **/
 	ros::Subscriber planifSendPosition;
@@ -81,7 +81,7 @@ public:
 	Robot(int num_du_robot);
 	~Robot();
 
-	
+
 	//Initialisation
 	void init(ros::NodeHandle noeud);
 
@@ -105,12 +105,12 @@ public:
 	//Pour atteindre une position prédéfinie
 	void SendPositionCallback(const std_msgs::Int32::ConstPtr& msg);
 
-	//Pour atteindre une position définie manuellement 
+	//Pour atteindre une position définie manuellement
 	void SendJointsCallback(const robots::RobotJoints::ConstPtr& msg);
 
 	//Pour monter ou descendre le bras
 	void DescendreBrasCallback(const std_msgs::Int32::ConstPtr& msg);
-	void MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg);	
+	void MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg);
 
 	//Pour ouvrir ou fermer la pince
 	void FermerPinceCallback(const std_msgs::Int32::ConstPtr& msg);
@@ -123,4 +123,3 @@ public:
 
 
 #endif
-

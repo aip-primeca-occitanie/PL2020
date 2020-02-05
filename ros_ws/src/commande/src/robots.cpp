@@ -61,7 +61,7 @@ Robots::Robots(ros::NodeHandle noeud)
 
 	//Ouvrir les pinces
 	pub_pince_ouvrir1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot1",1);
-	pub_pince_ouvrir2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot2",1);	
+	pub_pince_ouvrir2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot2",1);
 	pub_pince_ouvrir3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot3",1);
 	pub_pince_ouvrir4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot4",1);
 
@@ -70,7 +70,7 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_descendre2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/DescendreBras2",1);
 	pub_descendre3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/DescendreBras3",1);
 	pub_descendre4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/DescendreBras4",1);
-	
+
 	//Descendre les bras
 	pub_monter1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/MonterBras1",1);
 	pub_monter2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/MonterBras2",1);
@@ -131,26 +131,26 @@ void Robots::EnvoyerPosition(int numRobot, int numPosition)
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
-		case 1:	
+		case 1:
 			robotPosition[0]=-10;
 			pub_robot_position1.publish(msg);  // pub_robot_position1 est un publisher qui publie dans le topic /commande/Simulation/SendPositionRobot1
 			break;
 
-		case 2:	
+		case 2:
 			robotPosition[0]=-10;
 			pub_robot_position2.publish(msg);
 			break;
 
-		case 3:	
+		case 3:
 			robotPosition[0]=-10;
 			pub_robot_position3.publish(msg);
 			break;
 
-		case 4:	
+		case 4:
 			robotPosition[0]=-10;
 			pub_robot_position4.publish(msg);
 			break;
-	
+
 		default:
 			robotPosition[0]=-10;
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
@@ -161,7 +161,7 @@ void Robots::EnvoyerPosition(int numRobot, int numPosition)
 
 
 /*** Envoyer les robots manuellement ***/
-//Fonction pour envoyer un robot choisi dans une position définie par l'utilisateur 
+//Fonction pour envoyer un robot choisi dans une position définie par l'utilisateur
 void Robots::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int angle4, int angle5, int angle6, int angle7)
 {
 	//Déclaration du message
@@ -179,30 +179,30 @@ void Robots::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
-		case 1:	
+		case 1:
 			robotPosition[0]=-10;
-			pub_robot_joints1.publish(msg); 
+			pub_robot_joints1.publish(msg);
 			break;
 
-		case 2:	
+		case 2:
 			robotPosition[1]=-10;
 			pub_robot_joints2.publish(msg);
 			break;
 
-		case 3:	
+		case 3:
 			robotPosition[2]=-10;
 			pub_robot_joints3.publish(msg);
 			break;
 
-		case 4:	
+		case 4:
 			robotPosition[3]=-10;
 			pub_robot_joints4.publish(msg);
 			break;
-	
+
 		default:
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 			break;
-	}	
+	}
 }
 
 
@@ -224,36 +224,36 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 
 	if(bras != -1 && bras != 1)
 	{
-		cout <<  BOLDMAGENTA << "Cet etat du bras est inaccessible." << RESET << endl; // on a que 2 états du bras possibles, ces états sont -1 et +1 voir fichier 
+		cout <<  BOLDMAGENTA << "Cet etat du bras est inaccessible." << RESET << endl; // on a que 2 états du bras possibles, ces états sont -1 et +1 voir fichier
 	}
 
 	if(pince != -1 && pince != 1)
 	{
-		cout <<  BOLDMAGENTA << "Cet etat de la pince est inaccessible." << RESET << endl; // on a que 2 états de pince possibles, ces états sont -1 et +1 voir fichier 
+		cout <<  BOLDMAGENTA << "Cet etat de la pince est inaccessible." << RESET << endl; // on a que 2 états de pince possibles, ces états sont -1 et +1 voir fichier
 	}
 
-	switch(numRobot)         // on fait un switch case celon le numéro du robot eton publie dans les topics correspondant au 4 robots disponibles 
+	switch(numRobot)         // on fait un switch case celon le numéro du robot eton publie dans les topics correspondant au 4 robots disponibles
 	{
-		case 1:	
+		case 1:
 			robotPosition[0]=-10;
 			pub_controler_robot1.publish(controle); //  pub_controler_robot1 est un publisher qui publie dans le topic /commande/Simulation/retourCommande1 le subscriber est Robot1
 			break;
 
-		case 2:	
+		case 2:
 			robotPosition[1]=-10;
 			pub_controler_robot2.publish(controle);
 			break;
 
-		case 3:	
+		case 3:
 			robotPosition[2]=-10;
 			pub_controler_robot3.publish(controle);
 			break;
 
-		case 4:	
+		case 4:
 			robotPosition[3]=-10;
 			pub_controler_robot4.publish(controle);
 			break;
-	
+
 		default:
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 			break;
@@ -269,30 +269,30 @@ void Robots::FermerPince(int numRobot)
 	//Déclaration du message
 	std_msgs::Int32 msg;
 	msg.data=1;
-	
+
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
-		case 1:	
+		case 1:
 			pub_pince_fermer1.publish(msg);
 			break;
 
-		case 2:	
+		case 2:
 			pub_pince_fermer2.publish(msg);
 			break;
 
-		case 3:	
+		case 3:
 			pub_pince_fermer3.publish(msg);
 			break;
 
-		case 4:	
+		case 4:
 			pub_pince_fermer4.publish(msg);
 			break;
-	
+
 		default:
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 			break;
-	}	
+	}
 }
 
 
@@ -304,30 +304,30 @@ void Robots::OuvrirPince(int numRobot)
 	//Déclaration du message
 	std_msgs::Int32 msg;
 	msg.data=0;
-	
+
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
-		case 1:	
+		case 1:
 			pub_pince_ouvrir1.publish(msg);
 			break;
 
-		case 2:	
+		case 2:
 			pub_pince_ouvrir2.publish(msg);
 			break;
 
-		case 3:	
+		case 3:
 			pub_pince_ouvrir3.publish(msg);
 			break;
 
-		case 4:	
+		case 4:
 			pub_pince_ouvrir4.publish(msg);
 			break;
-	
+
 		default:
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 			break;
-	}	
+	}
 }
 
 
@@ -343,26 +343,26 @@ void Robots::DescendreBras(int numRobot)
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
-		case 1:	
+		case 1:
 			pub_descendre1.publish(msg);
 			break;
 
-		case 2:	
+		case 2:
 			pub_descendre2.publish(msg);
 			break;
 
-		case 3:	
+		case 3:
 			pub_descendre3.publish(msg);
 			break;
 
-		case 4:	
+		case 4:
 			pub_descendre4.publish(msg);
 			break;
-	
+
 		default:
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 			break;
-	}	
+	}
 }
 
 
@@ -378,26 +378,26 @@ void Robots::MonterBras(int numRobot)
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
-		case 1:	
+		case 1:
 			pub_monter1.publish(msg);
 			break;
 
-		case 2:	
+		case 2:
 			pub_monter2.publish(msg);
 			break;
 
-		case 3:	
+		case 3:
 			pub_monter3.publish(msg);
 			break;
 
-		case 4:	
+		case 4:
 			pub_monter4.publish(msg);
 			break;
-	
+
 		default:
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 			break;
-	}	
+	}
 }
 
 
@@ -409,7 +409,7 @@ void Robots::RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg)
 {
 	int retour;
 	retour=msg->data;
-	
+
 	switch(retour)
 	{
 		case 0:
@@ -430,27 +430,27 @@ void Robots::RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 3:
 			cout <<  BOLDCYAN << "Bras bloque pour le robot 1" << RESET << endl;
 			robotBras[0] = 0;
-			break;	
+			break;
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 1" << RESET << endl;
 			robotBras[0] = -1;
-			break;	
+			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 1" << RESET << endl;
 			robotBras[0] = 1;
-			break;	
+			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 1" << RESET << endl;
 			robotPince[0] = 1;
-			break;	
+			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 1" << RESET << endl;
 			robotPince[0] = -1;
-			break;	
+			break;
 	}
 }
 
@@ -460,7 +460,7 @@ void Robots::RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg)
 {
 	int retour;
 	retour=msg->data;
-	
+
 	switch(retour)
 	{
 		case 0:
@@ -481,22 +481,22 @@ void Robots::RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 3:
 			cout <<  BOLDCYAN << "Bras bloque pour le robot 2" << RESET << endl;
 			robotBras[1] = 0;
-			break;	
+			break;
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 2" << RESET << endl;
 			robotBras[1] = -1;
-			break;	
+			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 2" << RESET << endl;
 			robotBras[1] = 1;
-			break;	
+			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 2" << RESET << endl;
 			robotPince[1] = 1;
-			break;	
+			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 2" << RESET << endl;
@@ -511,7 +511,7 @@ void Robots::RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg)
 {
 	int retour;
 	retour=msg->data;
-	
+
 	switch(retour)
 	{
 		case 0:
@@ -532,22 +532,22 @@ void Robots::RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 3:
 			cout <<  BOLDCYAN << "Bras bloque pour le robot 3" << RESET << endl;
 			robotBras[2] = 0;
-			break;	
+			break;
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 3" << RESET << endl;
 			robotBras[2] = -1;
-			break;	
+			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 3" << RESET << endl;
 			robotBras[2] = 1;
-			break;	
+			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 3" << RESET << endl;
 			robotPince[2] = 1;
-			break;	
+			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 3" << RESET << endl;
@@ -562,7 +562,7 @@ void Robots::RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg)
 {
 	int retour;
 	retour=msg->data;
-	
+
 	switch(retour)
 	{
 		case 0:
@@ -583,22 +583,22 @@ void Robots::RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 3:
 			cout <<  BOLDCYAN << "Bras bloque pour le robot 4" << RESET << endl;
 			robotBras[3] = 0;
-			break;	
+			break;
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 4" << RESET << endl;
 			robotBras[3] = -1;
-			break;	
+			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 4" << RESET << endl;
 			robotBras[3] = 1;
-			break;	
+			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 4" << RESET << endl;
 			robotPince[3] = 1;
-			break;	
+			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 4" << RESET << endl;
@@ -632,10 +632,10 @@ int Robots::RobotInitialise(int numRobot)
 //Fonction permettant de savoir si le robot choisi est en position
 int Robots::RobotEnPosition(int numRobot)
 {
-	int Robot;	
+	int Robot;
 
-	ros::spinOnce();	
-	
+	ros::spinOnce();
+
 	if(numRobot<1 || numRobot>4)
 	{
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
@@ -653,10 +653,10 @@ int Robots::RobotEnPosition(int numRobot)
 //Fonction permettant de savoir si le bras du robot choisi est en position
 int Robots::BrasEnPosition(int numRobot)
 {
-	int Robot;	
+	int Robot;
 
-	ros::spinOnce();	
-	
+	ros::spinOnce();
+
 	if(numRobot<1 || numRobot>4)
 	{
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
@@ -667,7 +667,7 @@ int Robots::BrasEnPosition(int numRobot)
 		robotBras[numRobot-1]=-10;
 
 		if((Robot != 0)&&(Robot != -1)&&(Robot != 1))
-		{		
+		{
 			Robot=bras[numRobot-1];
 		}
 
@@ -682,10 +682,10 @@ int Robots::BrasEnPosition(int numRobot)
 //Fonction permettant de savoir si la pince du robot choisi est en position
 int Robots::PinceEnPosition(int numRobot)
 {
-	int Robot;	
+	int Robot;
 
-	ros::spinOnce();	
-	
+	ros::spinOnce();
+
 	if(numRobot<1 || numRobot>4)
 	{
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
@@ -696,7 +696,7 @@ int Robots::PinceEnPosition(int numRobot)
 		robotPince[numRobot-1]=-10;
 
 		if((Robot != 0)&&(Robot != -1)&&(Robot != 1))
-		{		
+		{
 			Robot=pince[numRobot-1];
 		}
 
@@ -706,9 +706,54 @@ int Robots::PinceEnPosition(int numRobot)
 	return Robot;
 }
 
+void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
+{
+	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0))
+	{
+		EnvoyerPosition(num_robot,positionA);
+		while(RobotEnPosition(num_robot)==0){usleep(100000);};
+		DescendreBras(num_robot);
+		while(BrasEnPosition(num_robot)!=-1){usleep(100000);};
+		FermerPince(num_robot);
+		while(PinceEnPosition(num_robot)!=1){usleep(100000);};
 
+		//ici on considère qu'on a pris une pièce
 
+		if (positionA==1 || positionA==4)//c'est donc un poste
+		{
+			//décolorer poste grâce au handle
+			ROS_INFO("Decoloration du poste");
+		}
+		else //c'est donc une navette
+		{
+			//décolorer navette grâce au handle
+			ROS_INFO("Decoloration de la navette");
+		}
 
+		MonterBras(num_robot);
+		while(BrasEnPosition(num_robot)!=1){usleep(100000);};
+		EnvoyerPosition(num_robot,positionB);
+		while(RobotEnPosition(num_robot)==0){usleep(100000);};
+		DescendreBras(num_robot);
+		while(BrasEnPosition(num_robot)!=-1){usleep(100000);};
+		OuvrirPince(num_robot);
+		while(PinceEnPosition(num_robot)!=-1){usleep(100000);};
+		//ici on considère qu'on a déposé la piècer
+
+		if (positionB==1 || positionB==4)//c'est donc un poste
+		{
+			//colorer poste grâce au handle
+			ROS_INFO("Coloration du poste");
+		}
+		else //c'est donc une navette
+		{
+			//colorer navette grâce au handle
+			ROS_INFO("Coloration de la navette");
+		}
+		MonterBras(num_robot);
+		while(BrasEnPosition(num_robot)!=1){usleep(100000);};
+	}
+}
 
 /*** Retour du traitement ***/
 //Fonctions Callback pour le retour des traitements relatifs au robot 1
@@ -720,7 +765,7 @@ void Robots::RetourTraitement1Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 1 fini" << RESET << endl;
-		tacheTraitement[0]=1;	
+		tacheTraitement[0]=1;
 	}
 }
 
@@ -732,7 +777,7 @@ void Robots::RetourTraitement2Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 1 fini" << RESET << endl;
-		tacheTraitement[1]=1;	
+		tacheTraitement[1]=1;
 	}
 }
 
@@ -745,7 +790,7 @@ void Robots::RetourTraitement3Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 2 fini" << RESET << endl;
-		tacheTraitement[2]=1;	
+		tacheTraitement[2]=1;
 	}
 }
 
@@ -757,7 +802,7 @@ void Robots::RetourTraitement4Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 2 fini" << RESET << endl;
-		tacheTraitement[3]=1;	
+		tacheTraitement[3]=1;
 	}
 }
 
@@ -771,7 +816,7 @@ void Robots::RetourTraitement5Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 3 fini" << RESET << endl;
-		tacheTraitement[4]=1;	
+		tacheTraitement[4]=1;
 	}
 }
 
@@ -783,7 +828,7 @@ void Robots::RetourTraitement6Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 3 fini" << RESET << endl;
-		tacheTraitement[5]=1;	
+		tacheTraitement[5]=1;
 	}
 }
 
@@ -798,7 +843,7 @@ void Robots::RetourTraitement7Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 1 pour le robot 4 fini" << RESET << endl;
-		tacheTraitement[6]=1;	
+		tacheTraitement[6]=1;
 	}
 }
 
@@ -810,7 +855,7 @@ void Robots::RetourTraitement8Callback(const std_msgs::Int32::ConstPtr& msg)
 	if(retour == 1)
 	{
 		cout << BOLDCYAN << "Traitement par tache 2 pour le robot 4 fini" << RESET << endl;
-		tacheTraitement[7]=1;	
+		tacheTraitement[7]=1;
 	}
 }
 
@@ -818,10 +863,10 @@ void Robots::RetourTraitement8Callback(const std_msgs::Int32::ConstPtr& msg)
 //Fonction permettant de savoir si le traitement de la tache choisie est finie
 int Robots::TraitementFini(int numTache)
 {
-	int Traitement;	
+	int Traitement;
 
-	ros::spinOnce();	
-	
+	ros::spinOnce();
+
 	if(numTache<1 || numTache>8)
 	{
 		cout <<  BOLDMAGENTA << "Le numero de tache doit etre compris entre 1 et 8." << RESET << endl;
@@ -834,4 +879,3 @@ int Robots::TraitementFini(int numTache)
 
 	return Traitement;
 }
-

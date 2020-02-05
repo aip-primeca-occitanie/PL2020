@@ -83,6 +83,7 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_controler_robot3=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras3",10);
 	pub_controler_robot4=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras4",10);
 
+	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
 
 	/*** Subscribers ***/
 	//Retour des robots vers la commande
@@ -91,7 +92,9 @@ Robots::Robots(ros::NodeHandle noeud)
 	sub_retourRobot3 = noeud.subscribe("/commande/Simulation/retourCommande3", 100, &Robots::RetourRobot3Callback,this);
 	sub_retourRobot4 = noeud.subscribe("/commande/Simulation/retourCommande4", 100, &Robots::RetourRobot4Callback,this);
 
+
 	//Retour du traitement des produits
+
 	sub_retourTraitementRobot1 = noeud.subscribe("/commande/Simulation/ProduitTraitement1", 10, &Robots::RetourTraitement1Callback,this);
 	sub_retourTraitementRobot2 = noeud.subscribe("/commande/Simulation/ProduitTraitement2", 10, &Robots::RetourTraitement2Callback,this);
 	sub_retourTraitementRobot3 = noeud.subscribe("/commande/Simulation/ProduitTraitement3", 10, &Robots::RetourTraitement3Callback,this);
@@ -137,22 +140,21 @@ void Robots::EnvoyerPosition(int numRobot, int numPosition)
 			break;
 
 		case 2:
-			robotPosition[0]=-10;
+			robotPosition[1]=-10;
 			pub_robot_position2.publish(msg);
 			break;
 
 		case 3:
-			robotPosition[0]=-10;
+			robotPosition[2]=-10;
 			pub_robot_position3.publish(msg);
 			break;
 
 		case 4:
-			robotPosition[0]=-10;
+			robotPosition[3]=-10;
 			pub_robot_position4.publish(msg);
 			break;
 
 		default:
-			robotPosition[0]=-10;
 			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 			break;
 	}
@@ -708,51 +710,44 @@ int Robots::PinceEnPosition(int numRobot)
 
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
+	couleur=0;
+
 	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0))
 	{
 		EnvoyerPosition(num_robot,positionA);
-		while(RobotEnPosition(num_robot)==0){usleep(100000);};
+		while(RobotEnPosition(num_robot)!=1){usleep(100000);};
 		DescendreBras(num_robot);
 		while(BrasEnPosition(num_robot)!=-1){usleep(100000);};
 		FermerPince(num_robot);
 		while(PinceEnPosition(num_robot)!=1){usleep(100000);};
 
 		//ici on considère qu'on a pris une pièce
-
-		if (positionA==1 || positionA==4)//c'est donc un poste
-		{
-			//décolorer poste grâce au handle
-			ROS_INFO("Decoloration du poste");
-		}
-		else //c'est donc une navette
-		{
-			//décolorer navette grâce au handle
-			ROS_INFO("Decoloration de la navette");
-		}
+		//decoloration, donc
+		Colorer(num_robot,positionA);//le robot a rien en mémoire, il décolore
 
 		MonterBras(num_robot);
 		while(BrasEnPosition(num_robot)!=1){usleep(100000);};
 		EnvoyerPosition(num_robot,positionB);
-		while(RobotEnPosition(num_robot)==0){usleep(100000);};
+		while(RobotEnPosition(num_robot)!=1){usleep(100000);};
 		DescendreBras(num_robot);
 		while(BrasEnPosition(num_robot)!=-1){usleep(100000);};
 		OuvrirPince(num_robot);
 		while(PinceEnPosition(num_robot)!=-1){usleep(100000);};
-		//ici on considère qu'on a déposé la piècer
 
-		if (positionB==1 || positionB==4)//c'est donc un poste
-		{
-			//colorer poste grâce au handle
-			ROS_INFO("Coloration du poste");
-		}
-		else //c'est donc une navette
-		{
-			//colorer navette grâce au handle
-			ROS_INFO("Coloration de la navette");
-		}
+		//ici on considère qu'on a déposé la piècer
+		//coloration, donc
+		Colorer(num_robot,positionB);//le robot a la couleur du produit en memoire, il colore
 		MonterBras(num_robot);
 		while(BrasEnPosition(num_robot)!=1){usleep(100000);};
 	}
+}
+
+
+void Robots::Colorer(int num_robot,int position)
+{
+	msgColor.num_robot=num_robot;
+	msgColor.position=position;
+	pub_colorer.publish(msgColor);
 }
 
 /*** Retour du traitement ***/

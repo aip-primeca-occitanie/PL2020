@@ -470,6 +470,16 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 	}
 }
 
+void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)
+{
+	if (msg->num_robot==num_robot)
+	{
+		//Colorer le poste ou la navette en position msg->Position
+		ROS_INFO("Je peux pas colorer, Anthony a pas finit de passer la simu sur kinetic");
+	}
+}
+
+
 /*** Initialisation ***/
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
@@ -515,6 +525,8 @@ void Robot::init(ros::NodeHandle noeud)
 	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras"+num_str,10,&Robot::DescendreBrasCallback,this);
 	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras"+num_str,10,&Robot::MonterBrasCallback,this);
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras"+num_str,10,&Robot::ControlerRobotCallback,this);
+	sub_colorer = noeud.subscribe("/commande/Simulation/Colorer",10,&Robot::ColorerCallback,this);
+
 
 	//Publishers
 	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+num_str, 10);

@@ -10,6 +10,7 @@
 #include <robots/RobotJoints.h>
 #include <robots/MoveRobot.h>
 #include <std_msgs/Int32.h>
+#include <robots/ColorMsg.h>
 
 
 class Robots
@@ -24,6 +25,7 @@ private:
 	ros::Publisher pub_descendre1, pub_descendre2, pub_descendre3, pub_descendre4;
 	ros::Publisher pub_monter1, pub_monter2, pub_monter3, pub_monter4;
 	ros::Publisher pub_controler_robot1, pub_controler_robot2, pub_controler_robot3, pub_controler_robot4;
+	ros::Publisher pub_colorer;
 
 	//Subscribers
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
@@ -37,7 +39,9 @@ private:
 	int bras[4];
 	int robotPince[4];
 	int pince[4];
-
+	int couleur_prec;
+	int couleur;
+	robots::ColorMsg msgColor;
 
 	//retours des traitements
 	int tacheTraitement[8];
@@ -81,7 +85,7 @@ public:
 	void RetourTraitement6Callback(const std_msgs::Int32::ConstPtr& msg);
 	void RetourTraitement7Callback(const std_msgs::Int32::ConstPtr& msg);
 	void RetourTraitement8Callback(const std_msgs::Int32::ConstPtr& msg);
-
+	void Colorer(int num_robot, int position);
 	int TraitementFini(int numTache); //retourne 1 si la tache numTache est terminée
 
   void DeplacerPiece(int num_robot, int positionA, int positionB);

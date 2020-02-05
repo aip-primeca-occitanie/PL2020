@@ -18,6 +18,7 @@ add_message_files(
    FILES
    RobotJoints.msg
    MoveRobot.msg
+   ColorMsg.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -71,7 +72,3 @@ add_dependencies(robot3 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
 add_executable(robot4 src/main_robot4.cpp src/Robot.cpp)
 target_link_libraries(robot4 ${catkin_LIBRARIES})
 add_dependencies(robot4 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-
-
-

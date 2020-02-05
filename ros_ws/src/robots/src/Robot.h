@@ -17,6 +17,7 @@
 //Messages
 #include <robots/RobotJoints.h>
 #include <robots/MoveRobot.h>
+#include <robots/ColorMsg.h>
 #include <std_msgs/Int32.h>
 
 #include <vector>
@@ -55,6 +56,7 @@ private:
 	ros::Subscriber planifDescendreBras;
 	ros::Subscriber planifMonterBras;
 	ros::Subscriber planifControlerRobot;
+	ros::Subscriber sub_colorer;
 
 	/** Publishers pour retours **/
 	ros::Publisher pub_pince;
@@ -118,7 +120,7 @@ public:
 
 	//Pour contrôler l'ensemble des mouvements du robot
 	void ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg);
-
+	void ColorerCallback(const robots::ColorMsg::ConstPtr& msg);
 };
 
 

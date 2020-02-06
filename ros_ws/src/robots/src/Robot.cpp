@@ -108,7 +108,7 @@ void Robot::EnvoyerRobot(int numposition)
 	pubSim_setJointState.publish(msgSim_setJointState);
 
 	//Attente de la réponse
-	while(!repSim_setJointState) 
+	while(!repSim_setJointState&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -126,11 +126,11 @@ void Robot::EnvoyerRobot(int numposition)
 		//Appel du topic pour connaître la position du robot
 		msgSim_getJointState.data = Rints[i];
 		pubSim_getJointState.publish(msgSim_getJointState);
-		while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_getJointState&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_getJointState = false;
 		Position = valueSim_getJointState;
 
@@ -138,11 +138,11 @@ void Robot::EnvoyerRobot(int numposition)
 		while(std::abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
-			while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_getJointState&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
 		}
@@ -184,7 +184,7 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 	pubSim_setJointState.publish(msgSim_setJointState);
 
 	//Attente de la réponse
-	while(!repSim_setJointState)
+	while(!repSim_setJointState&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -202,11 +202,11 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 		//Appel du topic pour connaître la position du robot
 		msgSim_getJointState.data = Rints[i];
 		pubSim_getJointState.publish(msgSim_getJointState);
-		while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_getJointState&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_getJointState = false;
 		Position = valueSim_getJointState;
 
@@ -214,11 +214,11 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 		while(std::abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
-			while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_getJointState&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
 		}
@@ -257,7 +257,7 @@ void Robot::DescendreBras()
 	pubSim_setJointState.publish(msgSim_setJointState);
 
 	//Attente de la réponse
-	while(!repSim_setJointState)
+	while(!repSim_setJointState&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -274,11 +274,11 @@ void Robot::DescendreBras()
 		//Appel du topic pour connaître la position du robot
 		msgSim_getJointState.data = Rints[i];
 		pubSim_getJointState.publish(msgSim_getJointState);
-		while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_getJointState&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_getJointState = false;
 		Position = valueSim_getJointState;
 
@@ -286,11 +286,11 @@ void Robot::DescendreBras()
 		while(std::abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
-			while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_getJointState&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
 		}
@@ -333,7 +333,7 @@ void Robot::MonterBras()
 	pubSim_setJointState.publish(msgSim_setJointState);
 
 	//Attente de la réponse
-	while(!repSim_setJointState)
+	while(!repSim_setJointState&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -350,11 +350,11 @@ void Robot::MonterBras()
 		//Appel du topic pour connaître la position du robot
 		msgSim_getJointState.data = Rints[i];
 		pubSim_getJointState.publish(msgSim_getJointState);
-		while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_getJointState&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_getJointState = false;
 		Position = valueSim_getJointState;
 
@@ -362,11 +362,11 @@ void Robot::MonterBras()
 		while(std::abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
-			while(!repSim_getJointState)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_getJointState&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
 		}
@@ -403,11 +403,11 @@ void Robot::FermerPince()
 		float t0, time;
 
 		pubSim_getTime.publish(msgSim_getTime);
-		while(!repSim_getTime)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_getTime&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_getTime=false;
 		t0 = valueSim_getTime;
 
@@ -415,11 +415,11 @@ void Robot::FermerPince()
 		while(time - t0 < 2)
 		{
 			pubSim_getTime.publish(msgSim_getTime);
-			while(!repSim_getTime)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_getTime&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_getTime=false;
 			time = valueSim_getTime;
 		}
@@ -453,11 +453,11 @@ void Robot::OuvrirPince()
 		float t0, time;
 
 		pubSim_getTime.publish(msgSim_getTime);
-		while(!repSim_getTime)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_getTime&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_getTime=false;
 		t0 = valueSim_getTime;
 
@@ -465,11 +465,11 @@ void Robot::OuvrirPince()
 		while(time - t0 < 1)
 		{
 			pubSim_getTime.publish(msgSim_getTime);
-			while(!repSim_getTime)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_getTime&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_getTime=false;
 			time = valueSim_getTime;
 		}
@@ -702,7 +702,11 @@ void Robot::init(ros::NodeHandle noeud)
 
 
 		pubSim_getObjectHandle.publish(msgSim_getObjectHandle);
-		while(!repSim_getObjectHandle) loop_rate->sleep() ;
+		while(!repSim_getObjectHandle&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep() ;
+		}
 		repSim_getObjectHandle = false;
 
 		Rints[i-1]=valueSim_getObjectHandle;

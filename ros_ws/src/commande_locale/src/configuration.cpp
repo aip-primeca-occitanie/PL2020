@@ -146,7 +146,7 @@ void Configuration::ProductAdd(char shuttleLetter, int typeNextShuttle){
 
 	std_msgs::Byte msgGetTime;
 	pubSim_GetTime.publish(msgGetTime);
-	while(!repSim_GetTime)
+	while(!repSim_GetTime&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();

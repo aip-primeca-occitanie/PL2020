@@ -189,7 +189,7 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 
 	std_msgs::Byte msgGetTime;
 	pubSim_GetTime.publish(msgGetTime);
-	while(!repSim_GetTime)
+	while(!repSim_GetTime&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -267,7 +267,7 @@ void Scheduler::launchNextSchedule(){
 
 		std_msgs::Byte msgGetTime;
 		pubSim_GetTime.publish(msgGetTime);
-		while(!repSim_GetTime)
+		while(!repSim_GetTime&&ros::ok())
 		{
 			ros::spinOnce();
 			loop_rate->sleep();
@@ -366,7 +366,7 @@ void Scheduler::productOutCallBack(const std_msgs::Int32::ConstPtr& msg) // on r
 
 	std_msgs::Byte msgGetTime;
 	pubSim_GetTime.publish(msgGetTime);
-	while(!repSim_GetTime)
+	while(!repSim_GetTime&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();

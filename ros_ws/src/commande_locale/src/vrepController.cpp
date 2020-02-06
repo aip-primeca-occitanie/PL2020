@@ -30,7 +30,7 @@ vrepController::vrepController(){
 void vrepController::pause()
 {
 	pubSim_pauseSimulation.publish(msgSim_pauseSimulation);
-	while(!repSim_pauseSimulation)
+	while(!repSim_pauseSimulation&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -42,7 +42,7 @@ void vrepController::pause()
 void vrepController::play()
 {
 	pubSim_startSimulation.publish(msgSim_startSimulation);
-	while(!repSim_startSimulation)
+	while(!repSim_startSimulation&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -88,7 +88,7 @@ int vrepController::LoadShuttle(char shuttleNumber, int type, int firstDestinati
 		nShuttleF ++;
 
 		pubSim_loadModel.publish(msgSim_loadModel);
-		while(!repSim_loadModel)
+		while(!repSim_loadModel&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -124,20 +124,20 @@ int vrepController::LoadShuttle(char shuttleNumber, int type, int firstDestinati
 			msgSim_changeShuttleColor.data.push_back(shuttleId);
 			msgSim_changeShuttleColor.data.push_back(shuttleColor);
 			pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
-			while(!repSim_changeShuttleColor)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_changeShuttleColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_changeShuttleColor = false;
 
 			msgSim_getColor.data = shuttleColorSignal;
 			pubSim_getColor.publish(msgSim_getColor);
-			while(!repSim_getColor)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+			while(!repSim_getColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
 			repSim_getColor = false;
 
 		}while(valueSim_getColor!=shuttleColor);
@@ -187,11 +187,11 @@ void vrepController::loadModelInit(char shuttleNumber)
 
 		msgSim_loadModel.data = shuttleName;
 		pubSim_loadModel.publish(msgSim_loadModel);
-		while(!repSim_loadModel)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_loadModel&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_loadModel = false;
 	}
 }
@@ -204,7 +204,7 @@ void vrepController::removeModel(int handle)
 {
 	msgSim_removeModel.data = handle;
 	pubSim_removeModel.publish(msgSim_removeModel);
-	while(!repSim_removeModel)
+	while(!repSim_removeModel&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -217,7 +217,7 @@ int32_t vrepController::getObjectHandle(std::string objectName)
 {
 	msgSim_getObjectHandle.data = objectName;
 	pubSim_getObjectHandle.publish(msgSim_getObjectHandle);
-	while(!repSim_getObjectHandle)
+	while(!repSim_getObjectHandle&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
@@ -270,20 +270,20 @@ void vrepController::ColorCallBack(const commande_locale::Msg_Color::ConstPtr& m
 		msgSim_changeShuttleColor.data.push_back(shuttleId);
 		msgSim_changeShuttleColor.data.push_back(Color);
 		pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
-		while(!repSim_changeShuttleColor)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_changeShuttleColor&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_changeShuttleColor = false;
 
 		msgSim_getColor.data = shuttleColorSignal;
 		pubSim_getColor.publish(msgSim_getColor);
-		while(!repSim_getColor)
-	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
+		while(!repSim_getColor&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
 		repSim_getColor = false;
 	}while(valueSim_getColor!=Color);
 }

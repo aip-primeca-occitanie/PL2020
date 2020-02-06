@@ -78,6 +78,8 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_controler_robot4=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras4",10);
 
 	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
+	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
+
 
 	/*** Subscribers ***/
 	//Retour des robots vers la commande
@@ -713,7 +715,7 @@ void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 		OuvrirPince(num_robot);
 		while(PinceEnPosition(num_robot)!=-1){usleep(100000);};
 
-		//ici on considère qu'on a déposé la piècer
+		//ici on considère qu'on a déposé la pièce
 		//coloration, donc
 		Colorer(num_robot,positionB);//le robot a la couleur du produit en memoire, il colore
 		MonterBras(num_robot);
@@ -726,4 +728,13 @@ void Robots::Colorer(int num_robot,int position)
 	msgColor.num_robot=num_robot;
 	msgColor.position=position;
 	pub_colorer.publish(msgColor);
+}
+
+
+void Robots::DoTask(int num_robot, int position, int num_tache)
+{
+	tache_msg.num_robot=num_robot;
+	tache_msg.position=position;
+	tache_msg.num_tache=num_tache;
+	pub_doTask.publish(tache_msg);
 }

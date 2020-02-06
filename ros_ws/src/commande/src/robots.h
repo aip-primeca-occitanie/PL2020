@@ -11,6 +11,8 @@
 #include <robots/MoveRobot.h>
 #include <std_msgs/Int32.h>
 #include <robots/ColorMsg.h>
+#include "robots/DoTaskMsg.h"
+
 
 
 class Robots
@@ -26,6 +28,7 @@ private:
 	ros::Publisher pub_monter1, pub_monter2, pub_monter3, pub_monter4;
 	ros::Publisher pub_controler_robot1, pub_controler_robot2, pub_controler_robot3, pub_controler_robot4;
 	ros::Publisher pub_colorer;
+	ros::Publisher pub_doTask;
 
 	//Subscribers
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
@@ -38,6 +41,7 @@ private:
 	int robotPince[4];
 	int pince[4];
 	robots::ColorMsg msgColor;
+	robots::DoTaskMsg tache_msg;
 
 public:
 	Robots(ros::NodeHandle noeud);
@@ -70,6 +74,7 @@ public:
 	void Colorer(int num_robot, int position);
 
   void DeplacerPiece(int num_robot, int positionA, int positionB);
+	void DoTask(int num_robot, int position, int num_tache);
 };
 
 #endif

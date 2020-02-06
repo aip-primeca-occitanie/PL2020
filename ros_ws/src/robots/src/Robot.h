@@ -17,6 +17,7 @@
 //Messages
 #include <robots/RobotJoints.h>
 #include <robots/MoveRobot.h>
+#include <robots/DoTaskMsg.h>
 #include <robots/ColorMsg.h>
 #include <std_msgs/Int32.h>
 
@@ -25,6 +26,7 @@
 #include <stdlib.h>
 #include <string>
 #include <string.h>
+#include "Poste.h"
 
 
 class Robot
@@ -57,6 +59,8 @@ private:
 	ros::Subscriber planifMonterBras;
 	ros::Subscriber planifControlerRobot;
 	ros::Subscriber sub_colorer;
+	ros::Subscriber sub_doTask;
+
 
 	/** Publishers pour retours **/
 	ros::Publisher pub_pince;
@@ -76,6 +80,10 @@ private:
 	std_msgs::Int32 robotBras;
 	std_msgs::Int32 robotPince;
 	std_msgs::Int32 retour;
+
+	int produit_sur_poste;
+	Poste poste_pos_1;
+	Poste poste_pos_4;
 
 
 public:
@@ -121,6 +129,9 @@ public:
 	//Pour contrôler l'ensemble des mouvements du robot
 	void ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg);
 	void ColorerCallback(const robots::ColorMsg::ConstPtr& msg);
+	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
+
+	void colorerPoste(int produit, string poste);
 };
 
 

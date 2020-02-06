@@ -72,7 +72,6 @@ int main(int argc, char **argv)
 			modif=1;
 			M[3]--;
 			cmd.Stop_PS(21);
-			ROS_INFO("TRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALALALA");
 			M[4]++;
 		}
 
@@ -89,20 +88,14 @@ int main(int argc, char **argv)
 			if (M[5]!=0 && capteur.PSx[24]==1) //orientation des aiguillages pour la boucle principale
 				{
 					M[5]--;
-
+					modif=1;
 					aiguillage.Gauche(1);
 					aiguillage.Gauche(2);
 					aiguillage.Gauche(3);
 					aiguillage.Gauche(10);
+					robot.DoTask(1,4,0);
 					M[6]++;
 				}
-
-
-
-
-
-
-
 
 /*		//t1
 		if(M[1]!=0 && cmd.NavetteStoppeeVide(1)!=0)

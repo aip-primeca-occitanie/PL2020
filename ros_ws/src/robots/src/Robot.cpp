@@ -470,12 +470,49 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 	}
 }
 
-void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)
+void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'est forcement quand on transporte !!
 {
 	if (msg->num_robot==num_robot)
 	{
-		//Colorer le poste ou la navette en position msg->Position
+		if (msg->position==1)
+		{
+			//mettre a jour la mémoire sur la couleur transportée, si on avait rien on prend, si on avait quelquechose on lache
+			//Colorer le poste ou la navette en position 1
+			//c'est cadeau, ce poste s'appelle poste_pos_1.get_nom()
+			int produit_detecte=1; //super fonction qui voit les couleurs
+			poste_pos_1.ajouter_produit(produit_detecte); //a changer en detectant la couleur
+		}
+		if (msg->position==4)
+		{
+			//mettre a jour la mémoire sur la couleur transportée, si on avait rien on prend, si on avait quelquechose on lache
+			//Colorer le poste ou la navette en position 4
+			//c'est cadeau, ce poste s'appelle poste_pos_4.get_nom()
+			int produit_detecte=1; //super fonction qui voit les couleurs
+			poste_pos_4.ajouter_produit(produit_detecte); //a changer en detectant la couleur
+		}
 		ROS_INFO("Je peux pas colorer, Anthony a pas finit de passer la simu sur kinetic");
+	}
+}
+
+void Robot::colorerPoste(int produit, string poste)
+{
+		ROS_INFO("La je veux colorer le poste suite a une tache, ca arrive bientot");
+}
+
+void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
+{
+	if (msg->num_robot==num_robot)
+	{
+		if (msg->position==1)
+		{
+			produit_sur_poste=poste_pos_1.do_task(msg->num_tache);
+			colorerPoste(produit_sur_poste,poste_pos_1.get_nom());
+		}
+		if (msg->position==4)
+		{
+			produit_sur_poste=poste_pos_4.do_task(msg->num_tache);
+			colorerPoste(produit_sur_poste,poste_pos_4.get_nom());
+		}
 	}
 }
 
@@ -485,22 +522,32 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)
 void Robot::init(ros::NodeHandle noeud)
 {
   std::string num_str;
+	std::string nom="Antonin";
+
   switch(num_robot){
 
 	case 1:
 		num_str="1";
+		poste_pos_1.nommer(nom);
+		poste_pos_4.nommer(nom);
 	break;
 
 	case 2:
     num_str="2";
+		poste_pos_1.nommer(nom);
+		poste_pos_4.nommer(nom);
 	break;
 
  	case 3:
 		num_str="3";
+		poste_pos_1.nommer(nom);
+		poste_pos_4.nommer(nom);
 	break;
 
   case 4:
 		num_str="4";
+		poste_pos_1.nommer(nom);
+		poste_pos_4.nommer(nom);
 	break;
 
   default:
@@ -526,6 +573,7 @@ void Robot::init(ros::NodeHandle noeud)
 	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras"+num_str,10,&Robot::MonterBrasCallback,this);
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras"+num_str,10,&Robot::ControlerRobotCallback,this);
 	sub_colorer = noeud.subscribe("/commande/Simulation/Colorer",10,&Robot::ColorerCallback,this);
+	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
 
 
 	//Publishers

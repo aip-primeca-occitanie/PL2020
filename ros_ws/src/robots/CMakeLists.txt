@@ -19,6 +19,7 @@ add_message_files(
    RobotJoints.msg
    MoveRobot.msg
    ColorMsg.msg
+   DoTaskMsg.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -57,18 +58,18 @@ include_directories(
 
 
 
-add_executable(robot1 src/main_robot1.cpp src/Robot.cpp)
+add_executable(robot1 src/main_robot1.cpp src/Robot.cpp src/Poste.cpp)
 target_link_libraries(robot1 ${catkin_LIBRARIES})
 add_dependencies(robot1 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
 
-add_executable(robot2 src/main_robot2.cpp src/Robot.cpp)
+add_executable(robot2 src/main_robot2.cpp src/Robot.cpp src/Poste.cpp)
 target_link_libraries(robot2 ${catkin_LIBRARIES})
 add_dependencies(robot2 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
 
-add_executable(robot3 src/main_robot3.cpp src/Robot.cpp)
+add_executable(robot3 src/main_robot3.cpp src/Robot.cpp src/Poste.cpp)
 target_link_libraries(robot3 ${catkin_LIBRARIES})
 add_dependencies(robot3 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
 
-add_executable(robot4 src/main_robot4.cpp src/Robot.cpp)
+add_executable(robot4 src/main_robot4.cpp src/Robot.cpp src/Poste.cpp)
 target_link_libraries(robot4 ${catkin_LIBRARIES})
 add_dependencies(robot4 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})

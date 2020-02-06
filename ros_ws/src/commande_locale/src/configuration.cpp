@@ -142,8 +142,8 @@ Configuration::~Configuration()
 }
 
 //Faire apparaitre le produit sur la table 2 (est appelé dans UI)
-void Configuration::ProductAddTable(int typeProduct){
-	ROS_INFO("J'aimerais faire apparaitre un produit");
+void Configuration::ProductAddTable(int typeProduct, int poste){
+	ROS_INFO("J'aimerais faire apparaitre un produit de type %d sur le poste %d",typeProduct,poste);
 	client_simRosGetInfo.call(srv_GetInfoVREP);
 	/*std::string ProductName;
 	Product* productPointer;

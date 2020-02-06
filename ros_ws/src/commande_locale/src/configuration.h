@@ -46,13 +46,13 @@ std_msgs::Int32 retourTraitement;
 public:
 	int numberOfProduct;
 	bool activeProduct[7];
-	
+
 	Configuration(vrepController* VREPC);
 	~Configuration();
-	
+
 	bool init(ros::NodeHandle nh, std::string executionPath);
 	void initProduct(std::string pName, int pFirstDestination, int initProductNumber, int pManRSize);
-	void ProductAddTable(int typeProduct);
+	void ProductAddTable(int typeProduct, int poste);
 	int getNbNavettes();
 };
 

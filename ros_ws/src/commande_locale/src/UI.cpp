@@ -9,10 +9,15 @@
 #include "UI.h"
 
 const std::string trackbarname ="Product type";
+const std::string trackbarposte ="Poste a alimenter";
+
 const std::string winname = "Simulation";
 int value = 0;
+int valueposte=0;
 int numberOfProduct = 6;
+int numberOfPost = 8;
 int typeNextShuttle_aux;
+int poste;
 
 
 // Button sizes
@@ -21,7 +26,7 @@ int typeNextShuttle_aux;
 	int playButton_x_size = 110; 	// colum                     	BOUTON PLAY
 	int playButton_y_size = 25; 	// row				BOUTON PLAY
 	int pauseButton_x_size = 110; 	// colum			BOUTON PAUSE
-	int pauseButton_y_size = 25; 	// row				BOUTON PAUSE	
+	int pauseButton_y_size = 25; 	// row				BOUTON PAUSE
 	int shuttleButton_x_size = 110; // colum			BOUTON NAVETTE
 	int shuttleButton_y_size = 25; 	// row				BOUTON NAVETTE
 	int modeButton_x_size = 110; 	// colum			BOUTON MODE
@@ -49,7 +54,7 @@ UI::UI(vrepController* VREPContrl,  Configuration* config)
 	configuration = config;
 }
 
-// On actualise les aiguillages (On dessine des cercles gris, sur lequel on rajoute une droite ou un arc de cercle pour afficher l'etat de l'aiguillage)  
+// On actualise les aiguillages (On dessine des cercles gris, sur lequel on rajoute une droite ou un arc de cercle pour afficher l'etat de l'aiguillage)
 void UI::DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState)
 {
 	circle(imageTot, cv::Point(21+78, 241+570), 	17, 	cv::Scalar(200,200,200), -1); 		//A01
@@ -74,13 +79,13 @@ void UI::DrawSwitchSensorImg(commande_locale::Msg_SensorState SensorState)
 	if(SensorState.DD[4]) line(imageTot, 	cv::Point(629+78, 243+570), 	cv::Point(655+78, 243+570), 	cv::Scalar(0,100,0), 3); 	//A04
 	if(SensorState.DG[4]) ellipse(imageTot, cv::Point(665+78, 220+570),	cv::Size(23,23),0,113,181,	cv::Scalar(0,100,0), 3);
 	if(SensorState.DD[5]) ellipse(imageTot, cv::Point(732+78, 265+570),	cv::Size(23,23),0,284,363,	cv::Scalar(0,100,0), 3);	//A05
-	if(SensorState.DG[5]) line(imageTot, 	cv::Point(738+78, 245+570), 	cv::Point(764+78, 245+570), 	cv::Scalar(0,100,0), 3); 
+	if(SensorState.DG[5]) line(imageTot, 	cv::Point(738+78, 245+570), 	cv::Point(764+78, 245+570), 	cv::Scalar(0,100,0), 3);
 	if(SensorState.DD[6]) line(imageTot, 	cv::Point(1008+78, 226+570), 	cv::Point(1008+78, 253+570), 	cv::Scalar(0,100,0), 3);	//A06
 	if(SensorState.DG[6]) ellipse(imageTot, cv::Point(985+78, 221+570),	cv::Size(23,23),0,83,12,	cv::Scalar(0,100,0), 3);
 	if(SensorState.DD[7]) line(imageTot, 	cv::Point(1008+78, 113+570), 	cv::Point(1008+78, 139+570), 	cv::Scalar(0,100,0), 3); 	//A07
 	if(SensorState.DG[7]) ellipse(imageTot, cv::Point(985+78, 145+570),	cv::Size(23,23),0,271,348,	cv::Scalar(0,100,0), 3);
 	if(SensorState.DD[8]) ellipse(imageTot, cv::Point(733+78, 96+570),	cv::Size(23,23),0,75,3,		cv::Scalar(0,100,0), 3);	//A08
-	if(SensorState.DG[8]) line(imageTot, 	cv::Point(740+78, 121+570), 	cv::Point(764+78, 121+570), 	cv::Scalar(0,100,0), 3); 
+	if(SensorState.DG[8]) line(imageTot, 	cv::Point(740+78, 121+570), 	cv::Point(764+78, 121+570), 	cv::Scalar(0,100,0), 3);
 	if(SensorState.DD[9]) line(imageTot, 	cv::Point(631+78, 121+570), 	cv::Point(659+78, 121+570), 	cv::Scalar(0,100,0), 3); 	//A09
 	if(SensorState.DG[9]) ellipse(imageTot, cv::Point(665+78, 143+570),	cv::Size(23,23),0,184,256,	cv::Scalar(0,100,0), 3);
 	if(SensorState.DD[10]) line(imageTot, 	cv::Point(363+78, 122+570), 	cv::Point(390+78, 122+570), 	cv::Scalar(0,100,0), 3); 	//A10
@@ -167,12 +172,13 @@ void UI::update()
 	// To change the value of the trackbar if the user put a forbiden value
 	if (!configuration->activeProduct[typeNextShuttle_aux]) {
 		std::cout << "Value forbiden"<< std::endl;
-		
+
 		do{
 			typeNextShuttle_aux --;
 		}while(!configuration->activeProduct[typeNextShuttle_aux]);
 		std::cout << "next value available: "<< typeNextShuttle_aux <<std::endl;
 		cv::setTrackbarPos(trackbarname, winname, typeNextShuttle_aux);
+		cv::setTrackbarPos(trackbarposte, winname, poste);
 	}
 
 	if ( modeShuttle == 2 )
@@ -197,16 +203,16 @@ void onMouse(int event, int x, int y, int, void* userdata)
     ui->onMouse_internal(event, x, y);
 }
 
-/* Fonction appellée pour mettre Play ou Pause à la simu 
+/* Fonction appellée pour mettre Play ou Pause à la simu
 et changer l'etat des boutons, en fonction de la position de la souris, contrôle aussi le bouton pour ajouter une plateforme à la simu */
 void UI::onMouse_internal( int event, int x, int y)
 {
-	static vrep_common::simRosStartSimulation srv_StartSimulation;		
+	static vrep_common::simRosStartSimulation srv_StartSimulation;
 	static vrep_common::simRosPauseSimulation srv_PauseSimulation;
 	static vrep_common::simRosLoadModel srv_LoadModel;
 
 	switch(event) {
-		case cv::EVENT_LBUTTONDOWN :   // Event lorsque l'on clique sur le bouton gauche de la souris 
+		case cv::EVENT_LBUTTONDOWN :   // Event lorsque l'on clique sur le bouton gauche de la souris
    		if(y>playButton_y_0 && y < playButton_y_0+playButton_y_size && x>playButton_x_0 && x < playButton_x_0 + playButton_x_size && mode!= 1) {
 					playButton_Down.copyTo(imageTot.rowRange(playButton_y_0,playButton_y_0+playButton_y_size).colRange(playButton_x_0,playButton_x_0+playButton_x_size));
 					pauseButton.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));
@@ -220,7 +226,7 @@ void UI::onMouse_internal( int event, int x, int y)
 					mode = 0; }
 		else if(y>shuttleButton_y_0 && y < shuttleButton_y_0+shuttleButton_y_size && x>shuttleButton_x_0 && x < shuttleButton_x_0 + shuttleButton_x_size && mode!= 0 && modeShuttle !=1 && modeShuttle !=0) {
 					shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
-					configuration->ProductAddTable(typeNextShuttle);//On ajoute un produit sur la table 2
+					configuration->ProductAddTable(typeNextShuttle,poste);//On ajoute un produit sur la table 2
 					}
 
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 0 && mode!=1 )
@@ -231,12 +237,12 @@ void UI::onMouse_internal( int event, int x, int y)
 				std_msgs::Bool modeMsg;
 				modeMsg.data = true;
 				pubStateButton.publish(modeMsg);
-		}		
+		}
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 1 && mode!=1 )
 		{
 				modeManuButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 				modeShuttle = 2;
-				
+
 				std_msgs::Bool modeMsg;
 				modeMsg.data = false;
 				pubStateButton.publish(modeMsg);
@@ -258,8 +264,8 @@ void UI::onMouse_internal( int event, int x, int y)
 				std_msgs::Bool modeMsg;
 				modeMsg.data = true;
 				pubStateButton.publish(modeMsg);
-		}	
-		
+		}
+
 		break;
 
 		case cv::EVENT_MOUSEMOVE :
@@ -295,7 +301,7 @@ void UI::onMouse_internal( int event, int x, int y)
 					modeRandButton_On.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 				else if (modeShuttle == 3 && mode !=1)
 					modeRandButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-	
+
 		break;
 	}
 }
@@ -306,8 +312,13 @@ static void onChangeTrackbar(int, void*){
 	typeNextShuttle_aux = value;
 }
 
+static void onChangeTrackbarposte(int, void*){
+	std::cout << valueposte << std::endl;
+	poste = valueposte;
+}
 
-void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui 
+
+void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 
 // Search of the images for the GUI
 	// 1) Sensor image
@@ -401,11 +412,11 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	// Initialisation of the necessary buttons
 	rectangle(imageTot, cv::Point(75,15+20), cv::Point(1105,533+20),cv::Scalar(100,100,100),2);
 	playButton.copyTo(imageTot.rowRange(playButton_y_0,playButton_y_0+playButton_y_size).colRange(playButton_x_0,playButton_x_0+playButton_x_size));
-	pauseButton_Down.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));	
+	pauseButton_Down.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));
 	shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
 	modeButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 
- 
+
 	// Cadre des produits
 
 	rectangle(imageTot, cv::Point(590-205, 936), cv::Point(590+205, 936-75), cv::Scalar(100,0,100), 2 );
@@ -419,13 +430,15 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	cv::resizeWindow("Simulation",1000,900);
 
 	// Trackbar
+	int testposte = cv::createTrackbar(trackbarposte, "Simulation",&valueposte, numberOfPost, onChangeTrackbarposte);
+	onChangeTrackbarposte( valueposte, 0 );
 	int test = cv::createTrackbar(trackbarname, "Simulation",&value, numberOfProduct, onChangeTrackbar);
 	onChangeTrackbar( value, 0 );
 
 		// Text for the product type of the trackbar
 			//putText(Mat& img, const string& text, Point org, int fontFace, double fontScale, Scalar color, int thickness=1, int lineType=8, bool bottomLeftOrigin=false )
 		cv::putText(imageTot, "Empty", cv::Point(100,25), 2, 0.8, cv::Scalar(0,0,0),1, 8,false );
-	
+
 		if(configuration->activeProduct[1]) cv::putText(imageTot, "A", cv::Point(305,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
 		if(configuration->activeProduct[2]) cv::putText(imageTot, "B", cv::Point(475,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
 		if(configuration->activeProduct[3]) cv::putText(imageTot, "C", cv::Point(645,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
@@ -456,19 +469,19 @@ void UI::close(){
 
 // On ferme la fenetre de Simulation
 bool UI::checkWindow(){
-	int verif= 0; 
-	
+	int verif= 0;
+
 	 try
 	  {
 	    verif = cv::getWindowProperty("Simulation", 0);
 	  }
 	  catch (cv::Exception & e)
-	  {	
+	  {
 		system("clear");
-		std::cout << "-----------------------------------------------------"<< std::endl; 
+		std::cout << "-----------------------------------------------------"<< std::endl;
 		std::cout << "    The simulation window was closed by the user     "<< std::endl;
 		std::cout << "                Good luck with the TER :)            "<< std::endl;
-		std::cout << "-----------------------------------------------------"<< std::endl; 
+		std::cout << "-----------------------------------------------------"<< std::endl;
 		return false;
 	  }
 	return true;
@@ -492,11 +505,9 @@ void UI::NombreDeProduitsCallBack(const std_msgs::Int32::ConstPtr& NbMsg){
 
 void UI::NomProduitsCallBack(const std_msgs::String::ConstPtr& NomMsg){
 
-	std::string ajout = NomMsg->data;	
+	std::string ajout = NomMsg->data;
 	TxtNomProduits += ajout;
 	TxtNomProduits += " ";
 	std::cout << TxtNomProduits << std::endl;
 	cv::putText(imageTot, TxtNomProduits, cv::Point(590-205+5, 966-75+15), 2, 0.5, cv::Scalar(0,0,0), 1, 8, false);
 }
-	
-

@@ -143,8 +143,9 @@ Configuration::~Configuration()
 
 //Faire apparaitre le produit sur la table 2 (est appelé dans UI)
 void Configuration::ProductAddTable(int typeProduct){
+	ROS_INFO("J'aimerais faire apparaitre un produit");
 	client_simRosGetInfo.call(srv_GetInfoVREP);
-	std::string ProductName;
+	/*std::string ProductName;
 	Product* productPointer;
 	bool ok = false;
 	for (iteratorPMap=ProductsMap.begin(); iteratorPMap!=ProductsMap.end(); ++iteratorPMap)	// On parcours l'ensemble de la collection
@@ -158,17 +159,18 @@ void Configuration::ProductAddTable(int typeProduct){
 	}
 	iteratorPMap=ProductsMap.begin();
 	if (ok)
-	{
+	{*/
 		std_msgs::Int32 msgO;
 		msgO.data = typeProduct;
 		pubProductAddTable.publish(msgO);
-	}
+		ROS_INFO("J'ai publish sur pubProductAddTable");
+	//}
 }
 
 // Création de produit
 void Configuration::initProduct(std::string pName, int pFirstDestination, int initProductNumber, int pManRSize)
 {
-	ROS_INFO("Creation Produit %s, first destination = %d, numero produit = %d , taille gamme = %d", pName.c_str(), pFirstDestination,initProductNumber, pManRSize);
+	/*ROS_INFO("Creation Produit %s, first destination = %d, numero produit = %d , taille gamme = %d", pName.c_str(), pFirstDestination,initProductNumber, pManRSize);
 
 	// Création dynamique de l'object product
 	Product* newProduct = new Product(pName,pFirstDestination,initProductNumber, pManRSize);
@@ -177,7 +179,7 @@ void Configuration::initProduct(std::string pName, int pFirstDestination, int in
 	std::pair<std::map<std::string,Product*>::iterator,bool> ret;			// ret permet d'avoir un retour de la fonction insert, il est faux si la key existe dèjà dans la map
 	ret = ProductsMap.insert(std::pair<std::string,Product*>(newProduct->name,newProduct));
 	//ROS_INFO("Product pointer : %p ", newProduct);
-
+	*/
 }
 
 

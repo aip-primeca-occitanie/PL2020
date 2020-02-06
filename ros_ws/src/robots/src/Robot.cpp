@@ -522,32 +522,32 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 void Robot::init(ros::NodeHandle noeud)
 {
   std::string num_str;
-	std::string nom="Antonin";
-
+	std::string nom="Antonin";//A personaliser
+	int numero_poste=1;//a personaliser
   switch(num_robot){
 
 	case 1:
 		num_str="1";
-		poste_pos_1.nommer(nom);
-		poste_pos_4.nommer(nom);
+		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_4.init(noeud,nom,numero_poste);
 	break;
 
 	case 2:
     num_str="2";
-		poste_pos_1.nommer(nom);
-		poste_pos_4.nommer(nom);
+		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_4.init(noeud,nom,numero_poste);
 	break;
 
  	case 3:
 		num_str="3";
-		poste_pos_1.nommer(nom);
-		poste_pos_4.nommer(nom);
+		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_4.init(noeud,nom,numero_poste);
 	break;
 
   case 4:
 		num_str="4";
-		poste_pos_1.nommer(nom);
-		poste_pos_4.nommer(nom);
+		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_4.init(noeud,nom,numero_poste);
 	break;
 
   default:

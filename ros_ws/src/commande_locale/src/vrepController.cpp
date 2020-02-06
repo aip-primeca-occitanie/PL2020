@@ -312,29 +312,29 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	sleep(2);
 
 	// Topic pour V-Rep
-	pubSim_getColor = n.advertise<std_msgs::String>("/sim_ros_interface/services/GetColor",100);
-	subSim_getColor = n.subscribe("/sim_ros_interface/services/response/GetColor",100,&vrepController::simGetColorCallback,this);
+	pubSim_getColor = n.advertise<std_msgs::String>("/sim_ros_interface/services/GetColor/vrep_controller",100);
+	subSim_getColor = n.subscribe("/sim_ros_interface/services/response/GetColor/vrep_controller",100,&vrepController::simGetColorCallback,this);
 
-	pubSim_changeColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/changeColor",100);
-	subSim_changeColor = n.subscribe("/sim_ros_interface/services/response/changeColor",100,&vrepController::simChangeColorCallback,this);
+	pubSim_changeColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/ChangeColor/vrep_controller",100);
+	subSim_changeColor = n.subscribe("/sim_ros_interface/services/response/ChangeColor/vrep_controller",100,&vrepController::simChangeColorCallback,this);
 
-	pubSim_changeShuttleColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/changeShuttleColor",100);
-	subSim_changeShuttleColor = n.subscribe("/sim_ros_interface/services/response/changeShuttleColor",100,&vrepController::simChangeShuttleColorCallback,this);
+	pubSim_changeShuttleColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/ChangeShuttleColor/vrep_controller",100);
+	subSim_changeShuttleColor = n.subscribe("/sim_ros_interface/services/response/ChangeShuttleColor/vrep_controller",100,&vrepController::simChangeShuttleColorCallback,this);
 
-	pubSim_startSimulation = n.advertise<std_msgs::Byte>("/sim_ros_interface/services/StartSimulation",100);
-	subSim_startSimulation = n.subscribe("/sim_ros_interface/services/response/StartSimulation",100,&vrepController::simStartSimulationCallback,this);
+	pubSim_startSimulation = n.advertise<std_msgs::Byte>("/sim_ros_interface/services/StartSimulation/vrep_controller",100);
+	subSim_startSimulation = n.subscribe("/sim_ros_interface/services/response/StartSimulation/vrep_controller",100,&vrepController::simStartSimulationCallback,this);
 
-	pubSim_pauseSimulation = n.advertise<std_msgs::Byte>("/sim_ros_interface/services/PauseSimulation",100);
-	subSim_pauseSimulation = n.subscribe("/sim_ros_interface/services/response/PauseSimulation",100,&vrepController::simPauseSimulationCallback,this);
+	pubSim_pauseSimulation = n.advertise<std_msgs::Byte>("/sim_ros_interface/services/PauseSimulation/vrep_controller",100);
+	subSim_pauseSimulation = n.subscribe("/sim_ros_interface/services/response/PauseSimulation/vrep_controller",100,&vrepController::simPauseSimulationCallback,this);
 
-	pubSim_loadModel = n.advertise<std_msgs::String>("/sim_ros_interface/services/LoadModel",100);
-	subSim_loadModel = n.subscribe("/sim_ros_interface/services/response/LoadModel",100,&vrepController::simLoadModelCallback,this);
+	pubSim_loadModel = n.advertise<std_msgs::String>("/sim_ros_interface/services/LoadModel/vrep_controller",100);
+	subSim_loadModel = n.subscribe("/sim_ros_interface/services/response/LoadModel/vrep_controller",100,&vrepController::simLoadModelCallback,this);
 
-	pubSim_removeModel = n.advertise<std_msgs::Int32>("/sim_ros_interface/services/RemoveModel",100);
-	subSim_removeModel = n.subscribe("/sim_ros_interface/services/response/RemoveModel",100,&vrepController::simRemoveModelCallback,this);
+	pubSim_removeModel = n.advertise<std_msgs::Int32>("/sim_ros_interface/services/RemoveModel/vrep_controller",100);
+	subSim_removeModel = n.subscribe("/sim_ros_interface/services/response/RemoveModel/vrep_controller",100,&vrepController::simRemoveModelCallback,this);
 
-	pubSim_getObjectHandle = n.advertise<std_msgs::String>("/sim_ros_interface/services/GetObjectHandle",100);
-	subSim_getObjectHandle = n.subscribe("/sim_ros_interface/services/response/GetObjectHandle",100,&vrepController::simGetObjectHandleCallback,this);
+	pubSim_getObjectHandle = n.advertise<std_msgs::String>("/sim_ros_interface/services/GetObjectHandle/vrep_controller",100);
+	subSim_getObjectHandle = n.subscribe("/sim_ros_interface/services/response/GetObjectHandle/vrep_controller",100,&vrepController::simGetObjectHandleCallback,this);
 
 	pub_Shuttle_Handle = n.advertise<aiguillages::ExchangeSh>("/commande_locale/New_Shuttle_Handle", 10);
 	DeleteShuttle = n.subscribe("/commande_locale/Delete_Shuttle", 10, &vrepController::deleteShuttleCallBack, this);

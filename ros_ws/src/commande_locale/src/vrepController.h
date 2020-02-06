@@ -16,7 +16,7 @@
 #include <string>
 #include <math.h> 
 #include <std_msgs/Int32.h>
-
+#include <vector>
 #include <vrep_common/simRosLoadModel.h>
 #include <vrep_common/simRosRemoveModel.h>
 #include <vrep_common/simRosGetObjectHandle.h>
@@ -38,8 +38,11 @@
 class vrepController
 {
 	private:
+		int done;
+		ros::Publisher pub_sendHandle;
 		ros::ServiceClient client_simRosLoadModelInit;
 		vrep_common::simRosLoadModel srv_LoadModelInit;
+		std::vector<int> listeHandle;
 
 		ros::ServiceClient client_simRosLoadModel;
 		vrep_common::simRosLoadModel srv_LoadModel;
@@ -74,6 +77,7 @@ class vrepController
 		
 		int nShuttleF;
 		std::string SimulationFileName;
+		std_msgs::Int32 msg_HandletoA10;
 	public:
 		vrepController ();
 		void init(ros::NodeHandle n,std::string executionPath, std::string simulationFileName);

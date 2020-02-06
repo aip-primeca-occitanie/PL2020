@@ -25,7 +25,9 @@ class Configuration
 {
 private:
 
-int maxShuttleNumber;
+int NombreNavettes;
+int nbLoop;
+int deltaLoop;
 vrepController* vrepCAcces;
 
 std::string configFile, logFile;
@@ -37,21 +39,21 @@ ros::ServiceClient client_simRosGetInfo;
 vrep_common::simRosGetInfo srv_GetInfoVREP;
 
 ros::Publisher pubManualProduct;
+ros::Publisher pubProductAddTable;
 
+std_msgs::Int32 retourTraitement;
 
 public:
 	int numberOfProduct;
 	bool activeProduct[7];
 	
-	
 	Configuration(vrepController* VREPC);
 	~Configuration();
 	
 	bool init(ros::NodeHandle nh, std::string executionPath);
-	
 	void initProduct(std::string pName, int pFirstDestination, int initProductNumber, int pManRSize);
-	void ProductAdd(char shuttleLetter, int product);
-	
+	void ProductAddTable(int typeProduct);
+	int getNbNavettes();
 };
 
 

@@ -3,14 +3,15 @@ project(scheduling)
 
 find_package(catkin REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
+  vrep_common
   roscpp
-  std_msgs 
+  std_msgs
   genmsg
   message_generation
-  vrep_common
   shuttles
 )
 
+include_directories(${catkin_INCLUDE_DIRS})
 
 add_message_files(
 	FILES
@@ -18,11 +19,9 @@ add_message_files(
 	)
 
 generate_messages( DEPENDENCIES std_msgs)
-catkin_package( CATKIN_DEPENDS message_runtime) 
+catkin_package( CATKIN_DEPENDS message_runtime)
 
-
-include_directories(${catkin_INCLUDE_DIRS})
-
-add_executable(ordonnancement src/mainScheduling.cpp src/scheduler.cpp src/product.cpp )  
+add_executable(ordonnancement src/mainScheduling.cpp src/scheduler.cpp src/product.cpp )
 target_link_libraries(ordonnancement ${catkin_LIBRARIES})
-add_dependencies(ordonnancement ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
+add_dependencies(ordonnancement ordonnancement_generate_messages_cpp)
+add_dependencies(ordonnancement ${PROJECT_NAME}_gencpp)

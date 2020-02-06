@@ -5,12 +5,13 @@
 
 
 // Constructeur
-Product::Product(std::string productName, int productFirstDestination, int initProductNumber,int productManRangeSize)
+Product::Product(std::string productName, int productFirstDestination, int initProductColor,int productManRangeSize, int initProductNumber)
 {
 	name = productName;
 	firstDestination = productFirstDestination;
-	productNumber = initProductNumber;
+	productColor = initProductColor;
 	manRangeSize = productManRangeSize;
+	productNumber = initProductNumber;
 }
 
 // Destructeur

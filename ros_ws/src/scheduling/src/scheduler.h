@@ -28,12 +28,19 @@ class Scheduler
 {
 private:
 
-int maxShuttleNumber;	
+int nbLoop;
+int deltaLoop;
+int nbNavettes;
 int scheduledLaunchDate[10];
 int numberOfProduct;
 int nextCount;
+int finEnvoi;
+int productNumber;
+int compteur;
 float lastLaunchDate;
+bool tableDispo;
 bool init_var;
+
 std::string nom_produits[100];
 
 std::string configFile, logFile;
@@ -43,7 +50,13 @@ std::map<int,Product*>::iterator iteratorPMap,iteratorPMapOut;
 std::map<int,Product*> ProductsMap; // la clé est le numéro de la phase de lancement
 
 ros::Publisher pubCreateShuttle, pubDelShuttle;
-ros::Subscriber subEndOfProductManufacture,subManualLaunchOfProduct;
+ros::Publisher pubNombreDeProduits;
+ros::Publisher pubNomProduits;
+ros::Publisher pubProductAddTable;
+ros::Publisher pubNbShuttle;
+std_msgs::Int32 msgShuttle;
+ros::Subscriber subEndOfProductManufacture;
+ros::Subscriber subProduitsPris;
 
 ros::ServiceClient client_simRosGetInfo;
 vrep_common::simRosGetInfo srv_GetInfoVREP;
@@ -51,10 +64,7 @@ vrep_common::simRosGetInfo srv_GetInfoVREP;
 ros::ServiceClient client_GetShuttleStatus;
 shuttles::srvGetShuttleStatus srv_GetShuttleStatus;
 
-ros::Publisher pubNombreDeProduits;
-ros::Publisher pubNomProduits;
-
-
+ros::Subscriber sub_DemandeNbrSh;
 
 public:
 	
@@ -63,12 +73,14 @@ public:
 	
 	bool init(ros::NodeHandle nh, std::string executionPath);
 	
-	void initProduct(std::string pName, int pFirstDestination, int initProductNumber, int pManRSize, int order);
+	void initProduct(std::string pName, int pFirstDestination, int initProductColor, int pManRSize, int order);
 
 	void launchNextSchedule();
 	
 	void productOutCallBack(const std_msgs::Int32::ConstPtr& msg);
-	void ManualLaunchCallBack(const std_msgs::Bool::ConstPtr& msg);
+
+	void tableUpdateCallback(const std_msgs::Bool::ConstPtr& msg);
+	void SendNbrShuttleCallback(const std_msgs::Int32::ConstPtr& msg);
 	
 };
 

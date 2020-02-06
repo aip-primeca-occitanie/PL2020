@@ -27,23 +27,17 @@ int typeNextShuttle_aux;
 	int modeButton_x_size = 110; 	// colum			BOUTON MODE
 	int modeButton_y_size = 25; 	// row				BOUTON MODE
 
-	int TERbutton_x_size = 110; 	// colum			BOUTON TER
-	int TERbutton_y_size = 25;  	// row				BOUTON TER
-
 // Button positions
 // Ici on defini la position des differents boutons qui seront present dans la simulation (on defini juste les position et non les boutons mêmes)
 
-	int playButton_x_0 = 400-15; 	// colum			BOUTON PLAY
+	int playButton_x_0 = 465; 	// colum			BOUTON PLAY
 	int playButton_y_0 = 570;	// row				BOUTON PLAY
-	int pauseButton_x_0 = 550-15; 	// colum			BOUTON PAUSE
+	int pauseButton_x_0 = 615; 	// colum			BOUTON PAUSE
 	int pauseButton_y_0 = 570; 	// row				BOUTON PAUSE
-	int shuttleButton_x_0 = 700-15; // colum			BOUTON NAVETTE
-	int shuttleButton_y_0 = 570; 	// row				BOUTON NAVETTE
-	int modeButton_x_0 = 475-15; 	// colum			BOUTON MODE
+	int shuttleButton_x_0 = 615;    // colum			BOUTON NAVETTE
+	int shuttleButton_y_0 = 570+50; // row				BOUTON NAVETTE
+	int modeButton_x_0 = 465; 	// colum			BOUTON MODE
 	int modeButton_y_0 = 570+50; 	// row				BOUTON MODE
-
-	int TERbutton_x_0 = 625-15;	// colum			BOUTON TER
-	int TERbutton_y_0 = 570+50;	// row 				BOUTON TER
 
 // To activate and desactivate the Trackbar positions
 //bool activeProduct[7]= {true, false, false, false, false, false, false};
@@ -226,10 +220,10 @@ void UI::onMouse_internal( int event, int x, int y)
 					mode = 0; }
 		else if(y>shuttleButton_y_0 && y < shuttleButton_y_0+shuttleButton_y_size && x>shuttleButton_x_0 && x < shuttleButton_x_0 + shuttleButton_x_size && mode!= 0 && modeShuttle !=1 && modeShuttle !=0) {
 					shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
-					configuration->ProductAdd('F', typeNextShuttle);
+					configuration->ProductAddTable(typeNextShuttle);//On ajoute un produit sur la table 2
 					}
 
-		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 0 && mode!=1 && modeTER == 0)
+		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 0 && mode!=1 )
 		{
 				modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 				shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
@@ -238,7 +232,7 @@ void UI::onMouse_internal( int event, int x, int y)
 				modeMsg.data = true;
 				pubStateButton.publish(modeMsg);
 		}		
-		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 1 && mode!=1 && modeTER == 0)
+		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 1 && mode!=1 )
 		{
 				modeManuButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 				modeShuttle = 2;
@@ -247,7 +241,7 @@ void UI::onMouse_internal( int event, int x, int y)
 				modeMsg.data = false;
 				pubStateButton.publish(modeMsg);
 		}
-		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 2 && mode!=1 && modeTER == 0)
+		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 2 && mode!=1 )
 		{
 				modeRandButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 				modeShuttle = 3;
@@ -256,7 +250,7 @@ void UI::onMouse_internal( int event, int x, int y)
 				modeMsg.data = false;
 				pubStateButton.publish(modeMsg);
 		}
-		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 3 && mode!=1 && modeTER == 0)
+		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 3 && mode!=1 )
 		{
 				modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 				shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
@@ -264,22 +258,6 @@ void UI::onMouse_internal( int event, int x, int y)
 				std_msgs::Bool modeMsg;
 				modeMsg.data = true;
 				pubStateButton.publish(modeMsg);
-		}
-		else if(y>TERbutton_y_0 && y < TERbutton_y_0+TERbutton_y_size && x>TERbutton_x_0 && x < TERbutton_x_0+TERbutton_x_size && modeTER == 0)
-		{
-				TERbutton_on.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
-				modeTER = 1;
-				std_msgs::Bool modeTERmsg;
-				modeTERmsg.data = true;
-				pubStateTERbutton.publish(modeTERmsg);
-		}
-		else if(y>TERbutton_y_0 && y < TERbutton_y_0+TERbutton_y_size && x>TERbutton_x_0 && x < TERbutton_x_0+TERbutton_x_size && modeTER == 1)
-		{
-				TERbutton.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
-				modeTER = 0;
-				std_msgs::Bool modeTERmsg;
-				modeTERmsg.data = false;
-				pubStateTERbutton.publish(modeTERmsg);
 		}	
 		
 		break;
@@ -317,11 +295,7 @@ void UI::onMouse_internal( int event, int x, int y)
 					modeRandButton_On.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
 				else if (modeShuttle == 3 && mode !=1)
 					modeRandButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-		if(y>TERbutton_y_0 && y < TERbutton_y_0+TERbutton_y_size && x>TERbutton_x_0 && x < TERbutton_x_0+TERbutton_x_size && modeTER == 0)
-					TERbutton_down.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
-				else if (modeTER == 0)
-					TERbutton.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
-			
+	
 		break;
 	}
 }
@@ -350,9 +324,9 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	std::string path_PauseButton_On = ros::package::getPath("commande_locale") + "/img/PauseButton_On.png";
 
 	// 4) Shuttle Button
-	std::string path_ShuttleButton = ros::package::getPath("commande_locale") + "/img/ShuttleButton.png";
-	std::string path_ShuttleButton_Down = ros::package::getPath("commande_locale") + "/img/ShuttleButton_Down.png";
-	std::string path_ShuttleButton_On = ros::package::getPath("commande_locale") + "/img/ShuttleButton_On.png";
+	std::string path_ShuttleButton = ros::package::getPath("commande_locale") + "/img/AddProductButton.png";
+	std::string path_ShuttleButton_Down = ros::package::getPath("commande_locale") + "/img/AddProductButton_Down.png";
+	std::string path_ShuttleButton_On = ros::package::getPath("commande_locale") + "/img/AddProductButton_On.png";
 
 	// 5) Mode Button
 	std::string path_ModeButton = ros::package::getPath("commande_locale") + "/img/ModeButton.png";
@@ -364,10 +338,6 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	std::string path_RandomButton 	= ros::package::getPath("commande_locale") + "/img/RandomButton.png";
 	std::string path_RandomButton_On = ros::package::getPath("commande_locale") + "/img/RandomButton_On.png";
 
-	// 6) TER button
-	std::string path_TERbutton = ros::package::getPath("commande_locale") + "/img/TERbutton.png";
-	std::string path_TERbutton_down = ros::package::getPath("commande_locale") + "/img/TERbutton_down.png";
-	std::string path_TERbutton_on = ros::package::getPath("commande_locale") + "/img/TERbutton_on.png";
 
 
 // Upload of the images to the internal variables
@@ -398,9 +368,6 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	modeRandButton = cv::imread(	path_RandomButton,	CV_LOAD_IMAGE_COLOR);
 	modeRandButton_On = cv::imread(	path_RandomButton_On,	CV_LOAD_IMAGE_COLOR);
 
-	TERbutton = cv::imread(		path_TERbutton,		CV_LOAD_IMAGE_COLOR);
-	TERbutton_down = cv::imread(	path_TERbutton_down,	CV_LOAD_IMAGE_COLOR);
-	TERbutton_on = cv::imread(	path_TERbutton_on,	CV_LOAD_IMAGE_COLOR);
 
 // Check for invalid input in the images
 	if(! imageSensor.data )		{std::cout <<  "Could not open or find the image 'Schema_cellule.png'" << std::endl ;}
@@ -427,9 +394,6 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	if(! modeRandButton.data )	{std::cout <<  "Could not open or find the image 'ModeRandButton.png'" << std::endl ;}
 	if(! modeRandButton_On.data )	{std::cout <<  "Could not open or find the image 'ModeRandButton_On.png'" << std::endl ;}
 
-	if(! TERbutton.data ) 		{std::cout <<  "Could not open or find the image 'TERbutton.png'"<< std::endl ;}
-	if(! TERbutton_down.data ) 		{std::cout <<  "Could not open or find the image 'TERbutton_down.png'"<< std::endl ;}
-	if(! TERbutton_on.data ) 		{std::cout <<  "Could not open or find the image 'TERbutton_on.png'"<< std::endl ;}
 
 	// Initialisation of the sensor background image
 	imageSensor.copyTo(imageTot.rowRange(570,936).colRange(78,1102));
@@ -440,7 +404,7 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	pauseButton_Down.copyTo(imageTot.rowRange(pauseButton_y_0,pauseButton_y_0+pauseButton_y_size).colRange(pauseButton_x_0,pauseButton_x_0+pauseButton_x_size));	
 	shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
 	modeButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-	TERbutton.copyTo(imageTot.rowRange(TERbutton_y_0,TERbutton_y_0+TERbutton_y_size).colRange(TERbutton_x_0,TERbutton_x_0+TERbutton_x_size));
+
  
 	// Cadre des produits
 
@@ -448,23 +412,24 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	cv::putText(imageTot, "Produits a fabriquer :", cv::Point(590-205+5, 936-75+15), 2, 0.5, cv::Scalar(0,0,0), 1, 8, false);
 
 	// Window
-	cv::namedWindow("Simulation", 7);
+	cv::namedWindow("Simulation", 6);
 	cv::startWindowThread();
 	cv::moveWindow("Simulation",0,0);
 	cv::setMouseCallback("Simulation", onMouse,this);
-	
+	cv::resizeWindow("Simulation",1000,900);
 
 	// Trackbar
-	int test = cv::createTrackbar(trackbarname, winname,&value, numberOfProduct, onChangeTrackbar);	
+	int test = cv::createTrackbar(trackbarname, "Simulation",&value, numberOfProduct, onChangeTrackbar);
 	onChangeTrackbar( value, 0 );
+
 		// Text for the product type of the trackbar
 			//putText(Mat& img, const string& text, Point org, int fontFace, double fontScale, Scalar color, int thickness=1, int lineType=8, bool bottomLeftOrigin=false )
-		cv::putText(imageTot, "Empty", cv::Point(90,22), 4, 0.5, cv::Scalar(0,0,0),1, 8,false );
+		cv::putText(imageTot, "Empty", cv::Point(100,25), 2, 0.8, cv::Scalar(0,0,0),1, 8,false );
 	
-		if(configuration->activeProduct[1]) cv::putText(imageTot, "A", cv::Point(286,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
-		if(configuration->activeProduct[2]) cv::putText(imageTot, "B", cv::Point(460,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
-		if(configuration->activeProduct[3]) cv::putText(imageTot, "C", cv::Point(634,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
-		if(configuration->activeProduct[4]) cv::putText(imageTot, "D", cv::Point(807,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
+		if(configuration->activeProduct[1]) cv::putText(imageTot, "A", cv::Point(305,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
+		if(configuration->activeProduct[2]) cv::putText(imageTot, "B", cv::Point(475,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
+		if(configuration->activeProduct[3]) cv::putText(imageTot, "C", cv::Point(645,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
+		if(configuration->activeProduct[4]) cv::putText(imageTot, "D", cv::Point(815,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
 		if(configuration->activeProduct[5]) cv::putText(imageTot, "E", cv::Point(982,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
 		if(configuration->activeProduct[6]) cv::putText(imageTot, "F", cv::Point(1155,25), 2, 0.8, cv::Scalar(0,0,0), 1, 8,false );
 
@@ -473,11 +438,9 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	image_transport::ImageTransport it(nh);
 	subImage = it.subscribe("vrep/VisionSensorData", 1, &UI::getSimuStream, this);
 	pubStateButton = nh.advertise<std_msgs::Bool>("/ordonnancement/On_Off",10);
-	pubStateTERbutton = nh.advertise<std_msgs::Bool>("/ordonnancement/TER_on_off",10);
 
 	mode = 0; // Mode 0 : Pause - Mode 1 : Play
 	modeShuttle = 0;
-	modeTER = 0;
 
 	TxtNomProduits = "Liste des produits a faire : ";
 

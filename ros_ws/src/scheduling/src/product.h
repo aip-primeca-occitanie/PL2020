@@ -13,10 +13,11 @@ public:
 	
 	std::string name;
 	int firstDestination;
-	int productNumber;
+	int productColor;
 	int manRangeSize;
+	int productNumber;
 
-	Product(std::string productName, int productFirstDestination, int initProductNumber,int productManRangeSize);
+	Product(std::string productName, int productFirstDestination, int initProductColor,int productManRangeSize, int initProductNumber);
 	~Product();
 
 };

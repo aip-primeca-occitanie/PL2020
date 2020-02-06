@@ -10,7 +10,6 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>vrep_common</build_depend>
   <build_depend>shuttles</build_depend>
   <build_depend>message_generation</build_depend>
   <build_depend>aiguillages</build_depend>

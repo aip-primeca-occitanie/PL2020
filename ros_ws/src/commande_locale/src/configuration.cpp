@@ -20,7 +20,7 @@ Configuration::~Configuration()
 	delete loop_rate;
 }
 
-// Initialisation de l'objet 
+// Initialisation de l'objet
 bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 {
 	// Utilisation du topic GetTime de VREP
@@ -29,7 +29,7 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 	repSim_GetTime = false;
 	valueSim_GetTime=0;
 
-	// Publishers Initialisation 
+	// Publishers Initialisation
 	pubManualProduct = nh.advertise<std_msgs::Bool>("/scheduling/ManualLaunch",10);
 
 	// Récupération du chemin vers le Working_Folder
@@ -44,7 +44,7 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 	std::string Working_Folder = executionPath.substr(0,pos+2);
 	ROS_INFO ("$%s$", Working_Folder.c_str()) ;
 
-		
+
 	//Initialisation des produits à l'aide du fichier de configuration
 
 		//Définition du chemin du fichier de config et log
@@ -52,7 +52,7 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 	logFile = Working_Folder + "/Statistic.txt";
 
 	std::ifstream streamConfigFile(configFile.c_str(), std::ios::in);
-		
+
 	if (streamConfigFile)
 	{
 		std::string pNameFF,destinationPart,maxShuttlePart,contents;
@@ -76,28 +76,28 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 
 		//Configuration temps entre lancement
 		std::getline(streamConfigFile,contents);
-		
+
 		while (std::getline(streamConfigFile, contents))
 			{
 
 			//ROS_INFO("%s",contents.c_str())	;
 			std::size_t pos2 = contents.find(":");
 			std::size_t pos3 = contents.find_last_of(":");
-			
+
 			pNameFF = contents.substr(0,pos2);
 			ROS_INFO("Product %s",pNameFF.c_str());
 			destinationPart = contents.substr(pos2+1,pos3-pos2-1);
-			
+
 			int destination[10];
 			int jobTime[10];
 			int manRSize = 0; //manufacturing range size of the product = number of operation
 
-			char * cstr2 = new char [destinationPart.length()+1]; 
+			char * cstr2 = new char [destinationPart.length()+1];
 			std::strcpy (cstr2, destinationPart.c_str());	// création objet cstring
 
 			// cstr now contains a c-string copy of str
 			int n2 = 0; //compteur sur les destinations
-			
+
 
 			char * p2 = std::strtok (cstr2," ");
 			while (p2!=NULL)
@@ -114,14 +114,14 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 
 			char charName;
 			charName = char(pNameFF.c_str()[0]-16);
-			
+
 			int index = atoi(&charName) ;
 			int pNumber = index * 10 ;
 			activeProduct[index] = true;
-			
+
 			initProduct(pNameFF,destination[0], pNumber, manRSize);
 			numberOfProduct++;
-		
+
 		}
 		ROS_INFO("Number of Product = %d", numberOfProduct);
 		iteratorPMap = ProductsMap.begin();
@@ -146,7 +146,11 @@ void Configuration::ProductAdd(char shuttleLetter, int typeNextShuttle){
 
 	std_msgs::Byte msgGetTime;
 	pubSim_GetTime.publish(msgGetTime);
-	while(!repSim_GetTime) loop_rate->sleep();
+	while(!repSim_GetTime)
+	{
+		ros::spinOnce();
+		loop_rate->sleep();
+	}
 	repSim_GetTime=false;
 
 	float time=valueSim_GetTime;
@@ -179,13 +183,13 @@ void Configuration::ProductAdd(char shuttleLetter, int typeNextShuttle){
 			std::ofstream StatsFile(logFile.c_str(), std::ios::out | std::ios::app);
 			if(StatsFile)  // si l'ouverture a réussi...
 				{
-		
+
 				//ROS_INFO("Statistic.txt file ok");
 				char logLine[1000];
-				// Construction Ligne avec notamment la date de lancement 
+				// Construction Ligne avec notamment la date de lancement
 				sprintf(logLine, "Produit %s lance a temps Vrep = %f s\n",ProductName.c_str(), time);
 				ROS_INFO("Produit %s lance a temps Vrep = %f s\n",ProductName.c_str(), time);
-				StatsFile << logLine; // Ecriture dans le fichier 
+				StatsFile << logLine; // Ecriture dans le fichier
 				StatsFile.close();  // on referme le fichier Statistic.txt
 
 				}
@@ -194,23 +198,23 @@ void Configuration::ProductAdd(char shuttleLetter, int typeNextShuttle){
 			}
 		else ROS_ERROR("Probleme Configuration Commande Locale :: Valeur retourné par la trackbar non conforme !!!! " ) ;
 		}
-	
+
 	if (typeNextShuttle == 0)
 		{
-		
+
 		int handle = vrepCAcces->LoadShuttle(shuttleLetter,0,0);
 
 		//ECRITURE LOG FILE///////////////////////////////////////////////////////////////////////////
 		std::ofstream StatsFile(logFile.c_str(), std::ios::out | std::ios::app);
 		if(StatsFile)  // si l'ouverture a réussi...
 			{
-		
+
 			//ROS_INFO("Statistic.txt file ok");
 			char logLine[1000];
-			// Construction Ligne avec notamment la date de lancement 
+			// Construction Ligne avec notamment la date de lancement
 			sprintf(logLine, "Navette vide lance a temps Vrep = %f s\n", time);
 			ROS_INFO("Navette vide lance a temps Vrep = %f s\n", time);
-			StatsFile << logLine; // Ecriture dans le fichier 
+			StatsFile << logLine; // Ecriture dans le fichier
 			StatsFile.close();  // on referme le fichier Statistic.txt
 
 			}
@@ -219,7 +223,7 @@ void Configuration::ProductAdd(char shuttleLetter, int typeNextShuttle){
 
 		}
 
-	
+
 	if (typeNextShuttle == -1)
 		{
 
@@ -233,25 +237,25 @@ void Configuration::ProductAdd(char shuttleLetter, int typeNextShuttle){
 		firstDestination = productPointer->firstDestination;
 		int product  = productPointer->productNumber;
 		iteratorPMap = ProductsMap.begin();
-		
+
 		int handle = vrepCAcces->LoadShuttle(shuttleLetter,product,firstDestination);
 		//ECRITURE LOG FILE///////////////////////////////////////////////////////////////////////////
 		std::ofstream StatsFile(logFile.c_str(), std::ios::out | std::ios::app);
 		if(StatsFile)  // si l'ouverture a réussi...
 			{
-		
+
 			//ROS_INFO("Statistic.txt file ok");
 			char logLine[1000];
-			// Construction Ligne avec notamment la date de lancement 
+			// Construction Ligne avec notamment la date de lancement
 			sprintf(logLine, "Produit %s lance a temps Vrep = %f s\n",ProductName.c_str(), time);
 			ROS_INFO("Produit %s lance a temps Vrep = %f s\n",ProductName.c_str(), time);
-			StatsFile << logLine; // Ecriture dans le fichier 
+			StatsFile << logLine; // Ecriture dans le fichier
 			StatsFile.close();  // on referme le fichier Statistic.txt
 
 			}
 		else ROS_ERROR("Impossible de creer ou ouvrir le fichier Statistic.txt !");
 		/////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 		}
 
 
@@ -279,10 +283,6 @@ void Configuration::initProduct(std::string pName, int pFirstDestination, int in
 
 	if (ret.second==false)	// Si un produit avec le même nom existe dèjà, celui-ci n'est pas ajouté à la collection
 	{
-    		ROS_WARN("commande_locale/config : Un produit de ce nom existe deja ! (%s) ", newProduct->name.c_str()); 
-  	} 
-} 
-
-
-
-	
+    		ROS_WARN("commande_locale/config : Un produit de ce nom existe deja ! (%s) ", newProduct->name.c_str());
+  	}
+}

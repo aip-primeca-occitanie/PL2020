@@ -301,11 +301,11 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	}
 	if(pos<0) ROS_ERROR("pos negative !!!");
 
-	std::string VRepPath = executionPath.substr(0,pos+2)+ "V-Rep";
+	std::string VRepPath = executionPath.substr(0,pos+2)+ "CoppeliaSim";
 
 
 	char final_command[1000];
-	sprintf(final_command, "cd %s &&(./vrep.sh -h ../sim/%s.ttt &)", VRepPath.c_str(), simulationFileName.c_str());
+	sprintf(final_command, "cd %s &&(./coppeliaSim.sh -h ../sim/%s.ttt &)", VRepPath.c_str(), simulationFileName.c_str());
 	system(final_command); // On execute VREP sans afficher la fenetre
 
 	//Launch of the different services

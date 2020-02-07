@@ -2,6 +2,7 @@
 
 #include <ros/ros.h>
 #include "configuration.h"
+#include <unistd.h>
 
 // Construteur
 Configuration::Configuration(vrepController* VREPC)
@@ -24,8 +25,8 @@ Configuration::~Configuration()
 bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 {
 	// Utilisation du topic GetTime de VREP
-	pubSim_GetTime = nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/GetTime/config",100);
-	subSim_GetTime = nh.subscribe("/sim_ros_interface/services/response/GetTime/config",100,&Configuration::SimGetTimeCallback,this);
+	pubSim_GetTime = nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/config/GetTime",100);
+	subSim_GetTime = nh.subscribe("/sim_ros_interface/services/response/config/GetTime",100,&Configuration::SimGetTimeCallback,this);
 	repSim_GetTime = false;
 	valueSim_GetTime=0;
 
@@ -130,6 +131,9 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 
 	}
 	else ROS_ERROR("Impossible d'ouvrir le fichier ProductConfiguration.txt !");
+
+	sleep(2);
+
 	return false;
 }
 

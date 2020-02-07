@@ -23,7 +23,7 @@ inOutController::inOutController(UI* usrInt, vrepController* vrepSA, Configurati
 // Fonction Callback pour les capteurs sur les rails
 void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 {
-    for(int i=1;i<=10;i++) SensorState.CP[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
+	for(int i=1;i<=10;i++) SensorState.CP[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
 	userInterface->DrawRailSensorImg(SensorState);
 	planifRailSensorState.publish(SensorState);
 }
@@ -160,4 +160,6 @@ void inOutController::init(ros::NodeHandle nh)
 	// Initialisation des capteurs des Ergots
 	for(int i=1;i<9;i++) SensorState.CPI[i]=0;
  	userInterface->DrawStationSensorImg(SensorState);
+
+	sleep(2);
 }

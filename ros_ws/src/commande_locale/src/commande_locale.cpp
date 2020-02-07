@@ -15,49 +15,46 @@ using namespace std;
 #include "UI.h"
 #include "inOutController.h"
 #include "configuration.h"
-
+#include <unistd.h>
 
 #include <ros/ros.h>
 
 int main(int argc, char **argv)
 {	
-			//Initialisation du noeud ROS
-			ros::init(argc, argv, "commande_locale");
-			ros::NodeHandle nh;
-			
-			ROS_INFO("Simulation file: %s \n", argv[1]);
+	//Initialisation du noeud ROS
+	ros::init(argc, argv, "commande_locale");
+	ros::NodeHandle nh;
+	
+	ROS_INFO("Simulation file: %s \n", argv[1]);
 
-			
-			// VREP CONTROLLER
-			vrepController VREPController;	
-			VREPController.init(nh,argv[0], argv[1]);
-			
-			// CONFIGURATION
-			Configuration config(&VREPController);
-			config.init(nh, argv[0]);
+	// VREP CONTROLLER
+	vrepController VREPController;	
+	VREPController.init(nh,argv[0], argv[1]);
+	
+	// CONFIGURATION
+	Configuration config(&VREPController);
+	config.init(nh, argv[0]);
 
-			// USER INTERFACE
-			UI userInterface(&VREPController,&config);
-			userInterface.init(nh);
+	// USER INTERFACE
+	UI userInterface(&VREPController,&config);
+	userInterface.init(nh);
 
-			// IN & OUT CONTROLLER
-			inOutController IOController(&userInterface, &VREPController, &config);
-			IOController.init(nh);
+	// IN & OUT CONTROLLER
+	inOutController IOController(&userInterface, &VREPController, &config);
+	IOController.init(nh);
 
-			// Demarrage de la simu pour avoir la premiere image
-			VREPController.play();
+	cout << "Pause envoyée" << endl;
+	VREPController.pause();
+	// Pause pour laisser à l'utilisateur le soin de lancer la simu avec le boutton Play
 
-			// Pause pour laisser à l'utilisateur le soin de lancer la simu avec le boutton Play
-			VREPController.pause();
-
-			ros::Rate loop_rate(30);
-			while (ros::ok()) // Tant que ROS est actif,
-			{
-				ros::spinOnce(); // on lance les callback correspondant aux messages entrants.
-				loop_rate.sleep();
-			}				
-				
-			userInterface.close(); // Si Ctrl+C -> On ferme la fenetre de l'UI et on quitte la simulation
-			VREPController.close();
-			return 0;
+	ros::Rate loop_rate(30);
+	while (ros::ok()) // Tant que ROS est actif,
+	{
+		ros::spinOnce(); // on lance les callback correspondant aux messages entrants.
+		loop_rate.sleep();
+	}				
+		
+	userInterface.close(); // Si Ctrl+C -> On ferme la fenetre de l'UI et on quitte la simulation
+	VREPController.close();
+	return 0;
 }

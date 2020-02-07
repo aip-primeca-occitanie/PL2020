@@ -25,7 +25,7 @@
 #include <scheduling/Msg_LoadShuttle.h>
 
 #include <std_msgs/Int32.h>
-
+#include <unistd.h>
 
 class inOutController
 {

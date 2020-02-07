@@ -22,8 +22,8 @@ Scheduler::Scheduler()
 // Initialisation de l'objet
 bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 {
-	pubSim_GetTime = nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/GetTime/scheduler", 100);
-	subSim_GetTime = nh.subscribe("/sim_ros_interface/services/response/GetTime/scheduler", 100, &Scheduler::SimGetTimeCallback, this);
+	pubSim_GetTime = nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/scheduler/GetTime", 100);
+	subSim_GetTime = nh.subscribe("/sim_ros_interface/services/response/scheduler/GetTime", 100, &Scheduler::SimGetTimeCallback, this);
 	repSim_GetTime = false;
 
 	// Services Initialisation

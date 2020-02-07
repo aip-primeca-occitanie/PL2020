@@ -639,17 +639,17 @@ void Robot::init(ros::NodeHandle noeud)
 	}
 
 	// Topic pour V-Rep
-	pubSim_getObjectHandle = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/GetObjectHandle/robots",100);
-	subSim_getObjectHandle = noeud.subscribe("/sim_ros_interface/services/response/GetObjectHandle/robots",100,&Robot::simGetObjectHandleCallback,this);
+	pubSim_getObjectHandle = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robots/GetObjectHandle",100);
+	subSim_getObjectHandle = noeud.subscribe("/sim_ros_interface/services/response/robots/GetObjectHandle",100,&Robot::simGetObjectHandleCallback,this);
 
-	pubSim_setJointState = noeud.advertise<std_msgs::Float32MultiArray>("/sim_ros_interface/services/SetJointState/robots",100);
-	subSim_setJointState = noeud.subscribe("/sim_ros_interface/services/response/SetJointState/robots",100,&Robot::simSetJointStateCallback,this);
+	pubSim_setJointState = noeud.advertise<std_msgs::Float32MultiArray>("/sim_ros_interface/services/robots/SetJointState",100);
+	subSim_setJointState = noeud.subscribe("/sim_ros_interface/services/response/robots/SetJointState",100,&Robot::simSetJointStateCallback,this);
 
-	pubSim_getJointState = noeud.advertise<std_msgs::Int32>("/sim_ros_interface/services/GetJointState/robots",100);
-	subSim_getJointState = noeud.subscribe("/sim_ros_interface/services/response/GetJointState/robots",100,&Robot::simGetJointStateCallback,this);
+	pubSim_getJointState = noeud.advertise<std_msgs::Int32>("/sim_ros_interface/services/robots/GetJointState",100);
+	subSim_getJointState = noeud.subscribe("/sim_ros_interface/services/response/robots/GetJointState",100,&Robot::simGetJointStateCallback,this);
 
-	pubSim_getTime = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/GetTime/robots",100);
-	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/GetTime/robots",100,&Robot::simGetTimeCallback,this);
+	pubSim_getTime = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/robots/GetTime",100);
+	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/robots/GetTime",100,&Robot::simGetTimeCallback,this);
 
 
 	//Subscribers

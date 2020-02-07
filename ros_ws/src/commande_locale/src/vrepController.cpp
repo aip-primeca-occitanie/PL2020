@@ -341,7 +341,7 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	ChangeColor = n.subscribe("/commande_locale/Change_Color", 10, &vrepController::ColorCallBack, this);
 
 
-	sleep(2);
+	sleep(1);
 }
 
 void vrepController::setSimulationFile(std::string fileName){

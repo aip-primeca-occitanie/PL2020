@@ -485,7 +485,7 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 	subNombreDeProduits = nh.subscribe("/ordonnancement/NombreDeProduits",1,&UI::NombreDeProduitsCallBack,this);
 	subNomProduits = nh.subscribe("/ordonnancement/NomProduits",100,&UI::NomProduitsCallBack,this);
 
-	sleep(2);
+	sleep(1);
 }
 
 

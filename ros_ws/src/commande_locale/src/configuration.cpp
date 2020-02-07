@@ -132,7 +132,7 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 	}
 	else ROS_ERROR("Impossible d'ouvrir le fichier ProductConfiguration.txt !");
 
-	sleep(2);
+	sleep(1);
 
 	return false;
 }

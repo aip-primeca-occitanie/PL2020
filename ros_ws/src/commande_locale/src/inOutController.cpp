@@ -12,9 +12,8 @@
 
 
 // inOutController doit pouvoir actualiser l'UI à chaque actualisation de capteurs
-inOutController::inOutController(UI* usrInt, vrepController* vrepSA, Configuration* config)
+inOutController::inOutController(vrepController* vrepSA, Configuration* config)
 {
-	userInterface = usrInt;
 	vrepServiceAcces = vrepSA;
 	configuration = config;
 }
@@ -24,7 +23,6 @@ inOutController::inOutController(UI* usrInt, vrepController* vrepSA, Configurati
 void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 {
 	for(int i=1;i<=10;i++) SensorState.CP[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
-	userInterface->DrawRailSensorImg(SensorState);
 	planifRailSensorState.publish(SensorState);
 }
 
@@ -32,7 +30,6 @@ void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 void inOutController::SensorCallbackStop(const std_msgs::Int32::ConstPtr& msg)
 {
     for(int i=1;i<=24;i++) SensorState.PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
-    userInterface->DrawStopSensorImg(SensorState);
     planifRailSensorState.publish(SensorState);
 }
 
@@ -43,7 +40,6 @@ void inOutController::SensorCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 		SensorState.DD[i] = (msg->data & (int32_t)pow(2,2*i-2)) > 0;
 		SensorState.DG[i] = (msg->data & (int32_t)pow(2,2*i-1)) > 0;
 	}
-	userInterface->DrawSwitchSensorImg(SensorState);
 	planifRailSensorState.publish(SensorState);
 }
 
@@ -125,7 +121,6 @@ void inOutController::StatePinCallBack(const commande_locale::Msg_PinControl::Co
 
     for(int i=1;i<=8;i++) SensorState.CPI[i] = (PinOn.data & (int32_t)pow(2,i-1)) > 0;
    
-    userInterface->DrawStationSensorImg(SensorState);
     planifRailSensorState.publish(SensorState);
 
 }
@@ -159,7 +154,6 @@ void inOutController::init(ros::NodeHandle nh)
 	
 	// Initialisation des capteurs des Ergots
 	for(int i=1;i<9;i++) SensorState.CPI[i]=0;
- 	userInterface->DrawStationSensorImg(SensorState);
 
-	sleep(2);
+	sleep(1);
 }

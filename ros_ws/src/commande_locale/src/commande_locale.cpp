@@ -12,10 +12,10 @@
 using namespace std; 
 
 #include "vrepController.h"  
-#include "UI.h"
 #include "inOutController.h"
 #include "configuration.h"
 #include <unistd.h>
+#include <thread>
 
 #include <ros/ros.h>
 
@@ -35,26 +35,54 @@ int main(int argc, char **argv)
 	Configuration config(&VREPController);
 	config.init(nh, argv[0]);
 
-	// USER INTERFACE
-	UI userInterface(&VREPController,&config);
-	userInterface.init(nh);
-
 	// IN & OUT CONTROLLER
-	inOutController IOController(&userInterface, &VREPController, &config);
+	inOutController IOController(&VREPController, &config);
 	IOController.init(nh);
 
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();
 	// Pause pour laisser à l'utilisateur le soin de lancer la simu avec le boutton Play
 
-	ros::Rate loop_rate(30);
-	while (ros::ok()) // Tant que ROS est actif,
+	int choix=0;
+	while(ros::ok())
 	{
-		ros::spinOnce(); // on lance les callback correspondant aux messages entrants.
-		loop_rate.sleep();
-	}				
+		cout << endl << endl << endl;
+		cout << "Que voulez faire ?" 	<< endl <<
+			"	1- Ajouter un produit" << endl << 
+			"	2- Pause simu" 	<< endl <<
+			"	3- Play simu" 		<< endl <<
+			"	4- Changer de mode"	<< endl;
+		cout << "Choix : ";
+		cin >> choix;
+		cout << endl;
+		switch(choix)
+		{
+			case 1:
+				cout << "ajout de produit" << endl;
+				//configuration->ProductAddTable(trucs);
+				break;
+
+			case 2:
+				cout << "Mise en pause de la simu" << endl;
+				VREPController.pause();
+				break;
+
+			case 3:
+				cout << "Mise en Play de la simu" << endl;
+				VREPController.play();
+				break;
+
+			case 4:
+				cout << "On change de mode" << endl;
+				break;
+
+			default:
+				cout << "mauvais choix .." << endl;
+				break;
+		}
+	}
+				
 		
-	userInterface.close(); // Si Ctrl+C -> On ferme la fenetre de l'UI et on quitte la simulation
 	VREPController.close();
 	return 0;
 }

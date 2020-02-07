@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(commande_locale)
 
-find_package(catkin REQUIRED)
+add_compile_options(-std=c++11)
+
 find_package(catkin REQUIRED COMPONENTS
-  vrep_common
+	roscpp
 	std_msgs
 	sensor_msgs
 	image_transport
-	cv_bridge
+	cv_bridge 
 	genmsg
 	message_generation
 	shuttles

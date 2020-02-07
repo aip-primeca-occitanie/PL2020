@@ -13,6 +13,7 @@
 #include <string>
 #include <math.h>
 #include <vector>
+#include <unistd.h>
 
 // Image Streaming
 #include <image_transport/image_transport.h>

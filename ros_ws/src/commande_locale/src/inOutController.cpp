@@ -12,9 +12,8 @@
 
 
 // inOutController doit pouvoir actualiser l'UI à chaque actualisation de capteurs
-inOutController::inOutController(UI* usrInt, vrepController* vrepSA, Configuration* config)
+inOutController::inOutController(vrepController* vrepSA, Configuration* config)
 {
-	userInterface = usrInt;
 	vrepServiceAcces = vrepSA;
 	configuration = config;
 }
@@ -23,8 +22,7 @@ inOutController::inOutController(UI* usrInt, vrepController* vrepSA, Configurati
 // Fonction Callback pour les capteurs sur les rails
 void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 {
-    for(int i=1;i<=10;i++) SensorState.CP[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
-	userInterface->DrawRailSensorImg(SensorState);
+	for(int i=1;i<=10;i++) SensorState.CP[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
 	planifRailSensorState.publish(SensorState);
 }
 
@@ -32,7 +30,6 @@ void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 void inOutController::SensorCallbackStop(const std_msgs::Int32::ConstPtr& msg)
 {
     for(int i=1;i<=24;i++) SensorState.PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
-    userInterface->DrawStopSensorImg(SensorState);
     planifRailSensorState.publish(SensorState);
 }
 
@@ -43,7 +40,6 @@ void inOutController::SensorCallbackSwitch(const std_msgs::Int32::ConstPtr& msg)
 		SensorState.DD[i] = (msg->data & (int32_t)pow(2,2*i-2)) > 0;
 		SensorState.DG[i] = (msg->data & (int32_t)pow(2,2*i-1)) > 0;
 	}
-	userInterface->DrawSwitchSensorImg(SensorState);
 	planifRailSensorState.publish(SensorState);
 }
 
@@ -125,7 +121,6 @@ void inOutController::StatePinCallBack(const commande_locale::Msg_PinControl::Co
 
     for(int i=1;i<=8;i++) SensorState.CPI[i] = (PinOn.data & (int32_t)pow(2,i-1)) > 0;
    
-    userInterface->DrawStationSensorImg(SensorState);
     planifRailSensorState.publish(SensorState);
 
 }
@@ -150,14 +145,15 @@ void inOutController::init(ros::NodeHandle nh)
 	subScheduler = nh.subscribe("/scheduling/NextProduct",10,&inOutController::SchedulerNextShuttleCallback,this);
 
 	// Publishers
-	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerRight", 1);
-	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerLeft", 1);
-	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/commande_locale/SwitchControllerLock", 1);
-	VREPStopController = nh.advertise<std_msgs::Int32>("/commande_locale/StopController", 1);
-	VREPGoController = nh.advertise<std_msgs::Int32>("/commande_locale/GoController", 1);
+	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerRight", 1);
+	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLeft", 1);
+	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLock", 1);
+	VREPStopController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/StopController", 1);
+	VREPGoController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/GoController", 1);
 	planifRailSensorState = nh.advertise<commande_locale::Msg_SensorState>("/commande/Simulation/Capteurs", 1);
 	
 	// Initialisation des capteurs des Ergots
 	for(int i=1;i<9;i++) SensorState.CPI[i]=0;
- 	userInterface->DrawStationSensorImg(SensorState);
+
+	sleep(1);
 }

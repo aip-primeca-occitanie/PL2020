@@ -20,13 +20,18 @@ Scheduler::Scheduler()
 	for(int i=0; i<100; i++) {
 		nom_produits[i]= "NULL";
 	}
+
+	loop_rate = new ros::Rate(25);
 }
 
-// Initialisation de l'objet 
+// Initialisation de l'objet
 bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 {
+	pubSim_GetTime = nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/scheduler/GetTime", 100);
+	subSim_GetTime = nh.subscribe("/sim_ros_interface/services/response/scheduler/GetTime", 100, &Scheduler::SimGetTimeCallback, this);
+	repSim_GetTime = false;
+
 	// Services Initialisation
-	client_simRosGetInfo = nh.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 	client_GetShuttleStatus = nh.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
 
 	// Subscribers Initialisation
@@ -56,7 +61,7 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 	std::string Working_Folder = executionPath.substr(0,pos+2);
 	ROS_INFO ("$%s$", Working_Folder.c_str()) ;
 
-	
+
 	//Initialisation des produits à l'aide du fichier de configuration
 
 	//Définition du chemin du fichier de config et log
@@ -64,19 +69,19 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 	logFile = Working_Folder + "/Statistic.txt";
 
 	std::ifstream streamConfigFile(configFile.c_str(), std::ios::in); 	// Ouverture en lecture seule du fichier de configuration
-	
+
 	// Pour comprendre la suite de la lecture du fichier, il peut etre utile de se référer à http://www.cplusplus.com/reference/iolibrary/
-	
+
 	if (streamConfigFile)	//Si l'ouverture à reussi
 	{
 		std::string pNameFF,destinationPart,launchDatePart,jobTimePart,nbLoopPos,contents,deltaLoopPos,nbNavettesPos; // string servant à l'extraction d'information
 
 		//saut des lignes d'entêtes, repèrage du start (on passe toutes les lignes tant que le mot Start n'y figure pas)
-	
+
 		while(1)
 		{
 			std::getline(streamConfigFile,contents);
-			std::size_t found = contents.find("Start"); 
+			std::size_t found = contents.find("Start");
   			if (found!=std::string::npos)
 			{
 				break;
@@ -84,52 +89,52 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 		}
 
 		//Configuration nombre de navettes
-	
+
 		std::getline(streamConfigFile,contents);
-		std::size_t pos11 = contents.find(":");   // repérage caractère ':' 
+		std::size_t pos11 = contents.find(":");   // repérage caractère ':'
 		nbNavettesPos = contents.substr(pos11+1); // on récupère le string qui se trouve après ':'
 		nbNavettes = atoi( nbNavettesPos.c_str()); // atoi = conversion vers integer !
-		
+
 		msgShuttle.data = nbNavettes;
 		pubNbShuttle.publish(msgShuttle);
-		ROS_INFO("nbNavettes = %d",nbNavettes);	
-	
+		ROS_INFO("nbNavettes = %d",nbNavettes);
+
 		//Configuration nombre de boucle
-	
+
 		std::getline(streamConfigFile,contents);
-		std::size_t pos0 = contents.find(":");   // repérage caractère ':' 
+		std::size_t pos0 = contents.find(":");   // repérage caractère ':'
 		nbLoopPos = contents.substr(pos0+1); // on récupère le string qui se trouve après ':'
 		nbLoop = atoi( nbLoopPos.c_str()); // atoi = conversion vers integer !
 		ROS_INFO("nbLoop = %d",nbLoop);
 
 		//Configuration temps entre les boucles
-	
+
 		std::getline(streamConfigFile,contents);
-		std::size_t pos10 = contents.find(":");   // repérage caractère ':' 
+		std::size_t pos10 = contents.find(":");   // repérage caractère ':'
 		deltaLoopPos = contents.substr(pos10+1); // on récupère le string qui se trouve après ':'
 		deltaLoop = atoi( deltaLoopPos.c_str()); // atoi = conversion vers integer !
 		ROS_INFO("deltaLoop = %d",deltaLoop);
 
 		//Configuration temps entre lancement
-	
+
 		std::getline(streamConfigFile,contents);
-		std::size_t pos1 = contents.find(":"); // repérage caractère ':' 
+		std::size_t pos1 = contents.find(":"); // repérage caractère ':'
 		launchDatePart = contents.substr(pos1+1); // on récupère le string qui se trouve après ':'
-	
-		char * cstr1 = new char [launchDatePart.length()+1]; // 
+
+		char * cstr1 = new char [launchDatePart.length()+1]; //
   		std::strcpy (cstr1, launchDatePart.c_str());	// création objet cstring
 
   		// cstr now contains a c-string copy of str
-		int n1 = 0; //compteur sur les dates de lancement 
+		int n1 = 0; //compteur sur les dates de lancement
  	 	char * p1 = std::strtok (cstr1," "); // cf strtok sur cplusplus.com, permet un découpage du cstring fonction de l'espace
   		while (p1!=0)
   		{
-			scheduledLaunchDate[n1++] = atoi(p1);		
+			scheduledLaunchDate[n1++] = atoi(p1);
 			ROS_INFO ("launch time entre %d et %d = %d",n1,n1+1,scheduledLaunchDate[n1-1]);
   			p1 = std::strtok(NULL," ");
   		}
   		delete[] cstr1; // comme la création est dynamique, on supprime l'objet pour libèrer la mémoire
-	
+
 		//Configuration Produits
 
 		int incrementation = 0;
@@ -137,9 +142,9 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 		{
 			if (contents.find(':') != std::string::npos )   // Per ne prendre en considération que les lignes renseignés, ( dans les faits qui contiennent au moins un ':')
 			{
-			std::size_t pos2 = contents.find(":"); // même idée que précedemment 
-			std::size_t pos3 = contents.find_last_of(":"); // même idée que précedemment 
-		
+			std::size_t pos2 = contents.find(":"); // même idée que précedemment
+			std::size_t pos3 = contents.find_last_of(":"); // même idée que précedemment
+
 			pNameFF = contents.substr(0,pos2);	// Recupération nom produit
 			ROS_INFO("Product %s",pNameFF.c_str());
 			destinationPart = contents.substr(pos2+1,pos3-pos2-1);  //recupération du string correspondant aux destinations sur la ligne produit
@@ -148,15 +153,15 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 			int jobTime[10];
 			int manRSize = 0; //manufacturing range size of the produit = number of operation
 
-			char * cstr2 = new char [destinationPart.length()+1]; 
+			char * cstr2 = new char [destinationPart.length()+1];
 	  		std::strcpy (cstr2, destinationPart.c_str());	// création objet cstring
-			char * cstr3 = new char [jobTimePart.length()+1]; 
-	  		std::strcpy (cstr3, jobTimePart.c_str()); 	
+			char * cstr3 = new char [jobTimePart.length()+1];
+	  		std::strcpy (cstr3, jobTimePart.c_str());
 
 	  		// cstr now contains a c-string copy of str
 			int n2 = 0; //compteur sur les destinations
 			int n3 = 0; //compteur sur les temps de fabrications
-	 	 	
+
 			// même principe que plus haut
 			char * p2 = std::strtok (cstr2," ");
 	  		while (p2!=NULL)
@@ -176,12 +181,12 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 	  		}
 
 	  		delete[] cstr2;
-			delete[] cstr3; 
+			delete[] cstr3;
 
 
 			char charName;
 			charName = char(pNameFF.c_str()[0]-16);
-			int pColor = atoi(&charName) * 10 ; 
+			int pColor = atoi(&charName) * 10 ;
 			numberOfProduct++; // on compte le nombre de produit
 
 			initProduct(pNameFF,destination[0], pColor, manRSize, productNumber);  // initialisation de l'objet produit
@@ -190,21 +195,38 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 			}
 		}
 	}
-	
-	// Fin config produit 
-	
+
+	// Fin config produit
+
 	ROS_INFO("Number of Product = %d", numberOfProduct);
 	iteratorPMap = ProductsMap.begin(); // initilise l'iterateur sur la collection de produit
 	nextCount = numberOfProduct-1; // Permet de bien placer les delays dans launch next schedule, on va effectuer le délays entre le dernier et le premier produit avant la lancement du premier produit
-	client_simRosGetInfo.call(srv_GetInfoVREP); //Recupération des infos sur la simulation Vrep ( temps de simulation notamment)
-	lastLaunchDate = srv_GetInfoVREP.response.simulationTime; //Initialise le temps de simulation
-	
+
+	std_msgs::Byte msgGetTime;
+	pubSim_GetTime.publish(msgGetTime);
+	while(!repSim_GetTime&&ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate->sleep();
+	}
+	repSim_GetTime=false;
+	lastLaunchDate = valueSim_GetTime;
+
 	streamConfigFile.close(); //fermeture du fichier ProductConfiguration.txt ouvert en lecture//
+}
+
+
+void Scheduler::SimGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
+{
+	valueSim_GetTime=msg->data;
+
+	repSim_GetTime=true;
 }
 
 // Destructor
 Scheduler::~Scheduler()
 {
+	delete loop_rate;
 }
 
 
@@ -228,16 +250,25 @@ void Scheduler::launchNextSchedule(){
 		init_var = false;
 	}
 
-	int nextDelay = scheduledLaunchDate[nextCount]; // définition next delays 
+	int nextDelay = scheduledLaunchDate[nextCount]; // définition next delays
 
-	// Récupération temps VREP ////////////// SERVICE simRosGetInfo de VREP ////////////
+	std_msgs::Byte msgGetTime;
+	pubSim_GetTime.publish(msgGetTime);
+	while(!repSim_GetTime&&ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate->sleep();
+	}
+	repSim_GetTime=false;
+	float time = valueSim_GetTime;
 
-	client_simRosGetInfo.call(srv_GetInfoVREP);
-	float timeDelta = srv_GetInfoVREP.response.simulationTime - lastLaunchDate;
-		
-	///////////////////////////////////////////////////////////////////////////////////	
+	float timeDelta = time - lastLaunchDate;
 
-	if (finEnvoi!=nbLoop)
+	////////////////////////////////////////////////////////////////////////////////////
+
+	// cassez vous !!
+
+	/*if (finEnvoi!=nbLoop)
 	{
 		if (compteur == numberOfProduct) // permet de replacer l'iterateur en début de map si celui-ci se trouve en end ( après le dernier élément)
 		{
@@ -263,8 +294,8 @@ void Scheduler::launchNextSchedule(){
 			lastLaunchDate = srv_GetInfoVREP.response.simulationTime;// récupération temps de simulation
 			// Récupération des information sur le produit
 			Product* productPointer;
-			productPointer = iteratorPMap->second;	
-		
+			productPointer = iteratorPMap->second;
+
 			//Creation du message de lancement de produit destiné à la commande_locale
 			std_msgs::Int32 msgO;
 			msgO.data = productPointer->productColor;
@@ -273,12 +304,12 @@ void Scheduler::launchNextSchedule(){
 			ROS_INFO("ORDO Add product %s color = %d number = %d",productPointer->name.c_str(), productPointer->productColor, productPointer->productNumber);
 			iteratorPMap++;		// avance dans la map produit
 			nextCount++; 		// permet d'être en phase vis à vis du tableau des temps entre les lancements des produits
-			nextCount = nextCount%numberOfProduct; //permet de revenir à la premier case quand on a fini le tableau 
+			nextCount = nextCount%numberOfProduct; //permet de revenir à la premier case quand on a fini le tableau
 			nextDelay = scheduledLaunchDate[nextCount]; // juste pour l'affichage...
 			ROS_INFO("Je vais attendre = %d s VREP avant le lancement du prochain produit",nextDelay);
 			tableDispo=false;
 		}
-	}
+	}*/
 }
 
 // Création de produit
@@ -301,13 +332,25 @@ void Scheduler::initProduct(std::string pName, int pFirstDestination, int initPr
 
 void Scheduler::productOutCallBack(const std_msgs::Int32::ConstPtr& msg) // on recoit le handle de la navette qui sort de la cellule
 {
-		srv_GetShuttleStatus.request.handle = msg->data;	// 
-		client_GetShuttleStatus.call(srv_GetShuttleStatus);	// recupération des infos sur la navette ( service du noeud shuttles)
-		client_simRosGetInfo.call(srv_GetInfoVREP);		// récupération info sur la simulation Vrep
+	srv_GetShuttleStatus.request.handle = msg->data;	//
+	client_GetShuttleStatus.call(srv_GetShuttleStatus);	// recupération des infos sur la navette ( service du noeud shuttles)
 
-		std::string finalProductName;	// nom produit fini
-		Product* productPointer;	// pointer pour recherche dans la collection
-			
+	std_msgs::Byte msgGetTime;
+	pubSim_GetTime.publish(msgGetTime);
+	while(!repSim_GetTime&&ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate->sleep();
+	}
+	repSim_GetTime=false;
+	float time = valueSim_GetTime;
+
+
+	std::string finalProductName;	// nom produit fini
+	Product* productPointer;	// pointer pour recherche dans la collection
+
+	//ROS_INFO ( "srv_GetShuttleStatus.response.product = %d " ,srv_GetShuttleStatus.response.product);
+
 	for (iteratorPMapOut=ProductsMap.begin(); iteratorPMapOut!=ProductsMap.end(); ++iteratorPMapOut)	// On parcours l'ensemble de la collection
 	{
 		productPointer = iteratorPMapOut->second;
@@ -328,4 +371,3 @@ void Scheduler::SendNbrShuttleCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	pubNbShuttle.publish(msgShuttle);
 }
-	

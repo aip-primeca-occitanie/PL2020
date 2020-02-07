@@ -59,7 +59,6 @@ Aiguillage::Aiguillage(ros::NodeHandle nh, int id_aiguillage)
 
 	loop_rate=new ros::Rate(25);
 
-	//client_get_vrep_time = nh.serviceClient<vrep_common::simRosGetInfo>("/vrep/simRosGetInfo");
 	//client_SetShuttleState = nh.serviceClient<shuttles::srvGetShuttleStatus>("/commande_navette/srvGetShuttleStatus");
 
 	//VREPsubStopSensor = nh.subscribe("vrep/StopSensor", 1000, &Aiguillage::StopSensorCallback, this);//numéro de l'aiguillage à modifier
@@ -82,7 +81,7 @@ Aiguillage::Aiguillage(ros::NodeHandle nh, int id_aiguillage)
 	AigGauche = nh.advertise<std_msgs::Int32>("/commande/AiguillageGauche", 1000);
 	AigDroite = nh.advertise<std_msgs::Int32>("/commande/AiguillageDroite", 1000);
 
-	cout<<"time : "<<this->get_time()<<endl;
+	//cout<<"time : "<<this->get_time()<<endl;
 
 	//Nav_CPD=0;
 	//Nav_CPG=0;
@@ -386,13 +385,11 @@ void Aiguillage::DroiteCallback(const std_msgs::Int32::ConstPtr& msg)
 
 }*/
 
-float Aiguillage::get_time()
+/*float Aiguillage::get_time()
 {
 	client_get_vrep_time.call(srv_get_time);
 	return (float) srv_get_time.response.simulationTime;
-
-
-}
+}*/
 
 /*void Aiguillage::wait_vrep(float dt)
 {

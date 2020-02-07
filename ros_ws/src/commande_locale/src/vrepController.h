@@ -14,16 +14,11 @@
 #include <ros/ros.h>
 #include <vector>
 #include <string>
-#include <math.h> 
+#include <math.h>
 #include <std_msgs/Int32.h>
-#include <vector>
-#include <vrep_common/simRosLoadModel.h>
-#include <vrep_common/simRosRemoveModel.h>
-#include <vrep_common/simRosGetObjectHandle.h>
-#include <vrep_common/simRosSetIntegerSignal.h>
-#include <vrep_common/simRosGetIntegerSignal.h>
-#include <vrep_common/simRosPauseSimulation.h>
-#include <vrep_common/simRosStartSimulation.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Byte.h>
+#include <std_msgs/Int32MultiArray.h>
 
 #include <shuttles/srvGetShuttleStatus.h>
 #include <shuttles/srvGetEmptyShuttles.h>
@@ -38,46 +33,75 @@
 class vrepController
 {
 	private:
-		int done;
-		ros::Publisher pub_sendHandle;
-		ros::ServiceClient client_simRosLoadModelInit;
-		vrep_common::simRosLoadModel srv_LoadModelInit;
-		std::vector<int> listeHandle;
+		//** Topic V-Rep **//
 
-		ros::ServiceClient client_simRosLoadModel;
-		vrep_common::simRosLoadModel srv_LoadModel;
+		// GetColor
+		ros::Publisher pubSim_getColor;
+		std_msgs::String msgSim_getColor;
+		ros::Subscriber subSim_getColor;
+		bool repSim_getColor;
+		int valueSim_getColor;
 
-		ros::ServiceClient client_simRosRemoveModel;
-		vrep_common::simRosRemoveModel srv_RemoveModel;
+		// ChangeColor
+		ros::Publisher pubSim_changeColor;
+		std_msgs::Int32MultiArray msgSim_changeColor;
+		ros::Subscriber subSim_changeColor;
+		bool repSim_changeColor;
 
-		ros::ServiceClient client_simRosGetObjectHandle; 
-		vrep_common::simRosGetObjectHandle srv_GetObjectHandle;
+		// ChangeShuttleColor
+		ros::Publisher pubSim_changeShuttleColor;
+		std_msgs::Int32MultiArray msgSim_changeShuttleColor;
+		ros::Subscriber subSim_changeShuttleColor;
+		bool repSim_changeShuttleColor;
 
-		ros::ServiceClient client_simRosStartSimulation;
-		vrep_common::simRosStartSimulation srv_StartSimulation;	
+		// StartSimulation
+		ros::Publisher pubSim_startSimulation;
+		std_msgs::Byte msgSim_startSimulation;
+		ros::Subscriber subSim_startSimulation;
+		bool repSim_startSimulation;
 
-		ros::ServiceClient client_simRosPauseSimulation;
-		vrep_common::simRosPauseSimulation srv_PauseSimulation;
+		// PauseSimulation
+		ros::Publisher pubSim_pauseSimulation;
+		std_msgs::Byte msgSim_pauseSimulation;
+		ros::Subscriber subSim_pauseSimulation;
+		bool repSim_pauseSimulation;
 
-		ros::ServiceClient client_simRosModelColor;
-		vrep_common::simRosSetIntegerSignal srv_ModelColor;
+		// LoadModel
+		ros::Publisher pubSim_loadModel;
+		std_msgs::String msgSim_loadModel;
+		ros::Subscriber subSim_loadModel;
+		bool repSim_loadModel;
+		int valueSim_loadModel;
 
-		ros::ServiceClient client_simRosModelColorVerif;
-		vrep_common::simRosGetIntegerSignal srv_ModelColor_Verif;
+		// RemoveModel
+		ros::Publisher pubSim_removeModel;
+		std_msgs::Int32 msgSim_removeModel;
+		ros::Subscriber subSim_removeModel;
+		bool repSim_removeModel;
+		int valueSim_removeModel;
 
-// Gestion de navettes
+		// GetObjectHandle
+		ros::Publisher pubSim_getObjectHandle;
+		std_msgs::String msgSim_getObjectHandle;
+		ros::Subscriber subSim_getObjectHandle;
+		bool repSim_getObjectHandle;
+		int valueSim_getObjectHandle;
+
+
+		// Gestion de navettes
 		ros::Publisher pub_Shuttle_Handle;
 		aiguillages::ExchangeSh Sh_Handle;
-		
+
 		ros::Subscriber DeleteShuttle;
 		ros::Publisher createShuttle;
 		shuttles::msgShuttleCreate Cr_Shuttle;
 
 		ros::Subscriber ChangeColor;
-		
+
 		int nShuttleF;
 		std::string SimulationFileName;
-		std_msgs::Int32 msg_HandletoA10;
+
+		ros::Rate* loop_rate;
 	public:
 		vrepController ();
 		void init(ros::NodeHandle n,std::string executionPath, std::string simulationFileName);
@@ -92,8 +116,18 @@ class vrepController
 
 		int LoadShuttle(char shuttleNumber, int product, int firstDestination);
 		void setSimulationFile(std::string);
-		void addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination); 
+		void addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination);
 		void ColorCallBack(const commande_locale::Msg_Color::ConstPtr& msg);
+
+		// Callbacks pour V-Rep
+		void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);
+		void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);
+		void simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg);
+		void simStartSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
+		void simPauseSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
+		void simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg);
+		void simRemoveModelCallback(const std_msgs::Int32::ConstPtr& msg);
+		void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);
 };
 
 #endif

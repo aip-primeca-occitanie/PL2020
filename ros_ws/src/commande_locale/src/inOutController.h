@@ -21,21 +21,18 @@
 #include "commande_locale/Msg_StopControl.h"
 #include "commande_locale/Msg_PinControl.h"
 #include "commande_locale/Msg_SensorState.h"
- 
+
 #include <scheduling/Msg_LoadShuttle.h>
-#include <vrep_common/simRosEnablePublisher.h>
-#include <vrep_common/simRosEnableSubscriber.h>
 
 #include <std_msgs/Int32.h>
-
+#include <unistd.h>
 
 class inOutController
 {
 private:
-	UI* userInterface;
 	vrepController* vrepServiceAcces;
-	Configuration* configuration;	
-	
+	Configuration* configuration;
+
 	ros::Publisher VREPSwitchControllerRight;
 	ros::Publisher VREPSwitchControllerLeft;
 	ros::Publisher VREPSwitchControllerLock;
@@ -56,7 +53,7 @@ private:
 	commande_locale::Msg_SwitchControl SwitchControl;
 	commande_locale::Msg_SensorState SensorState;
 public:
-	inOutController(UI* usrInt, vrepController* vrepSA, Configuration* config);
+	inOutController(vrepController* vrepSA, Configuration* config);
 	void init(ros::NodeHandle nh);
 	// Sensors
 	void SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg);

@@ -5,27 +5,24 @@
 
 #include <ros/ros.h>
 
-//Services Vrep
-#include <vrep_common/simRosEnablePublisher.h>
-#include <vrep_common/simRosEnableSubscriber.h>
-
-#include <vrep_common/simRosSetJointState.h>
-#include <vrep_common/simRosGetObjectHandle.h>
-#include <vrep_common/simRosGetJointState.h>
-#include <vrep_common/simRosGetInfo.h>
-
 //Messages
 #include <robots/RobotJoints.h>
 #include <robots/MoveRobot.h>
 #include <robots/DoTaskMsg.h>
 #include <robots/ColorMsg.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/String.h>
+#include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/Byte.h>
+#include <std_msgs/Float32.h>
+#include <sensor_msgs/JointState.h>
 
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
 #include <string>
 #include <string.h>
+#include <unistd.h>
 #include "Poste.h"
 
 
@@ -33,22 +30,35 @@ class Robot
 {
 private:
 
-	/** Services V-Rep **/
-	//Service simRosGetObjectHandle
-	ros::ServiceClient client_simRosGetHandle;
-	vrep_common::simRosGetObjectHandle srv_simRosGetHandle;
+	/** Topic V-Rep **/
+	// Le type Byte est utilisé lorsque le contenu du message n'est pas utile
 
-	//Service simRosSetJointState
-	ros::ServiceClient client_simRosSetJoint;
-	vrep_common::simRosSetJointState srv_simRosSetJoint;
+	// GetObjectHandle
+	ros::Publisher pubSim_getObjectHandle;
+	std_msgs::String msgSim_getObjectHandle;
+	ros::Subscriber subSim_getObjectHandle;
+	bool repSim_getObjectHandle;
+	int valueSim_getObjectHandle;
 
-	//Service simRosGetJointState
-	ros::ServiceClient client_simRosGetJoint;
-	vrep_common::simRosGetJointState srv_simRosGetJoint;
+	// SetJointState
+	ros::Publisher pubSim_setJointState;
+	std_msgs::Float32MultiArray msgSim_setJointState;
+	ros::Subscriber subSim_setJointState;
+	bool repSim_setJointState;
 
-	//Service simRosGetInfo
-	ros::ServiceClient client_simGetVrepTime;
-	vrep_common::simRosGetInfo srv_simGetVrepTime;
+	// GetJointState
+	ros::Publisher pubSim_getJointState;
+	std_msgs::Int32 msgSim_getJointState;
+	ros::Subscriber subSim_getJointState;
+	bool repSim_getJointState;
+	float valueSim_getJointState;
+
+	// GetTime
+	ros::Publisher pubSim_getTime;
+	std_msgs::Byte msgSim_getTime;
+	ros::Subscriber subSim_getTime;
+	bool repSim_getTime;
+	float valueSim_getTime;
 
 	/** Subscribers aux topics de la commande **/
 	ros::Subscriber planifSendPosition;
@@ -74,6 +84,7 @@ private:
 	int Rints[7];
 	// numero du robot
 	int num_robot;
+	ros::Rate* loop_rate;
 
 	/** Messages **/
 	std_msgs::Int32 robotPosition;
@@ -133,6 +144,12 @@ public:
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
 	void colorerPoste(int produit, string poste);
+
+	// Callbacks pour V-Rep
+	void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);
+	void simSetJointStateCallback(const std_msgs::Byte::ConstPtr& msg);
+	void simGetJointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
+	void simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg);
 };
 
 

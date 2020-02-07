@@ -4,9 +4,6 @@
 #include <ros/ros.h>
 #include <std_msgs/Int32.h>
 #include <unistd.h>
-#include <vrep_common/simRosEnablePublisher.h>
-#include <vrep_common/simRosEnableSubscriber.h>
-#include <vrep_common/simRosGetInfo.h>
 #include <map>
 //#include "Sh.h"
 #include "aiguillages/ExchangeSh.h"
@@ -28,10 +25,6 @@ private:
 	ros::Subscriber sub_cmd_Droite;
 	ros::Subscriber sub_cmd_Gauche;
 
-
-	//time
-	ros::ServiceClient client_get_vrep_time;
-	vrep_common::simRosGetInfo srv_get_time;
 
 	ros::Rate* loop_rate;
 
@@ -107,7 +100,7 @@ public:
 	//int get_Sh_Handle();
 	//void Send_Sh(int destination);
 
-	float get_time();
+	//float get_time();
 	//void wait_vrep(float dt);
 
 };

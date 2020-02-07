@@ -207,10 +207,6 @@ void onMouse(int event, int x, int y, int, void* userdata)
 et changer l'etat des boutons, en fonction de la position de la souris, contrôle aussi le bouton pour ajouter une plateforme à la simu */
 void UI::onMouse_internal( int event, int x, int y)
 {
-	static vrep_common::simRosStartSimulation srv_StartSimulation;
-	static vrep_common::simRosPauseSimulation srv_PauseSimulation;
-	static vrep_common::simRosLoadModel srv_LoadModel;
-
 	switch(event) {
 		case cv::EVENT_LBUTTONDOWN :   // Event lorsque l'on clique sur le bouton gauche de la souris
    		if(y>playButton_y_0 && y < playButton_y_0+playButton_y_size && x>playButton_x_0 && x < playButton_x_0 + playButton_x_size && mode!= 1) {
@@ -249,21 +245,21 @@ void UI::onMouse_internal( int event, int x, int y)
 		}
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 2 && mode!=1 )
 		{
-				modeRandButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-				modeShuttle = 3;
-				typeNextShuttle = -1 ;
-				std_msgs::Bool modeMsg;
-				modeMsg.data = false;
-				pubStateButton.publish(modeMsg);
+			modeRandButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
+			modeShuttle = 3;
+			typeNextShuttle = -1 ;
+			std_msgs::Bool modeMsg;
+			modeMsg.data = false;
+			pubStateButton.publish(modeMsg);
 		}
 		else if(y>modeButton_y_0 && y < modeButton_y_0+shuttleButton_y_size && x>modeButton_x_0 && x < modeButton_x_0 + modeButton_x_size && modeShuttle == 3 && mode!=1 )
 		{
-				modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
-				shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
-				modeShuttle = 1;
-				std_msgs::Bool modeMsg;
-				modeMsg.data = true;
-				pubStateButton.publish(modeMsg);
+			modeAutoButton.copyTo(imageTot.rowRange(modeButton_y_0,modeButton_y_0+modeButton_y_size).colRange(modeButton_x_0,modeButton_x_0+modeButton_x_size));
+			shuttleButton_Down.copyTo(imageTot.rowRange(shuttleButton_y_0,shuttleButton_y_0+shuttleButton_y_size).colRange(shuttleButton_x_0,shuttleButton_x_0+shuttleButton_x_size));
+			modeShuttle = 1;
+			std_msgs::Bool modeMsg;
+			modeMsg.data = true;
+			pubStateButton.publish(modeMsg);
 		}
 
 		break;
@@ -459,6 +455,8 @@ void UI::init(ros::NodeHandle nh){   // Fonction d'initialisation de l'ui
 
 	subNombreDeProduits = nh.subscribe("/ordonnancement/NombreDeProduits",1,&UI::NombreDeProduitsCallBack,this);
 	subNomProduits = nh.subscribe("/ordonnancement/NomProduits",100,&UI::NomProduitsCallBack,this);
+
+	sleep(1);
 }
 
 

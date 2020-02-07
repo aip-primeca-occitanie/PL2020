@@ -3,7 +3,6 @@ project(scheduling)
 
 find_package(catkin REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
-  vrep_common
   roscpp
   std_msgs
   genmsg

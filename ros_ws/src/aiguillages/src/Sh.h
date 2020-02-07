@@ -4,8 +4,6 @@
 #include <ros/ros.h>
 #include <std_msgs/Int32.h>
 #include <unistd.h>
-#include <vrep_common/simRosEnablePublisher.h>
-#include <vrep_common/simRosEnableSubscriber.h>
 
 
 using namespace std;

@@ -32,7 +32,7 @@ using namespace std;
 Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 {
   //Pour être informé de la création d'une navette et de son contenu
-	SubNouvelleNavette = noeud.subscribe("/commande_navette/AddShuttle", 1000, &Commande::NouvelleNavette, this);
+	sub_nouveau_produit = noeud.subscribe("/commande_locale/AddProduct", 1000, &Commande::NouveauProduitCallback, this);
 
 	// Actionner ergots
 	subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
@@ -79,25 +79,27 @@ void Commande::Initialisation()
 	for(int i=0;i<9;i++) PIx[i]=0;
 }
 
-void Commande::NouvelleNavette(const shuttles::msgShuttleCreate::ConstPtr& msg)
+void Commande::NouveauProduitCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg)
 {
-	produitNavette=msg->product;
-	arrivee_navette=1;
+	ROS_INFO("Je recois les messages trkl");
+	poste=msg->num_poste;
+	produit=msg->num_produit;
+	arrivee_produit=1;
 }
 
-int Commande::get_arrivee_navette()
+int Commande::get_arrivee_nouveau_produit()
 {
-	return arrivee_navette;
+	return arrivee_produit;
 }
 
-int Commande::get_produit_navette()
+int Commande::get_code_arrivee()
 {
-	return produitNavette;
+	return produit+poste;
 }
 
-void Commande::ReinitialiserArriveeNavette()
+void Commande::renitialiser_arrivee_nouveau_produit()
 {
-  arrivee_navette=0;
+  arrivee_produit=0;
 }
 
 void Commande::Stop_PS(int point_stop)

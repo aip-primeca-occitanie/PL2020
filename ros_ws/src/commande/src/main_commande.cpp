@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 // Initialisation variables //
 
 	cmd.Initialisation();
-  int NouvelleDestination;
+  int code_arrivee;
 	int M[Nb_Place];
 	int Nb_Place_T1,Nb_Place_T2,Nb_Place_T3,Nb_Place_T4;
 
@@ -50,27 +50,75 @@ int main(int argc, char **argv)
 
 	while (ros::ok())
 	{
-		NouvelleDestination = cmd.get_produit_navette();
-		if(cmd.get_arrivee_navette())
+		if(cmd.get_arrivee_nouveau_produit())
 		{
 			modif=1;
-			switch(NouvelleDestination)
+			code_arrivee=cmd.get_code_arrivee();
+			switch(code_arrivee)
 			{
-				case 10 : M[3]++;break;//si un produit A apparait
-				case 20 : M[103]++;break;//si un produit B apparait
-				case 30 : M[203]++;break;//si un produit C apparait
-				case 40 : M[303]++;break;//si un produit D apparait
-				case 50 : M[403]++;break;//si un produit E apparait
+				case 11: //Produit A sur poste 1
+					M[11]++;break;
+				case 12: //Produit A sur poste 2
+					M[12]++;break;
+				case 13: //Produit A sur poste 3
+					M[13]++;break;
+				case 14: //Produit A sur poste 4
+					M[14]++;break;
+
+				case 21: //Produit B sur poste 1
+					M[21]++;break;
+				case 22: //Produit B sur poste 2
+					M[22]++;break;
+				case 23: //Produit B sur poste 3
+					M[23]++;break;
+				case 24: //Produit B sur poste 4
+					M[24]++;break;
+
+				case 31: //Produit C sur poste 1
+					M[31]++;break;
+				case 32: //Produit C sur poste 2
+					M[32]++;break;
+				case 33: //Produit C sur poste 3
+					M[33]++;break;
+				case 34: //Produit C sur poste 4
+					M[34]++;break;
+
+				case 41: //Produit D sur poste 1
+					M[41]++;break;
+				case 42: //Produit D sur poste 2
+					M[42]++;break;
+				case 43: //Produit D sur poste 3
+					M[43]++;break;
+				case 44: //Produit D sur poste 4
+					M[44]++;break;
+
+				case 51: //Produit E sur poste 1
+					M[51]++;break;
+				case 52: //Produit E sur poste 2
+					M[52]++;break;
+				case 53: //Produit E sur poste 3
+					M[53]++;break;
+				case 54: //Produit E sur poste 4
+					M[54]++;break;
+
+				case 61: //Produit F sur poste 1
+					M[61]++;break;
+				case 62: //Produit F sur poste 2
+					M[62]++;break;
+				case 63: //Produit F sur poste 3
+					M[63]++;break;
+				case 64: //Produit F sur poste 4
+					M[64]++;break;
 			}
-			cmd.ReinitialiserArriveeNavette();
+			cmd.renitialiser_arrivee_nouveau_produit();
   	}
 
 ////////////////////Poste 1//////////////////////////////
 
-	if (M[3]!=0 && capteur.PSx[20]==1) // faire arreter la navette devant le robot 1
+	if (M[11]!=0 && capteur.PSx[20]==1) // faire arreter la navette devant le robot 1
 		{
 			modif=1;
-			M[3]--;
+			M[11]--;
 			cmd.Stop_PS(21);
 			M[4]++;
 		}

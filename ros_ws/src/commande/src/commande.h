@@ -15,6 +15,7 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int32.h>
 #include <commande_locale/Msg_StopControl.h>
+#include <commande_locale/Msg_AddProduct.h>
 #include "shuttles/msgShuttleCreate.h"
 #include <fstream>
 #include <iostream>
@@ -39,8 +40,7 @@ class Commande
 	ros::Subscriber subPinOn;
 	ros::Subscriber subPinOff;
 
-	ros::Subscriber NewShuttle;
-	ros::Subscriber SubNouvelleNavette;
+	ros::Subscriber sub_nouveau_produit;
 
 //Publisher
 	// Actionneurs
@@ -49,8 +49,9 @@ class Commande
   ros::Publisher pub_actionneurs_simu_pins;
 
 //Variables
-  int produitNavette;
-	int arrivee_navette;
+	int arrivee_produit;
+	int poste;
+	int produit;
 	/* Capteurs */
 	bool PSx[25],DxD[13],DxG[13],CPx[11],CPIx[9];
 	/* Actionneurs */
@@ -66,7 +67,7 @@ public:
 
 	void Initialisation();
 
-  void NouvelleNavette(const shuttles::msgShuttleCreate::ConstPtr& msg);
+  void NouveauProduitCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg);
 	void Stop_PS(int point_stop);
 	void Ouvrir_PS(int point_stop);
 
@@ -79,9 +80,9 @@ public:
 	void RentrerErgotCallback(const std_msgs::Int32::ConstPtr& msg);
 
 
-	int get_arrivee_navette();
-	int get_produit_navette();
-	void ReinitialiserArriveeNavette();
+	int get_code_arrivee();
+	int get_arrivee_nouveau_produit();
+	void renitialiser_arrivee_nouveau_produit();
 };
 
 #endif

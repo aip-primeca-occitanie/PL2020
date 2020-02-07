@@ -60,7 +60,7 @@ private:
 	ros::Subscriber planifControlerRobot;
 	ros::Subscriber sub_colorer;
 	ros::Subscriber sub_doTask;
-
+	ros::Subscriber sub_nouveau_produit;
 
 	/** Publishers pour retours **/
 	ros::Publisher pub_pince;
@@ -130,6 +130,7 @@ public:
 	void ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg);
 	void ColorerCallback(const robots::ColorMsg::ConstPtr& msg);
 	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
+	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
 	void colorerPoste(int produit, string poste);
 };

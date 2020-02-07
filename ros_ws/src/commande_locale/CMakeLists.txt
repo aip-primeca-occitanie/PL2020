@@ -23,11 +23,13 @@ include_directories(include ${OpenCV_INCLUDE_DIRS})
 
 add_message_files(
 	FILES
+  Msg_AddProduct.msg
 	Msg_SensorState.msg
 	Msg_StopControl.msg
 	Msg_Color.msg
 	Msg_SwitchControl.msg
 	Msg_PinControl.msg
+  Msg_AddProduct.msg
 )
 generate_messages( DEPENDENCIES std_msgs)
 catkin_package( CATKIN_DEPENDS message_runtime)

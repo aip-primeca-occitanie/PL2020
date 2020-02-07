@@ -496,7 +496,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 
 void Robot::colorerPoste(int produit, string poste)
 {
-		ROS_INFO("La je veux colorer le poste suite a une tache, ca arrive bientot");
+		ROS_INFO("La je veux colorer le poste suite a quelquechose, ca arrive bientot");
 }
 
 void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
@@ -516,11 +516,27 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 	}
 }
 
+void Robot::ajouter_produitCallback(commande_locale::Msg_AddProduct msg)
+{
+	if (poste_pos_1.get_numero()==msg.num_poste)
+	{
+		poste_pos_1.ajouter_produit(msg.num_produit);
+		colorerPoste(poste_pos_1.get_produit(),poste_pos_1.get_nom());
+	}
+	if (poste_pos_4.get_numero()==msg.num_poste)
+	{
+		poste_pos_4.ajouter_produit(msg.num_produit);
+		colorerPoste(poste_pos_4.get_produit(),poste_pos_4.get_nom());
+	}
+}
+
 
 /*** Initialisation ***/
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
 {
+
+
   std::string num_str;
 	std::string nom;
 	int numero_poste;
@@ -530,40 +546,40 @@ void Robot::init(ros::NodeHandle noeud)
 		num_str="1";
 		nom="customizableTable_tableTop#1";
 		numero_poste=1;
-		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_1.init(nom,numero_poste);
 		nom="customizableTable_tableTop#0";
 		numero_poste=2;
-		poste_pos_4.init(noeud,nom,numero_poste);
+		poste_pos_4.init(nom,numero_poste);
 	break;
 
 	case 2:
     num_str="2";
 		nom="customizableTable_tableTop#3";
 		numero_poste=3;
-		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_1.init(nom,numero_poste);
 		nom="customizableTable_tableTop#4";
 		numero_poste=4;
-		poste_pos_4.init(noeud,nom,numero_poste);
+		poste_pos_4.init(nom,numero_poste);
 	break;
 
  	case 3:
 		num_str="3";
 		nom="customizableTable_tableTop#6";
 		numero_poste=5;
-		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_1.init(nom,numero_poste);
 		nom="customizableTable_tableTop#7";
 		numero_poste=6;
-		poste_pos_4.init(noeud,nom,numero_poste);
+		poste_pos_4.init(nom,numero_poste);
 	break;
 
   case 4:
 		num_str="4";
 		nom="customizableTable_tableTop#10";
 		numero_poste=7;
-		poste_pos_1.init(noeud,nom,numero_poste);
+		poste_pos_1.init(nom,numero_poste);
 		nom="customizableTable_tableTop#9";
 		numero_poste=8;
-		poste_pos_4.init(noeud,nom,numero_poste);
+		poste_pos_4.init(nom,numero_poste);
 	break;
 
   default:
@@ -590,6 +606,7 @@ void Robot::init(ros::NodeHandle noeud)
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras"+num_str,10,&Robot::ControlerRobotCallback,this);
 	sub_colorer = noeud.subscribe("/commande/Simulation/Colorer",10,&Robot::ColorerCallback,this);
 	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
+	sub_nouveau_produit= noeud.subscribe("/commande_locale/AddProduct", 1, &Robot::ajouter_produitCallback,this);
 
 
 	//Publishers

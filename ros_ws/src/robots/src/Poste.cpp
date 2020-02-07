@@ -13,10 +13,8 @@ Poste::~Poste()
 }
 
 
-void Poste::init(ros::NodeHandle noeud, string nom, int numero)
+void Poste::init(string nom, int numero)
 {
-  sub_nouveau_produit= noeud.subscribe("/Table2/ManualProduct", 1, &Poste::ajouter_produitCallback,this);
-
   nom_poste_=nom;
   numero_poste_=numero;
   pres_requis_tache_[0]=1;//on peut changer en fonction du nom du poste
@@ -33,6 +31,11 @@ void Poste::init(ros::NodeHandle noeud, string nom, int numero)
 string Poste::get_nom()
 {
   return nom_poste_;
+}
+
+int Poste::get_numero()
+{
+  return numero_poste_;
 }
 
 int Poste::do_task(int num_tache)
@@ -53,17 +56,15 @@ int Poste::do_task(int num_tache)
   {
     ROS_INFO("Je refuse, tu t'es plante, c'est pas un bon numéro de tache");
   }
+  return produit_poste_;
+}
 
+int Poste::get_produit()
+{
   return produit_poste_;
 }
 
 void Poste::ajouter_produit(int produit)
 {
   produit_poste_=produit;
-}
-
-void Poste::ajouter_produitCallback(std_msgs::Int32 msg)
-{
-  produit_poste_=msg.data;
-  ROS_INFO("Mon nouveau produit sur le poste %d est le numéro %d",numero_poste_,produit_poste_);
 }

@@ -2,6 +2,7 @@
 
 #include <ros/ros.h>
 #include "configuration.h"
+#include "commande_locale/Msg_AddProduct.h"
 
 // Construteur
 Configuration::Configuration(vrepController* VREPC)
@@ -23,7 +24,7 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 
 	// Publishers Initialisation
 	pubManualProduct = nh.advertise<std_msgs::Bool>("/scheduling/ManualLaunch",10);
-	pubProductAddTable = nh.advertise<std_msgs::Int32>("/Table2/ManualProduct",10);
+	pubProductAdd= nh.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
 
 // Récupération du chemin vers le Working_Folder
 int count = 0 ;
@@ -143,7 +144,6 @@ Configuration::~Configuration()
 
 //Faire apparaitre le produit sur la table 2 (est appelé dans UI)
 void Configuration::ProductAddTable(int typeProduct, int poste){
-	ROS_INFO("J'aimerais faire apparaitre un produit de type %d sur le poste %d",typeProduct,poste);
 	client_simRosGetInfo.call(srv_GetInfoVREP);
 	/*std::string ProductName;
 	Product* productPointer;
@@ -160,10 +160,10 @@ void Configuration::ProductAddTable(int typeProduct, int poste){
 	iteratorPMap=ProductsMap.begin();
 	if (ok)
 	{*/
-		std_msgs::Int32 msgO;
-		msgO.data = typeProduct;
-		pubProductAddTable.publish(msgO);
-		ROS_INFO("J'ai publish sur pubProductAddTable");
+		commande_locale::Msg_AddProduct msg0;
+		msg0.num_poste = poste;
+		msg0.num_produit = typeProduct;
+		pubProductAdd.publish(msg0);
 	//}
 }
 

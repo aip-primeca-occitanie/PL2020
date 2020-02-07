@@ -39,7 +39,7 @@ ros::ServiceClient client_simRosGetInfo;
 vrep_common::simRosGetInfo srv_GetInfoVREP;
 
 ros::Publisher pubManualProduct;
-ros::Publisher pubProductAddTable;
+ros::Publisher pubProductAdd;
 
 std_msgs::Int32 retourTraitement;
 

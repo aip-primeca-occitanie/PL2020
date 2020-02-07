@@ -11,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   vrep_common
 )
 
-
+find_package(commande_locale)
 
 ## Generate messages in the 'msg' folder
 add_message_files(

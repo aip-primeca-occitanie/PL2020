@@ -313,7 +313,7 @@ static void onChangeTrackbar(int, void*){
 }
 
 static void onChangeTrackbarposte(int, void*){
-	std::cout << valueposte << std::endl;
+	//std::cout << valueposte << std::endl;
 	poste = valueposte;
 }
 

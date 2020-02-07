@@ -7,6 +7,7 @@
 #include <string>
 #include <string.h>
 #include <std_msgs/Int32.h>
+#include "commande_locale/Msg_AddProduct.h"
 
 using namespace std;
 
@@ -21,16 +22,17 @@ private:
   int sortie_tache_[3];
   int temps_operation_[3];
 
-  ros::Subscriber sub_nouveau_produit;
+  
 
 public:
 	Poste();
 	~Poste();
 
-  void init(ros::NodeHandle noeud, string nom, int numero);
+  void init(string nom, int numero);
   string get_nom();
+  int get_numero();
   int do_task(int num_tache);
   void ajouter_produit(int produit);
-  void ajouter_produitCallback(std_msgs::Int32 msg);
+  int get_produit();
 };
 #endif

@@ -1,5 +1,4 @@
 /**** Bruno DATO, Abdellah ELGOURAIN, Evgeny SHULGA M1 EEA ISTR Université Paul Sabatier Toulouse III 2016 ****/
-
 #ifndef ACT
 #define ACT
 
@@ -38,11 +37,8 @@ public:
 	void Ecrire_ligne_Vx(bool Vx[]);
 	void Ecrire_ligne_Dx(bool Dx[]);
 
-
 };
 
 void WRITE(long int *registre,bool donnee,int numero_bit);
-
-
 
 #endif

@@ -23,10 +23,12 @@ void Poste::init(string nom, int numero)
   sortie_tache_[0]=5;
   sortie_tache_[1]=1;
   sortie_tache_[2]=2;
-  temps_operation_[0]=2;
+  temps_operation_[0]=2;// a remonter deux classes plus haut
   temps_operation_[1]=2;
   temps_operation_[2]=2;
 }
+
+//le robot ne doit pas être occupé pendant la tâche
 
 string Poste::get_nom()
 {

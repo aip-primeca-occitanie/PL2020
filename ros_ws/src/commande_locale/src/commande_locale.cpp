@@ -100,6 +100,8 @@ int main(int argc, char **argv)
 	///////////////////////
 
 	int choix=0;
+	int choixProduit=0;
+	int choixPoste=0;
 	while(ros::ok())
 	{
 		cout << endl << endl << endl;
@@ -114,8 +116,11 @@ int main(int argc, char **argv)
 		switch(choix)
 		{
 			case 1:
-				cout << "ajout de produit" << endl;
-				//configuration->ProductAddTable(trucs);
+				cout << "ajout de produit : quel poste ?" << endl;
+				cin >> choixPoste;
+				cout << "Quel produit ?" << endl;
+				cin >> choixProduit;
+				config.ProductAddTable(choixProduit,choixPoste);
 				break;
 
 			case 2:
@@ -129,7 +134,7 @@ int main(int argc, char **argv)
 				break;
 
 			case 4:
-				cout << "On change de mode" << endl;
+				cout << "On change de mode (fake news)" << endl;
 				break;
 
 			default:

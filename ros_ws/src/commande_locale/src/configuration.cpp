@@ -12,24 +12,11 @@ Configuration::Configuration(vrepController* VREPC)
 	numberOfProduct = 0;
 	for ( int i = 1 ; i < 7 ; i++) activeProduct[i]=false;
 	activeProduct[0] = true;
-
-	loop_rate = new ros::Rate(25);
-}
-
-Configuration::~Configuration()
-{
-	delete loop_rate;
 }
 
 // Initialisation de l'objet
 bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 {
-	// Utilisation du topic GetTime de VREP
-	pubSim_GetTime = nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/config/GetTime",100);
-	subSim_GetTime = nh.subscribe("/sim_ros_interface/services/response/config/GetTime",100,&Configuration::SimGetTimeCallback,this);
-	repSim_GetTime = false;
-	valueSim_GetTime=0;
-
 	// Publishers Initialisation
 	pubManualProduct = nh.advertise<std_msgs::Bool>("/scheduling/ManualLaunch",10);
 	pubProductAdd= nh.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
@@ -146,11 +133,6 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 	return false;
 }
 
-
-void Configuration::SimGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
-{
-	valueSim_GetTime = msg->data;
-}
 
 //Faire apparaitre le produit sur la table 2 (est appelé dans UI)
 void Configuration::ProductAddTable(int typeProduct, int poste)

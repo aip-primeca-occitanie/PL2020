@@ -15,6 +15,8 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Byte.h>
@@ -106,7 +108,7 @@ class vrepController
 		vrepController ();
 		void init(ros::NodeHandle n,std::string executionPath, std::string simulationFileName);
 		void close();
-		void loadModelInit(char shuttleNumber);
+		void loadModelInit(int shuttleNumber);
 		void removeModel(int32_t handle);
 		int32_t getObjectHandle(std::string);
 		void waitVrep();

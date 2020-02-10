@@ -136,9 +136,9 @@ void inOutController::SchedulerNextShuttleCallback(const scheduling::Msg_LoadShu
 void inOutController::init(ros::NodeHandle nh)
 {
 	// Subscribe
-   	VREPsubRailSensor = nh.subscribe("vrep/RailSensor", 1, &inOutController::SensorCallbackRail, this);
-	VREPsubStopSensor = nh.subscribe("vrep/StopSensor", 1, &inOutController::SensorCallbackStop, this);
-	VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1, &inOutController::SensorCallbackSwitch, this);
+   	VREPsubRailSensor = nh.subscribe("sim_ros_interface/RailSensor", 1, &inOutController::SensorCallbackRail, this);
+	VREPsubStopSensor = nh.subscribe("sim_ros_interface/StopSensor", 1, &inOutController::SensorCallbackStop, this);
+	VREPsubSwitchSensor = nh.subscribe("sim_ros_interface/SwitchSensor", 1, &inOutController::SensorCallbackSwitch, this);
 	planifSubSwitchState = nh.subscribe("/commande/Simulation/Actionneurs_aiguillages", 1, &inOutController::StateSwitchCallBack, this);
 	planifSubStopState = nh.subscribe("/commande/Simulation/Actionneurs_stops", 1, &inOutController::StateStopCallBack, this);
 	planifSubPinState = nh.subscribe("/commande/Simulation/Actionneurs_pins", 1, &inOutController::StatePinCallBack, this);

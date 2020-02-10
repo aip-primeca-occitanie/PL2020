@@ -35,15 +35,8 @@ private:
 	std::map<std::string,Product*>::iterator iteratorPMap;
 	std::map<std::string,Product*> ProductsMap;
 
-	ros::Publisher pubSim_GetTime;
-	ros::Subscriber subSim_GetTime;
-	bool repSim_GetTime;
-	float valueSim_GetTime;
-
 	ros::Publisher pubManualProduct;
 	ros::Publisher pubProductAdd;
-
-	ros::Rate* loop_rate;
 
 	std_msgs::Int32 retourTraitement;
 
@@ -52,12 +45,10 @@ public:
 	bool activeProduct[7];
 
 	Configuration(vrepController* VREPC);
-	~Configuration();
 
 	bool init(ros::NodeHandle nh, std::string executionPath);
 	void ProductAddTable(int typeProduct, int poste);
 	int getNbNavettes();
-	void SimGetTimeCallback(const std_msgs::Float32::ConstPtr& msg);
 };
 
 

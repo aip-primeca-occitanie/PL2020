@@ -47,56 +47,12 @@ int main(int argc, char **argv)
 	//Creation des navettes
 	int nbNavettes;
 	nbNavettes = config.getNbNavettes();
-	ros::Publisher pubCreateShuttle = nh.advertise<scheduling::Msg_LoadShuttle>("/scheduling/NextProduct",10);
-	scheduling::Msg_LoadShuttle mymsg;
-
-	if (nbNavettes>=1)
+	for(int i=0; i<nbNavettes; i++)
 	{
-	mymsg.shuttleType = 'A';
-	mymsg.product = 0;
-	pubCreateShuttle.publish(mymsg);
-	std::cout << "Creation navette 1" << endl;
+		VREPController.loadModelInit(i);
+		std::cout << "Creation navette " << i << endl;
 	}
-
-	if (nbNavettes>=2)
-	{
-	mymsg.shuttleType = 'B';
-	mymsg.product = 0;
-	pubCreateShuttle.publish(mymsg);
-	std::cout << "Creation navette 2" << endl;
-	}
-
-	if (nbNavettes>=3)
-	{
-	mymsg.shuttleType = 'C';
-	mymsg.product = 0;
-	pubCreateShuttle.publish(mymsg);
-	std::cout << "Creation navette 3" << endl;
-	}
-
-	if (nbNavettes>=4)
-	{
-	mymsg.shuttleType = 'D';
-	mymsg.product = 0;
-	pubCreateShuttle.publish(mymsg);
-	std::cout << "Creation navette 4" << endl;
-	}
-
-	if (nbNavettes>=5)
-	{
-	mymsg.shuttleType = 'E';
-	mymsg.product = 0;
-	pubCreateShuttle.publish(mymsg);
-	std::cout << "Creation navette 5" << endl;
-	}
-
-	if (nbNavettes>=6)
-	{
-	mymsg.shuttleType = 'F';
-	mymsg.product = 0;
-	pubCreateShuttle.publish(mymsg);
-	std::cout << "Creation navette 6" << endl;
-	}
+	
 	///////////////////////
 
 	int choix=0;

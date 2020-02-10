@@ -19,6 +19,7 @@ add_message_files(
    MoveRobot.msg
    ColorMsg.msg
    DoTaskMsg.msg
+   Msg_numrobot.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

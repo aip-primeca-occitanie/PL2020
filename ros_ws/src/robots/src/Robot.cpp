@@ -469,80 +469,100 @@ void Robot::OuvrirPince()
 /*** Fonctions permettant de controler le robot avec des ordres du noeud commande ***/
 /** Envoyer le robot automatiquement **/
 //Fonction Callback permettant d'envoyer le robot dans une position prédéfinie à la réception du message de Commande
-void Robot::SendPositionCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::SendPositionCallback(const robots::Msg_numrobot::ConstPtr& msg)
 {
-	//Récupération des données du message : numéro de la position prédéfinie
-	int pos;
-	pos = msg->data;
+	if(num_robot==msg->num_robot)
+	{
+		//Récupération des données du message : numéro de la position prédéfinie
+		int pos;
+		pos = msg->data;
 
-	//Envoi du robot dans la position choisie
-	EnvoyerRobot(pos);
+		//Envoi du robot dans la position choisie
+		EnvoyerRobot(pos);
+	}
 }
 
 /** Envoyer le robot manuellement **/
 //Fonction Callback permettant d'envoyer le robot dans une position choisie par l'utilisateur à la réception du message de Commande
 void Robot::SendJointsCallback(const robots::RobotJoints::ConstPtr& msg)
 {
-	EnvoyerJoints(msg->joint1, msg->joint2, msg->joint3, msg->joint4, msg->joint5, msg->joint6, msg->joint7);
+	if(num_robot==msg->num_robot)
+	{
+		EnvoyerJoints(msg->joint1, msg->joint2, msg->joint3, msg->joint4, msg->joint5, msg->joint6, msg->joint7);
+	}
 }
 
 /** Fermer la pince **/
 //Fonction Callback permettant de fermer la pince du robot à la réception du message de Commande
-void Robot::FermerPinceCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::FermerPinceCallback(const robots::Msg_numrobot::ConstPtr& msg)
 {
-	FermerPince();
+	if(num_robot==msg->num_robot)
+	{
+		FermerPince();
+	}
 }
-
 /** Ouvrir la pince **/
 //Fonction Callback permettant d'ouvrir la pince du robot à la réception du message de Commande
-void Robot::OuvrirPinceCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::OuvrirPinceCallback(const robots::Msg_numrobot::ConstPtr& msg)
 {
-	OuvrirPince();
+	if(num_robot==msg->num_robot)
+	{
+		OuvrirPince();
+	}
 }
 
 /** Descendre le bras **/
 //Fonction Callback permettant de mettre le bras en position basse à la réception du message de Commande
-void Robot::DescendreBrasCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::DescendreBrasCallback(const robots::Msg_numrobot::ConstPtr& msg)
 {
-	DescendreBras();
+	if(num_robot==msg->num_robot)
+	{
+		DescendreBras();
+	}
 }
 
 /** Monter le bras **/
 //Fonction Callback permettant de mettre le bras en position haute à la réception du message de Commande
-void Robot::MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg)
+void Robot::MonterBrasCallback(const robots::Msg_numrobot::ConstPtr& msg)
 {
-	MonterBras();
+	if(num_robot==msg->num_robot)
+	{
+		MonterBras();
+	}
 }
 
 /** Contrôler le robot entièrement **/
 //Fonction Callback permettant de contrôler l'ensemble des mouvements du robot à la réception du message de Commande
 void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 {
-	//Envoi du robot dans la position souhaitée
-	EnvoyerRobot(msg->position);
-
-	//Envoi du bras dans l'état souhaité
-	switch(msg->bras)
+	if(num_robot==msg->num_robot)
 	{
-		case -1:
-			DescendreBras();
-			break;
+		//Envoi du robot dans la position souhaitée
+		EnvoyerRobot(msg->position);
 
-		case 1:
-			MonterBras();
-			break;
-	}
+		//Envoi du bras dans l'état souhaité
+		switch(msg->bras)
+		{
+			case -1:
+				DescendreBras();
+				break;
 
-	//Envoi de la pince dans l'état souhaité
-	switch(msg->pince)
-	{
-		case -1:
-			OuvrirPince();
-			break;
+			case 1:
+				MonterBras();
+				break;
+		}
 
-		case 1:
-			FermerPince();
-			break;
+		//Envoi de la pince dans l'état souhaité
+		switch(msg->pince)
+		{
+			case -1:
+				OuvrirPince();
+				break;
+
+			case 1:
+				FermerPince();
+				break;
+			}
 	}
 }
 
@@ -675,13 +695,13 @@ void Robot::init(ros::NodeHandle noeud)
 	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/robots/GetTime",100,&Robot::simGetTimeCallback,this);
 
 	//Subscribers
-	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot"+num_str,10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
-	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot"+num_str,10,&Robot::SendJointsCallback,this);
- 	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot"+num_str,10,&Robot::FermerPinceCallback,this);
-	planifOuvrirPince = noeud.subscribe("/commande/Simulation/OuvrirPinceRobot"+num_str,10,&Robot::OuvrirPinceCallback,this);
-	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras"+num_str,10,&Robot::DescendreBrasCallback,this);
-	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras"+num_str,10,&Robot::MonterBrasCallback,this);
-	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras"+num_str,10,&Robot::ControlerRobotCallback,this);
+	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
+	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot",10,&Robot::SendJointsCallback,this);
+ 	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot",10,&Robot::FermerPinceCallback,this);
+	planifOuvrirPince = noeud.subscribe("/commande/Simulation/OuvrirPinceRobot",10,&Robot::OuvrirPinceCallback,this);
+	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras",10,&Robot::DescendreBrasCallback,this);
+	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras",10,&Robot::MonterBrasCallback,this);
+	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras",10,&Robot::ControlerRobotCallback,this);
 	sub_colorer = noeud.subscribe("/commande/Simulation/Colorer",10,&Robot::ColorerCallback,this);
 	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
 	sub_nouveau_produit= noeud.subscribe("/commande_locale/AddProduct", 1, &Robot::ajouter_produitCallback,this);
@@ -775,4 +795,3 @@ void Robot::simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 
         repSim_getTime=true;
 }
-

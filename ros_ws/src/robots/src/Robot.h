@@ -16,6 +16,7 @@
 #include <std_msgs/Byte.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
+#include <robots/Msg_numrobot.h>
 
 #include <vector>
 #include <sstream>
@@ -124,18 +125,18 @@ public:
 
 	/** Fonctions permettant de controler le robot avec des ordres du noeud commande **/
 	//Pour atteindre une position prédéfinie
-	void SendPositionCallback(const std_msgs::Int32::ConstPtr& msg);
+	void SendPositionCallback(const robots::Msg_numrobot::ConstPtr& msg);
 
 	//Pour atteindre une position définie manuellement
 	void SendJointsCallback(const robots::RobotJoints::ConstPtr& msg);
 
 	//Pour monter ou descendre le bras
-	void DescendreBrasCallback(const std_msgs::Int32::ConstPtr& msg);
-	void MonterBrasCallback(const std_msgs::Int32::ConstPtr& msg);
+	void DescendreBrasCallback(const robots::Msg_numrobot::ConstPtr& msg);
+	void MonterBrasCallback(const robots::Msg_numrobot::ConstPtr& msg);
 
 	//Pour ouvrir ou fermer la pince
-	void FermerPinceCallback(const std_msgs::Int32::ConstPtr& msg);
-	void OuvrirPinceCallback(const std_msgs::Int32::ConstPtr& msg);
+	void FermerPinceCallback(const robots::Msg_numrobot::ConstPtr& msg);
+	void OuvrirPinceCallback(const robots::Msg_numrobot::ConstPtr& msg);
 
 	//Pour contrôler l'ensemble des mouvements du robot
 	void ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg);

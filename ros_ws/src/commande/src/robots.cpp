@@ -36,49 +36,29 @@ Robots::Robots(ros::NodeHandle noeud)
 
 	/** Publishers **/
 	//Positions prédéfinies
-	pub_robot_position1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/SendPositionRobot1",1);
-	pub_robot_position2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/SendPositionRobot2",1);
-	pub_robot_position3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/SendPositionRobot3",1);
-	pub_robot_position4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/SendPositionRobot4",1);
+	pub_robot_position=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/SendPositionRobot",1);
+
 
 	//Positions manuelles
-	pub_robot_joints1=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot1",1);
-	pub_robot_joints2=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot2",1);
-	pub_robot_joints3=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot3",1);
-	pub_robot_joints4=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot4",1);
+	pub_robot_joints=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot",1);
 
 	//Fermer les pinces
-	pub_pince_fermer1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/FermerPinceRobot1",1);
-	pub_pince_fermer2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/FermerPinceRobot2",1);
-	pub_pince_fermer3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/FermerPinceRobot3",1);
-	pub_pince_fermer4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/FermerPinceRobot4",1);
+	pub_pince_fermer=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/FermerPinceRobot",1);
 
 	//Ouvrir les pinces
-	pub_pince_ouvrir1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot1",1);
-	pub_pince_ouvrir2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot2",1);
-	pub_pince_ouvrir3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot3",1);
-	pub_pince_ouvrir4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/OuvrirPinceRobot4",1);
+	pub_pince_ouvrir=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/OuvrirPinceRobot",1);
+	//Descendre les bras
+	pub_descendre=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/DescendreBras",1);
 
 	//Descendre les bras
-	pub_descendre1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/DescendreBras1",1);
-	pub_descendre2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/DescendreBras2",1);
-	pub_descendre3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/DescendreBras3",1);
-	pub_descendre4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/DescendreBras4",1);
-
-	//Descendre les bras
-	pub_monter1=noeud.advertise<std_msgs::Int32>("/commande/Simulation/MonterBras1",1);
-	pub_monter2=noeud.advertise<std_msgs::Int32>("/commande/Simulation/MonterBras2",1);
-	pub_monter3=noeud.advertise<std_msgs::Int32>("/commande/Simulation/MonterBras3",1);
-	pub_monter4=noeud.advertise<std_msgs::Int32>("/commande/Simulation/MonterBras4",1);
+	pub_monter=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/MonterBras",1);
 
 	//Contrôler les robots
-	pub_controler_robot1=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras1",10);
-	pub_controler_robot2=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras2",10);
-	pub_controler_robot3=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras3",10);
-	pub_controler_robot4=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras4",10);
+	pub_controler_robot=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras",10);
 
 	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
 	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
+
 
 
 	/*** Subscribers ***/
@@ -102,8 +82,8 @@ Robots::~Robots()
 void Robots::EnvoyerPosition(int numRobot, int numPosition)
 {
 	//Déclaration du message
-	std_msgs::Int32 msg;
-
+	robots::Msg_numrobot msg;
+	
 	//Numéro de la position souhaitée
 	if(numPosition<1 || numPosition>4)
 	{
@@ -113,28 +93,28 @@ void Robots::EnvoyerPosition(int numRobot, int numPosition)
 	{
 		msg.data = numPosition;
 	}
-
+	msg.num_robot=numRobot;
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
 		case 1:
 			robotPosition[0]=-10;
-			pub_robot_position1.publish(msg);  // pub_robot_position1 est un publisher qui publie dans le topic /commande/Simulation/SendPositionRobot1
+			pub_robot_position.publish(msg);  // pub_robot_position1 est un publisher qui publie dans le topic /commande/Simulation/SendPositionRobot1
 			break;
 
 		case 2:
 			robotPosition[1]=-10;
-			pub_robot_position2.publish(msg);
+			pub_robot_position.publish(msg);
 			break;
 
 		case 3:
 			robotPosition[2]=-10;
-			pub_robot_position3.publish(msg);
+			pub_robot_position.publish(msg);
 			break;
 
 		case 4:
 			robotPosition[3]=-10;
-			pub_robot_position4.publish(msg);
+			pub_robot_position.publish(msg);
 			break;
 
 		default:
@@ -160,28 +140,29 @@ void Robots::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int
 	msg.joint5 = angle5;
 	msg.joint6 = angle6;
 	msg.joint7 = angle7;
+	msg.num_robot=numRobot;
 
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
 		case 1:
 			robotPosition[0]=-10;
-			pub_robot_joints1.publish(msg);
+			pub_robot_joints.publish(msg);
 			break;
 
 		case 2:
 			robotPosition[1]=-10;
-			pub_robot_joints2.publish(msg);
+			pub_robot_joints.publish(msg);
 			break;
 
 		case 3:
 			robotPosition[2]=-10;
-			pub_robot_joints3.publish(msg);
+			pub_robot_joints.publish(msg);
 			break;
 
 		case 4:
 			robotPosition[3]=-10;
-			pub_robot_joints4.publish(msg);
+			pub_robot_joints.publish(msg);
 			break;
 
 		default:
@@ -201,6 +182,8 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 	controle.position = numPosition; // cette strcture (MoveRobot) contient 3 variables, postion, bras et pince
 	controle.bras = bras;
 	controle.pince = pince;
+	controle.num_robot=numRobot;
+
 
 	if(numPosition<1 || numPosition>4)
 	{
@@ -221,22 +204,22 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 	{
 		case 1:
 			robotPosition[0]=-10;
-			pub_controler_robot1.publish(controle); //  pub_controler_robot1 est un publisher qui publie dans le topic /commande/Simulation/retourCommande1 le subscriber est Robot1
+			pub_controler_robot.publish(controle); //  pub_controler_robot1 est un publisher qui publie dans le topic /commande/Simulation/retourCommande1 le subscriber est Robot1
 			break;
 
 		case 2:
 			robotPosition[1]=-10;
-			pub_controler_robot2.publish(controle);
+			pub_controler_robot.publish(controle);
 			break;
 
 		case 3:
 			robotPosition[2]=-10;
-			pub_controler_robot3.publish(controle);
+			pub_controler_robot.publish(controle);
 			break;
 
 		case 4:
 			robotPosition[3]=-10;
-			pub_controler_robot4.publish(controle);
+			pub_controler_robot.publish(controle);
 			break;
 
 		default:
@@ -252,26 +235,26 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 void Robots::FermerPince(int numRobot)
 {
 	//Déclaration du message
-	std_msgs::Int32 msg;
+	robots::Msg_numrobot msg;
 	msg.data=1;
-
+	msg.num_robot=numRobot;
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
 		case 1:
-			pub_pince_fermer1.publish(msg);
+			pub_pince_fermer.publish(msg);
 			break;
 
 		case 2:
-			pub_pince_fermer2.publish(msg);
+			pub_pince_fermer.publish(msg);
 			break;
 
 		case 3:
-			pub_pince_fermer3.publish(msg);
+			pub_pince_fermer.publish(msg);
 			break;
 
 		case 4:
-			pub_pince_fermer4.publish(msg);
+			pub_pince_fermer.publish(msg);
 			break;
 
 		default:
@@ -287,26 +270,26 @@ void Robots::FermerPince(int numRobot)
 void Robots::OuvrirPince(int numRobot)
 {
 	//Déclaration du message
-	std_msgs::Int32 msg;
+	robots::Msg_numrobot msg;
 	msg.data=0;
-
+	msg.num_robot=numRobot;
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
 		case 1:
-			pub_pince_ouvrir1.publish(msg);
+			pub_pince_ouvrir.publish(msg);
 			break;
 
 		case 2:
-			pub_pince_ouvrir2.publish(msg);
+			pub_pince_ouvrir.publish(msg);
 			break;
 
 		case 3:
-			pub_pince_ouvrir3.publish(msg);
+			pub_pince_ouvrir.publish(msg);
 			break;
 
 		case 4:
-			pub_pince_ouvrir4.publish(msg);
+			pub_pince_ouvrir.publish(msg);
 			break;
 
 		default:
@@ -322,26 +305,26 @@ void Robots::OuvrirPince(int numRobot)
 void Robots::DescendreBras(int numRobot)
 {
 	//Déclaration du message
-	std_msgs::Int32 msg;
+	robots::Msg_numrobot msg;
 	msg.data=1;
-
+	msg.num_robot=numRobot;
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
 		case 1:
-			pub_descendre1.publish(msg);
+			pub_descendre.publish(msg);
 			break;
 
 		case 2:
-			pub_descendre2.publish(msg);
+			pub_descendre.publish(msg);
 			break;
 
 		case 3:
-			pub_descendre3.publish(msg);
+			pub_descendre.publish(msg);
 			break;
 
 		case 4:
-			pub_descendre4.publish(msg);
+			pub_descendre.publish(msg);
 			break;
 
 		default:
@@ -357,26 +340,27 @@ void Robots::DescendreBras(int numRobot)
 void Robots::MonterBras(int numRobot)
 {
 	//Déclaration du message
-	std_msgs::Int32 msg;
+	robots::Msg_numrobot msg;
 	msg.data=0;
+	msg.num_robot=numRobot;
 
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	switch(numRobot)
 	{
 		case 1:
-			pub_monter1.publish(msg);
+			pub_monter.publish(msg);
 			break;
 
 		case 2:
-			pub_monter2.publish(msg);
+			pub_monter.publish(msg);
 			break;
 
 		case 3:
-			pub_monter3.publish(msg);
+			pub_monter.publish(msg);
 			break;
 
 		case 4:
-			pub_monter4.publish(msg);
+			pub_monter.publish(msg);
 			break;
 
 		default:

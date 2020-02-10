@@ -8,6 +8,7 @@
 
 //Messages
 #include <std_msgs/Int32.h>
+#include "aiguillages/Msg_Aiguillage.h"
 
 
 class AigsInterface
@@ -16,12 +17,13 @@ private:
 	//Publishers
 
 
-	ros::Publisher pub_aig_Droite1, pub_aig_Droite2, pub_aig_Droite3, pub_aig_Droite4, pub_aig_Droite5, pub_aig_Droite6, pub_aig_Droite7, pub_aig_Droite8, pub_aig_Droite9, pub_aig_Droite10, pub_aig_Droite11, pub_aig_Droite12;
+	ros::Publisher pub_aig_Droite;
 
-	ros::Publisher pub_aig_Gauche1, pub_aig_Gauche2, pub_aig_Gauche3, pub_aig_Gauche4, pub_aig_Gauche5, pub_aig_Gauche6, pub_aig_Gauche7, pub_aig_Gauche8, pub_aig_Gauche9, pub_aig_Gauche10, pub_aig_Gauche11, pub_aig_Gauche12;
+	ros::Publisher pub_aig_Gauche;
 
 	//Attributs
 	std_msgs::Int32 msg;
+	aiguillages::Msg_Aiguillage msg_aigs;
 
 public:
 	AigsInterface(ros::NodeHandle noeud);

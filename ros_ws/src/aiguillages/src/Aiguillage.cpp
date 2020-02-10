@@ -77,50 +77,59 @@ void Aiguillage::SwitchSensorCallback(const std_msgs::Int32::ConstPtr& msg)
 	Aig_G = (msg->data & (int32_t)pow(2,2*num_aiguillage-1)) > 0;
 }
 
-void Aiguillage::GaucheCallback(const std_msgs::Int32::ConstPtr& msg)
+void Aiguillage::GaucheCallback(const aiguillages::Msg_Aiguillage::ConstPtr& msg_aigs)
 {
-	if(!Aig_G)
+	if (num_AIG.data==msg_aigs->Aiguillage)
 	{
-		//Deverouillage de l'aiguillage
-		AigDev.publish(num_AIG);
-		usleep(100000);
-		//Envoie ordre mouvement à gauche
-		AigGauche.publish(num_AIG);
-
-		//Attente...
-		while(!Aig_G)
+		ROS_INFO("On bouge a gauche");
+		if(!Aig_G)
 		{
-			ros::spinOnce();
-			if(Aig_D) AigGauche.publish(num_AIG);
-			loop_rate->sleep();
-		}
+			//Deverouillage de l'aiguillage
+			AigDev.publish(num_AIG);
+			usleep(100000);
+				//Envoie ordre mouvement à gauche
+			AigGauche.publish(num_AIG);
 
-		//Verouillage de l'aiguillage
-		AigVer.publish(num_AIG);
+			//Attente...
+			while(!Aig_G)
+			{
+				ros::spinOnce();
+				if(Aig_D) AigGauche.publish(num_AIG);
+				loop_rate->sleep();
+			}
+
+			//Verouillage de l'aiguillage
+			AigVer.publish(num_AIG);
+		}
+		usleep(100000);
 	}
-	usleep(100000);
 }
 
-void Aiguillage::DroiteCallback(const std_msgs::Int32::ConstPtr& msg)
+
+void Aiguillage::DroiteCallback(const aiguillages::Msg_Aiguillage::ConstPtr& msg_aigs)
 {
-	if(!Aig_D)
+	if (num_AIG.data==msg_aigs->Aiguillage)
 	{
-		//Deverouillage de l'aiguillage
-		AigDev.publish(num_AIG);
-		usleep(100000);
-		//Envoie ordre mouvement à droite
-		AigDroite.publish(num_AIG);
-
-		//Attente...
-		while(!Aig_D)
+		ROS_INFO("On bouge a droite");
+		if(!Aig_D)
 		{
-			ros::spinOnce();
-			if(Aig_G) AigDroite.publish(num_AIG);
-			loop_rate->sleep();
-		}
+			//Deverouillage de l'aiguillage
+			AigDev.publish(num_AIG);
+			usleep(100000);
+			//Envoie ordre mouvement à droite
+			AigDroite.publish(num_AIG);
 
-		//Verouillage de l'aiguillage
-		AigVer.publish(num_AIG);
+			//Attente...
+			while(!Aig_D)
+			{
+				ros::spinOnce();
+				if(Aig_G) AigDroite.publish(num_AIG);
+				loop_rate->sleep();
+			}
+
+			//Verouillage de l'aiguillage
+			AigVer.publish(num_AIG);
+		}
+		usleep(100000);
 	}
-	usleep(100000);
 }

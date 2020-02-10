@@ -12,6 +12,8 @@
 #include <std_msgs/Int32.h>
 #include <robots/ColorMsg.h>
 #include "robots/DoTaskMsg.h"
+#include "robots/Msg_numrobot.h"
+
 
 
 
@@ -19,14 +21,14 @@ class Robots
 {
 private:
 	//Publishers
-	ros::Publisher pub_robot_position1, pub_robot_position2, pub_robot_position3, pub_robot_position4;
-	ros::Publisher pub_robot_joints1, pub_robot_joints2, pub_robot_joints3, pub_robot_joints4;
-	ros::Publisher pub_pince_fermer1, pub_pince_fermer2, pub_pince_fermer3, pub_pince_fermer4;
-	ros::Publisher pub_pince_ouvrir1, pub_pince_ouvrir2, pub_pince_ouvrir3, pub_pince_ouvrir4;
-	ros::Publisher pub_pince_descendre1, pub_pince_descendre2, pub_pince_descendre3, pub_pince_descendre4;
-	ros::Publisher pub_descendre1, pub_descendre2, pub_descendre3, pub_descendre4;
-	ros::Publisher pub_monter1, pub_monter2, pub_monter3, pub_monter4;
-	ros::Publisher pub_controler_robot1, pub_controler_robot2, pub_controler_robot3, pub_controler_robot4;
+	ros::Publisher pub_robot_position;
+	ros::Publisher pub_robot_joints;
+	ros::Publisher pub_pince_fermer;
+	ros::Publisher pub_pince_ouvrir;
+	ros::Publisher pub_pince_descendre;
+	ros::Publisher pub_descendre;
+	ros::Publisher pub_monter;
+	ros::Publisher pub_controler_robot;
 	ros::Publisher pub_colorer;
 	ros::Publisher pub_doTask;
 

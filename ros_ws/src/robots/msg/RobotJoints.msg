@@ -5,3 +5,4 @@ int32 joint4
 int32 joint5
 int32 joint6
 int32 joint7
+int32 num_robot

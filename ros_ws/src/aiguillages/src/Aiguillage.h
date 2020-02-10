@@ -4,6 +4,7 @@
 #include <ros/ros.h>
 #include <std_msgs/Int32.h>
 #include <unistd.h>
+#include <aiguillages/Msg_Aiguillage.h>
 
 using namespace std;
 
@@ -34,8 +35,7 @@ public:
 	~Aiguillage();
 
 	void SwitchSensorCallback(const std_msgs::Int32::ConstPtr& msg);
-	void GaucheCallback(const std_msgs::Int32::ConstPtr& msg);
-	void DroiteCallback(const std_msgs::Int32::ConstPtr& msg);
-
+	void GaucheCallback(const aiguillages::Msg_Aiguillage::ConstPtr& msg_aigs);
+	void DroiteCallback(const aiguillages::Msg_Aiguillage::ConstPtr& msg_aigs);
 };
 #endif

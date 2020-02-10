@@ -10,6 +10,8 @@
 
 #include "vrepController.h"
 
+using namespace std;
+
 // Initialisation du nombre de plateformes F
 vrepController::vrepController(){
 	nShuttleF = 0;
@@ -30,24 +32,28 @@ vrepController::vrepController(){
 void vrepController::pause()
 {
 	pubSim_pauseSimulation.publish(msgSim_pauseSimulation);
+	cout << "debut pause" << endl;
 	while(!repSim_pauseSimulation&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
 	}
 	repSim_pauseSimulation = false;
+	cout << "fin pause" << endl;
 }
 
 // PLAY
 void vrepController::play()
 {
 	pubSim_startSimulation.publish(msgSim_startSimulation);
+	cout << "debut start" << endl;
 	while(!repSim_startSimulation&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
 	}
 	repSim_startSimulation = false;
+	cout << "fin play" << endl;
 }
 
 // SHUTTLE (pour charger une plateforme dans la simulation: plateforme aléatoire puis couleur de plateforme aléatoire)
@@ -66,7 +72,6 @@ int vrepController::LoadShuttle(char shuttleNumber, int type, int firstDestinati
 				//std::cout << "cas 3 " << std::endl;
 		}else {
 				shuttleColor = type;
-				ROS_INFO("%d",type);
 				//std::cout << "cas 4 " << std::endl;
 		}
 
@@ -90,12 +95,14 @@ int vrepController::LoadShuttle(char shuttleNumber, int type, int firstDestinati
 		nShuttleF ++;
 
 		pubSim_loadModel.publish(msgSim_loadModel);
+		cout << "debut load" << endl;
 		while(!repSim_loadModel&&ros::ok())
 		{
 			ros::spinOnce();
 			loop_rate->sleep();
 		}
 		repSim_loadModel = false;
+		cout << "fin load" << endl;
 
 
 		//Recuperation nom signal couleur : <handle de la navette>_color
@@ -107,11 +114,8 @@ int vrepController::LoadShuttle(char shuttleNumber, int type, int firstDestinati
 		int dim;
 
 		dim=floor(log10(handle_navette))+1;
-		std::cout<<"dim : "<<dim<<std::endl;
-
 		std::string shuttleColorSignal= std::string(intStr,dim) + "_color"; ;
 
-		std::cout<<"test : "<<shuttleColorSignal<<std::endl;
 
 		int shuttleId=shuttleNumber-64; // 'A' -> 1 decimal
 		if(shuttleNumber=='Z')
@@ -123,21 +127,25 @@ int vrepController::LoadShuttle(char shuttleNumber, int type, int firstDestinati
 			msgSim_changeShuttleColor.data.push_back(shuttleId);
 			msgSim_changeShuttleColor.data.push_back(shuttleColor);
 			pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
+			cout << "debut change color" << endl;
 			while(!repSim_changeShuttleColor&&ros::ok())
 			{
 				ros::spinOnce();
 				loop_rate->sleep();
 			}
 			repSim_changeShuttleColor = false;
+			cout << "fin change color" << endl;
 
 			msgSim_getColor.data = shuttleColorSignal;
 			pubSim_getColor.publish(msgSim_getColor);
+			cout << "debut get color " << endl;
 			while(!repSim_getColor&&ros::ok())
 			{
 				ros::spinOnce();
 				loop_rate->sleep();
 			}
 			repSim_getColor = false;
+			cout << "fin get color" << endl;
 
 		}while(valueSim_getColor!=shuttleColor);
 
@@ -172,22 +180,26 @@ void vrepController::addNewShuttle(int handle_navette, int handle_plateforme, in
 }
 
 // Chargement des modèles dans la simulation lors de son lancement
-void vrepController::loadModelInit(char shuttleNumber)
+void vrepController::loadModelInit(int shuttleNumber)
 {
-	if(shuttleNumber>54 || shuttleNumber<48) printf(" ATTENTION, LE NUMERO DU SHUTTLE DOIT ETRE COMPRIS ENTRE 0 ET 6 \n");
+	char shuttleChar;
+	cout << "shuttleNumber:" << shuttleNumber << endl;
+	if(shuttleNumber<0 || shuttleNumber>6) printf(" ATTENTION, LE NUMERO DU SHUTTLE DOIT ETRE COMPRIS ENTRE 0 ET 6 \n");
 	else {
-		if(shuttleNumber == 48) shuttleNumber = char(74); // SI 0 -> ShuttleZ
-		shuttleNumber = char(shuttleNumber+16);
-		std::string shuttleName = "models/montrac/shuttle"+std::string(&shuttleNumber)+".ttm";
+		if(shuttleNumber == 0) shuttleChar = (char)(90); // SI 0 -> ShuttleZ
+		else shuttleChar = char(shuttleNumber+64);
+		std::string shuttleName = "models/montrac/shuttle"+std::string(&shuttleChar)+".ttm";
 
 		msgSim_loadModel.data = shuttleName;
 		pubSim_loadModel.publish(msgSim_loadModel);
+		cout << "debut load init" << endl;
 		while(!repSim_loadModel&&ros::ok())
 		{
 			ros::spinOnce();
 			loop_rate->sleep();
 		}
 		repSim_loadModel = false;
+		cout << "fin load init" << endl;
 	}
 }
 
@@ -199,12 +211,14 @@ void vrepController::removeModel(int handle)
 {
 	msgSim_removeModel.data = handle;
 	pubSim_removeModel.publish(msgSim_removeModel);
+	cout << "debut remove model" << endl;
 	while(!repSim_removeModel&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
 	}
 	repSim_removeModel = false;
+	cout << "fin remove model" << endl;
 }
 
 //Obtention d'un handle d'objet dans la simulation
@@ -212,12 +226,14 @@ int32_t vrepController::getObjectHandle(std::string objectName)
 {
 	msgSim_getObjectHandle.data = objectName;
 	pubSim_getObjectHandle.publish(msgSim_getObjectHandle);
+	cout << "debut get objact handle" << endl;
 	while(!repSim_getObjectHandle&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
 	}
 	repSim_getObjectHandle = false;
+	cout << "fin getobjecthandle" << endl;
 	return valueSim_getObjectHandle;
 }
 
@@ -252,9 +268,6 @@ void vrepController::ColorCallBack(const commande_locale::Msg_Color::ConstPtr& m
 	dim=floor(log10(Handle))+1;
 	std::string shuttleColorSignal= std::string(intStr,dim) + "_color"; ;
 
-	std::cout<<"test : "<<shuttleColorSignal<<std::endl;
-	ROS_INFO("-------- ShuttleColorSignal: %s" , shuttleColorSignal.c_str());
-
 	char shuttleNumber=shuttleColorSignal[7];
 	int shuttleId = shuttleNumber-64;
 	if(shuttleNumber=='Z')
@@ -265,21 +278,25 @@ void vrepController::ColorCallBack(const commande_locale::Msg_Color::ConstPtr& m
 		msgSim_changeShuttleColor.data.push_back(shuttleId);
 		msgSim_changeShuttleColor.data.push_back(Color);
 		pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
+		cout << "debut change color seul" << endl;
 		while(!repSim_changeShuttleColor&&ros::ok())
 		{
 			ros::spinOnce();
 			loop_rate->sleep();
 		}
 		repSim_changeShuttleColor = false;
+		cout << "fin change color seul" << endl;
 
 		msgSim_getColor.data = shuttleColorSignal;
 		pubSim_getColor.publish(msgSim_getColor);
+		cout << "debut get color seul" << endl;
 		while(!repSim_getColor&&ros::ok())
 		{
 			ros::spinOnce();
 			loop_rate->sleep();
 		}
 		repSim_getColor = false;
+		cout << "fin get color seul" << endl;
 	}while(valueSim_getColor!=Color);
 }
 

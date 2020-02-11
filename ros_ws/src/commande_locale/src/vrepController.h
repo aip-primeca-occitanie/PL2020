@@ -44,18 +44,6 @@ class vrepController
 		bool repSim_getColor;
 		int valueSim_getColor;
 
-		// ChangeColor
-		ros::Publisher pubSim_changeColor;
-		std_msgs::Int32MultiArray msgSim_changeColor;
-		ros::Subscriber subSim_changeColor;
-		bool repSim_changeColor;
-
-		// ChangeShuttleColor
-		ros::Publisher pubSim_changeShuttleColor;
-		std_msgs::Int32MultiArray msgSim_changeShuttleColor;
-		ros::Subscriber subSim_changeShuttleColor;
-		bool repSim_changeShuttleColor;
-
 		// StartSimulation
 		ros::Publisher pubSim_startSimulation;
 		std_msgs::Byte msgSim_startSimulation;
@@ -116,7 +104,6 @@ class vrepController
 		void pause();
 		void deleteShuttleCallBack(const aiguillages::ExchangeSh::ConstPtr& msg);
 
-		int LoadShuttle(char shuttleNumber, int product, int firstDestination);
 		void setSimulationFile(std::string);
 		void addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination);
 		void ColorCallBack(const commande_locale::Msg_Color::ConstPtr& msg);

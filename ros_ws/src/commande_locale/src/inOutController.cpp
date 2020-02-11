@@ -8,7 +8,7 @@
  * ********************************* *
 */
 
-#include "inOutController.h"  
+#include "inOutController.h"
 
 
 // inOutController doit pouvoir actualiser l'UI à chaque actualisation de capteurs
@@ -120,15 +120,8 @@ void inOutController::StatePinCallBack(const commande_locale::Msg_PinControl::Co
 
 
     for(int i=1;i<=8;i++) SensorState.CPI[i] = (PinOn.data & (int32_t)pow(2,i-1)) > 0;
-   
+
     planifRailSensorState.publish(SensorState);
-
-}
-
-//Callback appeler lorsqu'on 
-void inOutController::SchedulerNextShuttleCallback(const scheduling::Msg_LoadShuttle::ConstPtr&  msg){
-		
-	int handle = vrepServiceAcces->LoadShuttle(msg->shuttleType,msg->product,msg->firstDestination);
 
 }
 
@@ -142,7 +135,6 @@ void inOutController::init(ros::NodeHandle nh)
 	planifSubSwitchState = nh.subscribe("/commande/Simulation/Actionneurs_aiguillages", 1, &inOutController::StateSwitchCallBack, this);
 	planifSubStopState = nh.subscribe("/commande/Simulation/Actionneurs_stops", 1, &inOutController::StateStopCallBack, this);
 	planifSubPinState = nh.subscribe("/commande/Simulation/Actionneurs_pins", 1, &inOutController::StatePinCallBack, this);
-	subScheduler = nh.subscribe("/scheduling/NextProduct",10,&inOutController::SchedulerNextShuttleCallback,this);
 
 	// Publishers
 	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerRight", 1);
@@ -151,7 +143,7 @@ void inOutController::init(ros::NodeHandle nh)
 	VREPStopController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/StopController", 1);
 	VREPGoController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/GoController", 1);
 	planifRailSensorState = nh.advertise<commande_locale::Msg_SensorState>("/commande/Simulation/Capteurs", 1);
-	
+
 	// Initialisation des capteurs des Ergots
 	for(int i=1;i<9;i++) SensorState.CPI[i]=0;
 

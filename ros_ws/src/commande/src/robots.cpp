@@ -4,6 +4,7 @@
 
 #include <ros/ros.h>
 #include <iostream>
+#include <unistd.h>
 
 using namespace std;
 
@@ -67,6 +68,8 @@ Robots::Robots(ros::NodeHandle noeud)
 	sub_retourRobot2 = noeud.subscribe("/commande/Simulation/retourCommande2", 100, &Robots::RetourRobot2Callback,this);
 	sub_retourRobot3 = noeud.subscribe("/commande/Simulation/retourCommande3", 100, &Robots::RetourRobot3Callback,this);
 	sub_retourRobot4 = noeud.subscribe("/commande/Simulation/retourCommande4", 100, &Robots::RetourRobot4Callback,this);
+	
+	sleep(1);
 }
 
 
@@ -712,6 +715,8 @@ void Robots::Colorer(int num_robot,int position)
 	msgColor.num_robot=num_robot;
 	msgColor.position=position;
 	pub_colorer.publish(msgColor);
+
+	usleep(1200000);
 }
 
 

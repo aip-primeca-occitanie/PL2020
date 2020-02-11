@@ -13,6 +13,7 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/Byte.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
@@ -20,9 +21,9 @@
 
 #include <vector>
 #include <sstream>
+#include <iostream>
 #include <stdlib.h>
 #include <string>
-#include <string.h>
 #include <unistd.h>
 #include "Poste.h"
 
@@ -61,6 +62,25 @@ private:
 	bool repSim_getTime;
 	float valueSim_getTime;
 
+	// ChangeColor
+	ros::Publisher pubSim_changeColor;
+	std_msgs::Int32MultiArray msgSim_changeColor;
+	ros::Subscriber subSim_changeColor;
+	bool repSim_changeColor;
+
+	// ChangeShuttleColor
+	ros::Publisher pubSim_changeShuttleColor;
+	std_msgs::Int32MultiArray msgSim_changeShuttleColor;
+	ros::Subscriber subSim_changeShuttleColor;
+	bool repSim_changeShuttleColor;
+
+	// GetColor
+	ros::Publisher pubSim_getColor;
+	std_msgs::String msgSim_getColor;
+	ros::Subscriber subSim_getColor;
+	bool repSim_getColor;
+	int valueSim_getColor;
+
 	/** Subscribers aux topics de la commande **/
 	ros::Subscriber planifSendPosition;
 	ros::Subscriber planifSendJoints;
@@ -83,6 +103,7 @@ private:
 	unsigned char mymodes[7];
 	float Rpos[7];
 	int Rints[7];
+	int couleur_transportee[4];
 	// numero du robot
 	int num_robot;
 	ros::Rate* loop_rate;
@@ -106,6 +127,8 @@ public:
 
 	//Initialisation
 	void init(ros::NodeHandle noeud);
+
+	int computeTableId(int position);
 
 	/** Fonctions internes permettant le contrôle du robot **/
 	//Pour atteindre une position prédéfinie
@@ -151,6 +174,9 @@ public:
 	void simSetJointStateCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simGetJointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
 	void simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg);
+	void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);
+	void simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg);
+	void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);
 };
 
 

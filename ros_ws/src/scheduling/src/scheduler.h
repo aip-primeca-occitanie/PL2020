@@ -50,7 +50,6 @@ private:
 	std::map<int,Product*>::iterator iteratorPMap,iteratorPMapOut;
 	std::map<int,Product*> ProductsMap; // la clé est le numéro de la phase de lancement
 
-	ros::Publisher pubCreateShuttle, pubDelShuttle;
 	ros::Publisher pubNombreDeProduits;
 	ros::Publisher pubNomProduits;
 	ros::Publisher pubProductAddTable;

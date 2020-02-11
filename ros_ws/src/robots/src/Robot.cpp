@@ -1,6 +1,8 @@
 /**** Projet long N7 2020 ****/
 #include "Robot.h"
 
+using namespace std;
+
 //Constructeur
 Robot::Robot(int num_du_robot)
 {
@@ -15,10 +17,16 @@ Robot::Robot(int num_du_robot)
 		mymodes[i]=1;
 	}
 
+	for(int i=0; i<4; i++)
+		couleur_transportee[i]=0;
+
 	repSim_getObjectHandle=false;
         repSim_setJointState=false;
         repSim_getJointState=false;
         repSim_getTime=false;
+	repSim_changeColor=false;
+	repSim_changeShuttleColor=false;
+	repSim_getColor=false;
 
 	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
 	msgSim_setJointState.layout.dim[0].label="handles";
@@ -126,7 +134,7 @@ void Robot::EnvoyerRobot(int numposition)
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(std::abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -200,7 +208,7 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(std::abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -270,7 +278,7 @@ void Robot::DescendreBras()
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(std::abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -346,7 +354,7 @@ void Robot::MonterBras()
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(std::abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001)
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -566,33 +574,158 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 	}
 }
 
+int Robot::computeTableId(int position)
+{
+	int id=-1;
+
+	switch(num_robot)
+	{
+		case 1:
+			if(position==1)
+				id=1;
+			else if(position==4)
+				id=0;
+			break;
+		case 2:
+			if(position==1)
+				id=3;
+			else if(position==4)
+				id=4;
+			break;
+		case 3:
+			if(position==1)
+				id=6;
+			else if(position==4)
+				id=7;
+			break;
+		case 4:
+			if(position==1)
+				id=10;
+			else if(position==4)
+				id=9;
+			break;
+	}
+	
+	return id;
+}
+
 void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'est forcement quand on transporte !!
 {
 	if (msg->num_robot==num_robot)
 	{
-		if (msg->position==1)
+		cout << "me concerne robot=" << msg->num_robot << " pos=" << msg->position << endl;
+		int idNavette=-1;
+		if(msg->position==2 || msg->position==3) // Si navette
 		{
-			//mettre a jour la mémoire sur la couleur transportée, si on avait rien on prend, si on avait quelquechose on lache
-			//Colorer le poste ou la navette en position 1
-			//c'est cadeau, ce poste s'appelle poste_pos_1.get_nom()
-			int produit_detecte=1; //super fonction qui voit les couleurs
-			poste_pos_1.ajouter_produit(produit_detecte); //a changer en detectant la couleur
+			//idNavette = shuttleManager.getIdNavette(robot=,pos=);
+			idNavette=1;
 		}
-		if (msg->position==4)
+		
+	// regarde la couleur de ce qu'on veut prendre (call shuttleManager si navette)
+		bool erreur=false;
+		int couleur[4];
+		char c=(char)(idNavette+64);
+		string signal;
+		if(msg->position==2 || msg->position==3) // Si navette
 		{
-			//mettre a jour la mémoire sur la couleur transportée, si on avait rien on prend, si on avait quelquechose on lache
-			//Colorer le poste ou la navette en position 4
-			//c'est cadeau, ce poste s'appelle poste_pos_4.get_nom()
-			int produit_detecte=1; //super fonction qui voit les couleurs
-			poste_pos_4.ajouter_produit(produit_detecte); //a changer en detectant la couleur
+			signal="Shuttle"+string(&c);
 		}
-		ROS_INFO("Je peux pas colorer, Anthony a pas finit de passer la simu sur kinetic");
+		else if(msg->position==1 || msg->position==4) // Si poste
+		{
+			if(msg->position==1)
+				signal=poste_pos_1.get_nom();
+			else
+				signal=poste_pos_4.get_nom();
+		}
+		else
+		{
+			erreur=true;
+			ROS_ERROR("ColorerCallback: msg->position incorrecte !!!");
+		}
+
+		cout << "signal=" << signal << endl;
+		string fin;
+
+		if(!erreur)
+		{
+			for(int i=0; i<4; i++)
+			{
+				fin.clear();
+				fin.append(signal);
+				fin.append("#");
+				fin.append(to_string(i));
+				fin.append("_color");
+				msgSim_getColor.data=fin;
+
+				pubSim_getColor.publish(msgSim_getColor);
+				while(!repSim_getColor&&ros::ok())
+				{
+					ros::spinOnce();
+					loop_rate->sleep();
+				}
+				repSim_getColor=false;
+				couleur[i]=valueSim_getColor;
+			}
+		}
+	
+		cout << "get color" << endl;
+		for(int i=0; i<4; i++)
+			cout << "couleur[" << i << "]=" << couleur[i] << endl;
+	
+		int produit_detecte=1;
+		if(msg->position==1)
+			poste_pos_1.ajouter_produit(produit_detecte);
+		else if(msg->position==4)
+			poste_pos_4.ajouter_produit(produit_detecte);
+
+		cout << "ajout des produit" << endl;
+
+	// colore le poste ou navette en pos 1 avec couleur en mémoire
+		if(msg->position==2 || msg->position==3) // Si navette
+		{
+			msgSim_changeShuttleColor.data.clear();
+			msgSim_changeShuttleColor.data.push_back(idNavette);
+			for(int i=0; i<4; i++)
+				msgSim_changeShuttleColor.data.push_back(couleur_transportee[i]);
+			pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
+			while(!repSim_changeShuttleColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_changeShuttleColor=false;
+		}
+		else if(msg->position==1 || msg->position==4)
+		{
+			cout << "debut change color" << endl;
+			msgSim_changeColor.data.clear();
+			msgSim_changeColor.data.push_back(computeTableId(msg->position));
+			for(int i=0; i<4; i++)
+				msgSim_changeColor.data.push_back(couleur_transportee[i]);
+			pubSim_changeColor.publish(msgSim_changeColor);
+			cout << "apres publish" << endl;
+			while(!repSim_changeColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_changeColor=false;
+		}
+
+	// on met a jour la couleur en mémoire (qu'on transporte)
+		for(int i=0; i<4; i++)
+		{
+			couleur_transportee[i]=couleur[i];
+			cout << "couleur_trasportee[" << i << "]=" << couleur_transportee[i] << endl;
+		}
+		cout << "fin" << endl;
 	}
 }
 
 void Robot::colorerPoste(int produit, string poste)
 {
-		ROS_INFO("La je veux colorer le poste suite a quelquechose, ca arrive bientot");
+	ROS_INFO("La je veux colorer le poste suite a quelquechose, ca arrive bientot");
+	ROS_INFO("produit:%d poste:%s",produit, poste.c_str());
 }
 
 void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
@@ -631,47 +764,47 @@ void Robot::ajouter_produitCallback(commande_locale::Msg_AddProduct msg)
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
 {
-	std::string num_str;
-	std::string nom;
+	string num_str;
+	string nom;
 	int numero_poste;
 	switch(num_robot){
 
 	case 1:
 		num_str="1";
-		nom="customizableTable_tableTop#1";
+		nom="Table#1";
 		numero_poste=1;
 		poste_pos_1.init(nom,numero_poste);
-		nom="customizableTable_tableTop#0";
+		nom="Table#0";
 		numero_poste=2;
 		poste_pos_4.init(nom,numero_poste);
 	break;
 
 	case 2:
-    num_str="2";
-		nom="customizableTable_tableTop#3";
+		num_str="2";
+		nom="Table#3";
 		numero_poste=3;
 		poste_pos_1.init(nom,numero_poste);
-		nom="customizableTable_tableTop#4";
+		nom="Table#4";
 		numero_poste=4;
 		poste_pos_4.init(nom,numero_poste);
 	break;
 
  	case 3:
 		num_str="3";
-		nom="customizableTable_tableTop#6";
+		nom="Table#6";
 		numero_poste=5;
 		poste_pos_1.init(nom,numero_poste);
-		nom="customizableTable_tableTop#7";
+		nom="Table#7";
 		numero_poste=6;
 		poste_pos_4.init(nom,numero_poste);
 	break;
 
   case 4:
 		num_str="4";
-		nom="customizableTable_tableTop#10";
+		nom="Table#10";
 		numero_poste=7;
 		poste_pos_1.init(nom,numero_poste);
-		nom="customizableTable_tableTop#9";
+		nom="Table#9";
 		numero_poste=8;
 		poste_pos_4.init(nom,numero_poste);
 	break;
@@ -693,6 +826,16 @@ void Robot::init(ros::NodeHandle noeud)
 
 	pubSim_getTime = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/robots/GetTime",100);
 	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/robots/GetTime",100,&Robot::simGetTimeCallback,this);
+
+	pubSim_changeColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robots/ChangeColor",100);
+	subSim_changeColor = noeud.subscribe("/sim_ros_interface/services/response/robots/ChangeColor",100,&Robot::simChangeColorCallback,this);
+
+	pubSim_changeShuttleColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robots/ChangeShuttleColor",100);
+	subSim_changeShuttleColor = noeud.subscribe("/sim_ros_interface/services/response/robots/ChangeShuttleColor",100,&Robot::simChangeShuttleColorCallback,this);
+
+	pubSim_getColor = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robots/GetColor",100);
+	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robots/GetColor",100,&Robot::simGetColorCallback,this);
+
 
 	//Subscribers
 	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
@@ -720,7 +863,7 @@ void Robot::init(ros::NodeHandle noeud)
 	//Utilisation du service simRosGetObjectHandle pour obtenir les handles du robot
 	for (int i=1;i<8;i++)
 	{
-		std::stringstream sr;
+		stringstream sr;
 		sr << i;
 		switch(num_robot){
 			case 1:
@@ -794,4 +937,20 @@ void Robot::simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 	valueSim_getTime=msg->data;
 
         repSim_getTime=true;
+}
+
+void Robot::simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+	repSim_changeColor=true;
+}
+
+void Robot::simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+	repSim_changeShuttleColor=true;
+}
+
+void Robot::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	valueSim_getColor=msg->data;
+	repSim_getColor=true;
 }

@@ -63,6 +63,5 @@ public:
 	void StateSwitchCallBack(const commande_locale::Msg_SwitchControl::ConstPtr&  msg);
 	void StateStopCallBack(const commande_locale::Msg_StopControl::ConstPtr&  msg);
 	void StatePinCallBack(const commande_locale::Msg_PinControl::ConstPtr&  msg);
-	void SchedulerNextShuttleCallback(const scheduling::Msg_LoadShuttle::ConstPtr& msg);
 };
 #endif

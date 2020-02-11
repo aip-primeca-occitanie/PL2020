@@ -40,8 +40,6 @@ bool Scheduler::init(ros::NodeHandle nh, std::string executionPath)
 	sub_DemandeNbrSh = nh.subscribe("/A10/DemandeNbrSh", 10 , &Scheduler::SendNbrShuttleCallback,this);
 
 	// Publishers Initialisation
-	pubCreateShuttle = nh.advertise<scheduling::Msg_LoadShuttle>("/scheduling/NextProduct",10);
-	pubDelShuttle = nh.advertise<std_msgs::Int32>("/commande_navette/DelShuttle",10);
 	pubProductAddTable = nh.advertise<std_msgs::Int32>("/Table2/ManualProduct",10);
 	pubNbShuttle = nh.advertise<std_msgs::Int32>("/A10/NombreShuttle",10);
 

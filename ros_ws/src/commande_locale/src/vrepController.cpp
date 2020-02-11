@@ -17,8 +17,6 @@ vrepController::vrepController(){
 	nShuttleF = 0;
 
 	repSim_getColor=false;
-	repSim_changeColor=false;
-	repSim_changeShuttleColor=false;
 	repSim_startSimulation=false;
 	repSim_pauseSimulation=false;
 	repSim_loadModel=false;
@@ -56,113 +54,7 @@ void vrepController::play()
 	cout << "fin play" << endl;
 }
 
-// SHUTTLE (pour charger une plateforme dans la simulation: plateforme aléatoire puis couleur de plateforme aléatoire)
-int vrepController::LoadShuttle(char shuttleNumber, int type, int firstDestination)
-{
-
-		std::string shuttleName = "models/montrac/shuttle"+std::string(&shuttleNumber,1)+".ttm";
-		//ROS_INFO("------------ ShuttleName: %s" , shuttleName.c_str());
-
-		msgSim_loadModel.data = shuttleName;
-
-		// Choix du type de produit (changement de la couleur)
-		int shuttleColor ;
-		if (type == -1){
-				shuttleColor = (rand() % 7)*10;
-				//std::cout << "cas 3 " << std::endl;
-		}else {
-				shuttleColor = type;
-				//std::cout << "cas 4 " << std::endl;
-		}
-
-		//ROS_INFO("------------ ShuttleColor: %i" , shuttleColor);
-
-
-		std::string shuttleNameComplete, platformNameComplete;
-		if (nShuttleF == 0) {
-			//std::cout << "cas 1 " << std::endl;
-			shuttleNameComplete = "Shuttle"+std::string(&shuttleNumber,1);
-			platformNameComplete = "PlatformUp"+std::string(&shuttleNumber,1);
-		}
-		else{
-			//std::cout << "cas 2 " << std::endl;
-			char aux = nShuttleF - 1 + '0';	 // transformation int -> char
-			//ROS_INFO("-------- Aux : %c" ,aux);
-			shuttleNameComplete = "Shuttle"+std::string(&shuttleNumber,1)+"#"+ std::string(&aux,1);
-			platformNameComplete = "PlatformUp"+std::string(&shuttleNumber,1)+"#"+ std::string(&aux,1);
-		}
-		//ROS_INFO("------ ShuttleNameComplete: %s" , shuttleNameComplete.c_str());
-		nShuttleF ++;
-
-		pubSim_loadModel.publish(msgSim_loadModel);
-		cout << "debut load" << endl;
-		while(!repSim_loadModel&&ros::ok())
-		{
-			ros::spinOnce();
-			loop_rate->sleep();
-		}
-		repSim_loadModel = false;
-		cout << "fin load" << endl;
-
-
-		//Recuperation nom signal couleur : <handle de la navette>_color
-
-		int handle_navette = valueSim_loadModel;
-		char intStr[1000];
-		sprintf (intStr, "%d", handle_navette);
-
-		int dim;
-
-		dim=floor(log10(handle_navette))+1;
-		std::string shuttleColorSignal= std::string(intStr,dim) + "_color"; ;
-
-
-		int shuttleId=shuttleNumber-64; // 'A' -> 1 decimal
-		if(shuttleNumber=='Z')
-			shuttleId=0;
-
-		do
-		{
-			msgSim_changeShuttleColor.data.clear();
-			msgSim_changeShuttleColor.data.push_back(shuttleId);
-			msgSim_changeShuttleColor.data.push_back(shuttleColor);
-			pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
-			cout << "debut change color" << endl;
-			while(!repSim_changeShuttleColor&&ros::ok())
-			{
-				ros::spinOnce();
-				loop_rate->sleep();
-			}
-			repSim_changeShuttleColor = false;
-			cout << "fin change color" << endl;
-
-			msgSim_getColor.data = shuttleColorSignal;
-			pubSim_getColor.publish(msgSim_getColor);
-			cout << "debut get color " << endl;
-			while(!repSim_getColor&&ros::ok())
-			{
-				ros::spinOnce();
-				loop_rate->sleep();
-			}
-			repSim_getColor = false;
-			cout << "fin get color" << endl;
-
-		}while(valueSim_getColor!=shuttleColor);
-
-
-		//int32_t handle_plateforme = vrepController::getObjectHandle(platformNameComplete);
-
-		// std::cout << "Handle de la plateforme: " <<handle_plateforme <<std::endl;
-
-		//addNewShuttle(handle_navette, handle_plateforme,shuttleColor, firstDestination );
-
-
-
-		return handle_navette;
-}
-
 void vrepController::addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination) {
-
 
 	char aux[1000];
 	sprintf(aux,"Shuttle%d",handle_navette);
@@ -250,56 +142,6 @@ void vrepController::deleteShuttleCallBack(const aiguillages::ExchangeSh::ConstP
 	this->removeModel(msg->handle);
 }
 
-// Callback couleur
-void vrepController::ColorCallBack(const commande_locale::Msg_Color::ConstPtr& msg)
-{
-	int Handle;
-	Handle=msg->Handle;
-	int Color;
-	Color=msg->Color;
-
-
-	char intStr[1000];
-	sprintf (intStr, "%d", Handle);
-
-
-	int dim;
-
-	dim=floor(log10(Handle))+1;
-	std::string shuttleColorSignal= std::string(intStr,dim) + "_color"; ;
-
-	char shuttleNumber=shuttleColorSignal[7];
-	int shuttleId = shuttleNumber-64;
-	if(shuttleNumber=='Z')
-		shuttleId=0;
-
-	do
-	{
-		msgSim_changeShuttleColor.data.push_back(shuttleId);
-		msgSim_changeShuttleColor.data.push_back(Color);
-		pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
-		cout << "debut change color seul" << endl;
-		while(!repSim_changeShuttleColor&&ros::ok())
-		{
-			ros::spinOnce();
-			loop_rate->sleep();
-		}
-		repSim_changeShuttleColor = false;
-		cout << "fin change color seul" << endl;
-
-		msgSim_getColor.data = shuttleColorSignal;
-		pubSim_getColor.publish(msgSim_getColor);
-		cout << "debut get color seul" << endl;
-		while(!repSim_getColor&&ros::ok())
-		{
-			ros::spinOnce();
-			loop_rate->sleep();
-		}
-		repSim_getColor = false;
-		cout << "fin get color seul" << endl;
-	}while(valueSim_getColor!=Color);
-}
-
 void vrepController::init(ros::NodeHandle n,std::string executionPath, std::string simulationFileName)
 {
 
@@ -327,12 +169,6 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	pubSim_getColor = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/GetColor",100);
 	subSim_getColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetColor",100,&vrepController::simGetColorCallback,this);
 
-	pubSim_changeColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/vrep_controller/ChangeColor",100);
-	subSim_changeColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/ChangeColor",100,&vrepController::simChangeColorCallback,this);
-
-	pubSim_changeShuttleColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/vrep_controller/ChangeShuttleColor",100);
-	subSim_changeShuttleColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/ChangeShuttleColor",100,&vrepController::simChangeShuttleColorCallback,this);
-
 	pubSim_startSimulation = n.advertise<std_msgs::Byte>("/sim_ros_interface/services/vrep_controller/StartSimulation",100);
 	subSim_startSimulation = n.subscribe("/sim_ros_interface/services/response/vrep_controller/StartSimulation",100,&vrepController::simStartSimulationCallback,this);
 
@@ -351,7 +187,6 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	pub_Shuttle_Handle = n.advertise<aiguillages::ExchangeSh>("/commande_locale/New_Shuttle_Handle", 10);
 	DeleteShuttle = n.subscribe("/commande_locale/Delete_Shuttle", 10, &vrepController::deleteShuttleCallBack, this);
 	createShuttle = n.advertise<shuttles::msgShuttleCreate>("/commande_navette/AddShuttle",10);
-	ChangeColor = n.subscribe("/commande_locale/Change_Color", 10, &vrepController::ColorCallBack, this);
 
 	sleep(1);
 }
@@ -369,15 +204,6 @@ void vrepController::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
 	repSim_getColor=true;
 }
 
-void vrepController::simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg)
-{
-	repSim_changeColor=true;
-}
-
-void vrepController::simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg)
-{
-	repSim_changeShuttleColor=true;
-}
 
 void vrepController::simStartSimulationCallback(const std_msgs::Byte::ConstPtr& msg)
 {

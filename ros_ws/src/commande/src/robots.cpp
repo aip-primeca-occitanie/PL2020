@@ -654,7 +654,7 @@ void Robots::Colorer(int num_robot,int position)
 	msgColor.position=position;
 	pub_colorer.publish(msgColor);
 
-	usleep(1200000);
+	sleep(2);
 }
 
 void Robots::DoTask(int num_robot, int position, int num_tache)

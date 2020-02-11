@@ -815,26 +815,26 @@ void Robot::init(ros::NodeHandle noeud)
 	}
 
 	// Topic pour V-Rep
-	pubSim_getObjectHandle = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robots/GetObjectHandle",100);
-	subSim_getObjectHandle = noeud.subscribe("/sim_ros_interface/services/response/robots/GetObjectHandle",100,&Robot::simGetObjectHandleCallback,this);
+	pubSim_getObjectHandle = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetObjectHandle",100);
+	subSim_getObjectHandle = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetObjectHandle",100,&Robot::simGetObjectHandleCallback,this);
 
-	pubSim_setJointState = noeud.advertise<std_msgs::Float32MultiArray>("/sim_ros_interface/services/robots/SetJointState",100);
-	subSim_setJointState = noeud.subscribe("/sim_ros_interface/services/response/robots/SetJointState",100,&Robot::simSetJointStateCallback,this);
+	pubSim_setJointState = noeud.advertise<std_msgs::Float32MultiArray>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/SetJointState",100);
+	subSim_setJointState = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/SetJointState",100,&Robot::simSetJointStateCallback,this);
 
-	pubSim_getJointState = noeud.advertise<std_msgs::Int32>("/sim_ros_interface/services/robots/GetJointState",100);
-	subSim_getJointState = noeud.subscribe("/sim_ros_interface/services/response/robots/GetJointState",100,&Robot::simGetJointStateCallback,this);
+	pubSim_getJointState = noeud.advertise<std_msgs::Int32>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetJointState",100);
+	subSim_getJointState = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetJointState",100,&Robot::simGetJointStateCallback,this);
 
-	pubSim_getTime = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/robots/GetTime",100);
-	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/robots/GetTime",100,&Robot::simGetTimeCallback,this);
+	pubSim_getTime = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetTime",100);
+	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetTime",100,&Robot::simGetTimeCallback,this);
 
-	pubSim_changeColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robots/ChangeColor",100);
-	subSim_changeColor = noeud.subscribe("/sim_ros_interface/services/response/robots/ChangeColor",100,&Robot::simChangeColorCallback,this);
+	pubSim_changeColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/ChangeColor",100);
+	subSim_changeColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/ChangeColor",100,&Robot::simChangeColorCallback,this);
 
-	pubSim_changeShuttleColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robots/ChangeShuttleColor",100);
-	subSim_changeShuttleColor = noeud.subscribe("/sim_ros_interface/services/response/robots/ChangeShuttleColor",100,&Robot::simChangeShuttleColorCallback,this);
+	pubSim_changeShuttleColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/ChangeShuttleColor",100);
+	subSim_changeShuttleColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/ChangeShuttleColor",100,&Robot::simChangeShuttleColorCallback,this);
 
-	pubSim_getColor = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robots/GetColor",100);
-	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robots/GetColor",100,&Robot::simGetColorCallback,this);
+	pubSim_getColor = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetColor",100);
+	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColor",100,&Robot::simGetColorCallback,this);
 
 
 	//Subscribers

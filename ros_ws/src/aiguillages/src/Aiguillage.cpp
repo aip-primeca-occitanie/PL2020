@@ -43,9 +43,9 @@ Aiguillage::Aiguillage(ros::NodeHandle nh, int id_aiguillage)
 			case 12:
 						num_str="12";
 						break;
-		default:
-	ROS_INFO("CHOIX AIGUILLAGE INCORRECT");
-	break;
+			default:
+						ROS_INFO("CHOIX AIGUILLAGE INCORRECT");
+						break;
 	}
 
 	num_aiguillage=id_aiguillage;
@@ -53,8 +53,8 @@ Aiguillage::Aiguillage(ros::NodeHandle nh, int id_aiguillage)
 	loop_rate=new ros::Rate(25);
 
 	VREPsubSwitchSensor = nh.subscribe("vrep/SwitchSensor", 1000, &Aiguillage::SwitchSensorCallback, this);//Info sur position aiguillage
-	sub_cmd_Droite = nh.subscribe("/commande/Simulation/AiguillageDroite"+num_str,1000,&Aiguillage::DroiteCallback,this);
-	sub_cmd_Gauche = nh.subscribe("/commande/Simulation/AiguillageGauche"+num_str,1000,&Aiguillage::GaucheCallback,this);
+	sub_cmd_Droite = nh.subscribe("/commande/Simulation/AiguillageDroite",1000,&Aiguillage::DroiteCallback,this);
+	sub_cmd_Gauche = nh.subscribe("/commande/Simulation/AiguillageGauche",1000,&Aiguillage::GaucheCallback,this);
 
 	AigDev = nh.advertise<std_msgs::Int32>("/commande/DeverouilleAiguillage", 1000);
 	AigVer = nh.advertise<std_msgs::Int32>("/commande/VerouilleAiguillage", 1000);

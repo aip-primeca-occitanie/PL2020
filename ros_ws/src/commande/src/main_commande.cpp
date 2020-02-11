@@ -19,6 +19,7 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "commande");
 	ros::NodeHandle noeud;
 
+
 	Commande cmd(noeud,argv[0]);
 	Robots robot(noeud);
 	AigsInterface aiguillage(noeud);
@@ -30,6 +31,7 @@ int main(int argc, char **argv)
   	int code_arrivee;//dépend du produit et du poste sur lequel il apparait
 	int M[Nb_Place];
 	int Nb_Place_T1,Nb_Place_T2,Nb_Place_T3,Nb_Place_T4;
+	Nb_Place_T1=100;
 
 	for(int i=0;i<Nb_Place;i++) M[i]=0;
 

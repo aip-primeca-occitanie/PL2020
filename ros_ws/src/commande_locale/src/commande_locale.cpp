@@ -20,6 +20,16 @@ using namespace std;
 
 #include <ros/ros.h>
 
+void spinner()
+{
+	ros::Rate loop_rate(25);
+	while(ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+}
+
 int main(int argc, char **argv)
 {
 	//Initialisation du noeud ROS
@@ -52,6 +62,8 @@ int main(int argc, char **argv)
 		VREPController.loadModelInit(i);
 		std::cout << "Creation navette " << i << endl;
 	}
+
+	thread spinnerThread(spinner);
 	
 	///////////////////////
 

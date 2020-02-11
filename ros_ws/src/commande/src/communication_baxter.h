@@ -1,28 +1,24 @@
 /**** Bruno DATO M1 EEA ISTR Université Paul Sabatier Toulouse III 2016 ****/
-
 #ifndef BAXT
 #define BAXT
 
 #include <ros/ros.h>
 #include "std_msgs/Bool.h"
 
-
 class Communication_Baxter
 {
 private:
 
-	//Publishers
 	ros::Publisher pub_prise_demandee_bras_droit , pub_prise_demandee_bras_gauche ;
 
-	//Subscribers
 	ros::Subscriber sub_prise_effectuee_bras_droit , sub_prise_effectuee_bras_gauche, sub_attente_prise_bras_droit, sub_attente_prise_bras_gauche  ;
 
 public:
-	
+
 	std_msgs::Bool msg_prise_demandee_bras_droit ,msg_prise_demandee_bras_gauche ;
 	std_msgs::Bool msg_prise_effectuee_bras_droit,msg_prise_effectuee_bras_gauche ;
 	std_msgs::Bool msg_attente_prise_bras_droit,msg_attente_prise_bras_gauche ;
-	
+
 	Communication_Baxter(ros::NodeHandle noeud);
 	~Communication_Baxter();
 
@@ -44,9 +40,4 @@ public:
 
 	void Update();
 };
-
-
-
-
-
 #endif

@@ -1,8 +1,3 @@
-/*
- * ************************************* *
- * 	  Projet Long N7 2017  	         *
- * ************************************* *
-*/
 #include "commande.h"
 #include <ros/ros.h>
 #include <iostream>
@@ -31,7 +26,7 @@ using namespace std;
 
 Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 {
-  //Pour être informé de la création d'une navette et de son contenu
+  	//Pour être informé de l'arrivée d'un produit sur un poste
 	sub_nouveau_produit = noeud.subscribe("/commande_locale/AddProduct", 1000, &Commande::NouveauProduitCallback, this);
 
 	// Actionner ergots
@@ -45,10 +40,9 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	SubAiguillagesDroits = noeud.subscribe("/commande/AiguillageDroite", 1000, &Commande::AiguillagesdroitsCallback, this);
 
 	// Publishers messages actionneurs
-	cout<<"Initialisation publisher"<<endl;
 	pub_navettes_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 1);
 	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 1);
-  pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 10);
+  	pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 10);
 
 	// Initialisation des Actionneurs
 	for(int i=1;i<=24;i++) actionneurs_simulation_Stop.STOP[i] = 0;
@@ -58,8 +52,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aiguillages.RD[i] = 0;
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aiguillages.RG[i] = 0;
 
-  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = 0;
-  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = 1;
+  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = 0;
+  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = 1;
 }
 
 void Commande::Initialisation()

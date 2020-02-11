@@ -1,8 +1,3 @@
-/*
- * ************************************* *
- * 	  Projet Long N7 2017  	         *
- * ************************************* *
-*/
 #ifndef COMMANDE_SIMU
 #define COMMANDE_SIMU
 
@@ -14,21 +9,15 @@
 #include <std_msgs/Int32.h>
 #include <commande_locale/Msg_StopControl.h>
 #include <commande_locale/Msg_AddProduct.h>
-#include "shuttles/msgShuttleCreate.h"
-#include <fstream>
 #include <iostream>
-#include <cstring>
 #include <string>
 #include <cstdlib>
-#include <stdlib.h>
-#include <map>
 
 class Commande
 {
 	private:
 
-	//Subscriber
-	// Aiguillages
+	//Aiguillages
 	ros::Subscriber SubDeverouilleAiguillages;
 	ros::Subscriber SubVerouilleAiguillages;
 	ros::Subscriber SubAiguillagesGauches;
@@ -40,20 +29,21 @@ class Commande
 
 	ros::Subscriber sub_nouveau_produit;
 
-//Publisher
 	// Actionneurs
 	ros::Publisher pub_navettes_stops;
 	ros::Publisher pub_actionneurs_simu_aiguillages;
-  ros::Publisher pub_actionneurs_simu_pins;
+  	ros::Publisher pub_actionneurs_simu_pins;
 
-//Variables
 	int arrivee_produit;
 	int poste;
 	int produit;
+
 	/* Capteurs */
 	bool PSx[25],DxD[13],DxG[13],CPx[11],CPIx[9];
+
 	/* Actionneurs */
 	bool STx[25],RxD[13],RxG[13],Vx[13],Dx[13],PIx[9];
+
 	//messages pour actionneurs
 	commande_locale::Msg_StopControl actionneurs_simulation_Stop;
 	commande_locale::Msg_SwitchControl actionneurs_simulation_Aiguillages;
@@ -65,7 +55,7 @@ public:
 
 	void Initialisation();
 
-  void NouveauProduitCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg);
+  	void NouveauProduitCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg);
 	void Stop_PS(int point_stop);
 	void Ouvrir_PS(int point_stop);
 
@@ -77,10 +67,8 @@ public:
 	void SortirErgotCallback(const std_msgs::Int32::ConstPtr& msg);
 	void RentrerErgotCallback(const std_msgs::Int32::ConstPtr& msg);
 
-
 	int get_code_arrivee();
 	int get_arrivee_nouveau_produit();
 	void renitialiser_arrivee_nouveau_produit();
 };
-
 #endif

@@ -12,18 +12,13 @@
 // Constructeur
 Communication_Baxter::Communication_Baxter(ros::NodeHandle noeud)
 {
-	// Publisher
-
 	pub_prise_demandee_bras_droit = noeud.advertise<std_msgs::Bool>("/pont_BaxterLigneTransitique/right_arm/prise_demandee", 1);
 	pub_prise_demandee_bras_gauche = noeud.advertise<std_msgs::Bool>("/pont_BaxterLigneTransitique/left_arm/prise_demandee", 1);
-	
-	// Subscriber
 
 	sub_prise_effectuee_bras_droit = noeud.subscribe("/pont_BaxterLigneTransitique/right_arm/prise_effectuee", 1, &Communication_Baxter::Callback_prise_effectuee_bras_droit,this);
 	sub_prise_effectuee_bras_gauche = noeud.subscribe("/pont_BaxterLigneTransitique/left_arm/prise_effectuee", 1, &Communication_Baxter::Callback_prise_effectuee_bras_gauche,this);
 	sub_attente_prise_bras_droit = noeud.subscribe("/pont_BaxterLigneTransitique/right_arm/attente_prise", 1, &Communication_Baxter::Callback_attente_prise_bras_droit,this);
 	sub_attente_prise_bras_gauche = noeud.subscribe("/pont_BaxterLigneTransitique/left_arm/attente_prise", 1, &Communication_Baxter::Callback_attente_prise_bras_gauche,this);
-
 
 	msg_prise_demandee_bras_droit.data = false ;
 	msg_prise_effectuee_bras_droit.data = false ;
@@ -33,18 +28,12 @@ Communication_Baxter::Communication_Baxter(ros::NodeHandle noeud)
 
 	msg_attente_prise_bras_droit.data = false ;
 	msg_attente_prise_bras_gauche.data = false ;
-
-
-
 }
 
-
-// Destructeur
 Communication_Baxter::~Communication_Baxter()
 {
 }
 
-// Callbacks
 void Communication_Baxter::Callback_prise_effectuee_bras_droit(const std_msgs::Bool& msg)
 {
 	msg_prise_effectuee_bras_droit = msg ;
@@ -72,11 +61,6 @@ void Communication_Baxter::Callback_attente_prise_bras_droit(const std_msgs::Boo
 	msg_attente_prise_bras_droit = msg ;
 	//std::cout<<msg<<std::endl;
 }
-
-
-
-
-
 
 // Tests
 bool Communication_Baxter::Prise_effectuee_bras_droit()
@@ -115,7 +99,6 @@ bool Communication_Baxter::Attente_prise_bras_gauche()
 	else return false ;
 }
 
-
 // Actions
 void Communication_Baxter::Demander_prise_bras_droit()
 {
@@ -126,13 +109,8 @@ void Communication_Baxter::Demander_prise_bras_gauche()
 {
 	msg_prise_demandee_bras_gauche.data = true ;
 }
-	
-
-
-
 
 //Affichage
-
 void Communication_Baxter::Afficher_Communication_Baxter()
 {
 	std::cout <<"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"<<std::endl;
@@ -143,7 +121,7 @@ void Communication_Baxter::Afficher_Communication_Baxter()
 
 	std::cout <<"~~~~~~~~~~~~~~~~~~ "<< BOLDYELLOW <<"Bras Droit"<< RESET <<" ~~~~~~~~~~~~~~~~~~~"<<std::endl<<std::endl;
 
-	
+
 	if (msg_attente_prise_bras_droit.data == 1) std::cout << BOLDGREEN << "attente prise" << RESET <<"     ";
 	else std::cout << BOLDRED << "attente prise" << RESET <<"     ";
 
@@ -157,7 +135,7 @@ void Communication_Baxter::Afficher_Communication_Baxter()
 
 	std::cout <<"~~~~~~~~~~~~~~~~~~ "<< BOLDYELLOW <<"Bras Gauche"<< RESET <<" ~~~~~~~~~~~~~~~~~~"<<std::endl<<std::endl;
 
-	
+
 	if (msg_attente_prise_bras_gauche.data == 1) std::cout << BOLDGREEN << "attente prise" << RESET <<"     ";
 	else std::cout << BOLDRED << "attente prise" << RESET <<"     ";
 
@@ -171,12 +149,8 @@ void Communication_Baxter::Afficher_Communication_Baxter()
 	std::cout << std::endl<<std::endl;
 }
 
-
 void Communication_Baxter::Update()
 {
 	pub_prise_demandee_bras_gauche.publish(msg_prise_demandee_bras_gauche);
 	pub_prise_demandee_bras_droit.publish(msg_prise_demandee_bras_droit);
 }
-
-
-

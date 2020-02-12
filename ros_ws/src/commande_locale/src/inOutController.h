@@ -21,9 +21,6 @@
 #include "commande_locale/Msg_StopControl.h"
 #include "commande_locale/Msg_PinControl.h"
 #include "commande_locale/Msg_SensorState.h"
-
-#include <scheduling/Msg_LoadShuttle.h>
-
 #include <std_msgs/Int32.h>
 #include <unistd.h>
 

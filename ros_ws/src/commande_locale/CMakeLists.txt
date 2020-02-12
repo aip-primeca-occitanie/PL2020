@@ -8,7 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
 	std_msgs
 	sensor_msgs
 	image_transport
-	cv_bridge 
+	cv_bridge
 	genmsg
 	message_generation
 	shuttles
@@ -39,3 +39,7 @@ catkin_package( CATKIN_DEPENDS message_runtime)
 add_executable(simulation src/commande_locale.cpp src/UI.cpp src/inOutController.cpp src/vrepController.cpp src/configuration.cpp src/product.cpp)
 target_link_libraries(simulation ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(simulation commande_locale_generate_messages_cpp)
+
+add_executable(display src/display.cpp)
+target_link_libraries(display ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(display commande_locale_generate_messages_cpp)

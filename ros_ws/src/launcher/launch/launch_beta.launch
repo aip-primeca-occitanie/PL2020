@@ -2,7 +2,7 @@
 
  	<node name="commande" pkg="commande" type="run" output="screen" launch-prefix="xterm -e"/>
 
-	<node name="aiguillage" pkg="aiguillages" type="run_Aiguillage"/>
+	<node name="aiguillage" pkg="aiguillages" type="run_Aiguillage" output="screen" launch-prefix="xterm -e"/>
 
 	<node name="Robot1" pkg="robots" type="robot1" output="screen" launch-prefix="xterm -e"/>
 	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -e"/>

@@ -5,7 +5,6 @@
 #include <iostream>
 //Messages
 #include <std_msgs/Int32.h>
-#include "aiguillages/Msg_Aiguillage.h"
 
 
 class AigsInterface
@@ -15,7 +14,7 @@ private:
 	ros::Publisher pub_aig_Gauche;
 
 	std_msgs::Int32 msg;
-	aiguillages::Msg_Aiguillage msg_aigs;
+	std_msgs::Int32 msg_aigs;
 
 public:
 	AigsInterface(ros::NodeHandle noeud);

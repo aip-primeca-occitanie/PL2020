@@ -40,9 +40,9 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	SubAiguillagesDroits = noeud.subscribe("/commande/AiguillageDroite", 1000, &Commande::AiguillagesdroitsCallback, this);
 
 	// Publishers messages actionneurs
-	pub_navettes_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 1);
-	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 1);
-  	pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 10);
+	pub_navettes_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 100);
+	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 100);
+  	pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 100);
 
 	// Initialisation des Actionneurs
 	for(int i=1;i<=24;i++) actionneurs_simulation_Stop.STOP[i] = 0;

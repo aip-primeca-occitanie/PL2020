@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-add_message_files(FILES Capteurs.msg Actionneurs.msg ExchangeSh.msg Msg_Aiguillage.msg)
+add_message_files(FILES Capteurs.msg Actionneurs.msg ExchangeSh.msg)
 
 generate_messages(DEPENDENCIES std_msgs)
 catkin_package(CATKIN_DEPENDS roscpp message_runtime)

@@ -129,20 +129,20 @@ void inOutController::StatePinCallBack(const commande_locale::Msg_PinControl::Co
 void inOutController::init(ros::NodeHandle nh)
 {
 	// Subscribe
-   	VREPsubRailSensor = nh.subscribe("sim_ros_interface/RailSensor", 1, &inOutController::SensorCallbackRail, this);
-	VREPsubStopSensor = nh.subscribe("sim_ros_interface/StopSensor", 1, &inOutController::SensorCallbackStop, this);
-	VREPsubSwitchSensor = nh.subscribe("sim_ros_interface/SwitchSensor", 1, &inOutController::SensorCallbackSwitch, this);
-	planifSubSwitchState = nh.subscribe("/commande/Simulation/Actionneurs_aiguillages", 1, &inOutController::StateSwitchCallBack, this);
-	planifSubStopState = nh.subscribe("/commande/Simulation/Actionneurs_stops", 1, &inOutController::StateStopCallBack, this);
-	planifSubPinState = nh.subscribe("/commande/Simulation/Actionneurs_pins", 1, &inOutController::StatePinCallBack, this);
+   	VREPsubRailSensor = nh.subscribe("sim_ros_interface/RailSensor", 100, &inOutController::SensorCallbackRail, this);
+	VREPsubStopSensor = nh.subscribe("sim_ros_interface/StopSensor", 100, &inOutController::SensorCallbackStop, this);
+	VREPsubSwitchSensor = nh.subscribe("sim_ros_interface/SwitchSensor", 100, &inOutController::SensorCallbackSwitch, this);
+	planifSubSwitchState = nh.subscribe("/commande/Simulation/Actionneurs_aiguillages", 100, &inOutController::StateSwitchCallBack, this);
+	planifSubStopState = nh.subscribe("/commande/Simulation/Actionneurs_stops", 100, &inOutController::StateStopCallBack, this);
+	planifSubPinState = nh.subscribe("/commande/Simulation/Actionneurs_pins", 100, &inOutController::StatePinCallBack, this);
 
 	// Publishers
-	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerRight", 1);
-	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLeft", 1);
-	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLock", 1);
-	VREPStopController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/StopController", 1);
-	VREPGoController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/GoController", 1);
-	planifRailSensorState = nh.advertise<commande_locale::Msg_SensorState>("/commande/Simulation/Capteurs", 1);
+	VREPSwitchControllerRight = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerRight", 100);
+	VREPSwitchControllerLeft = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLeft", 100);
+	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLock", 100);
+	VREPStopController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/StopController", 100);
+	VREPGoController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/GoController", 100);
+	planifRailSensorState = nh.advertise<commande_locale::Msg_SensorState>("/commande/Simulation/Capteurs", 100);
 
 	// Initialisation des capteurs des Ergots
 	for(int i=1;i<9;i++) SensorState.CPI[i]=0;

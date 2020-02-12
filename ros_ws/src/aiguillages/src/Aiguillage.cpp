@@ -33,11 +33,11 @@ void Aiguillage::SwitchSensorCallback(const std_msgs::Int32::ConstPtr& msg)
 	Aig_G = (msg->data & (int32_t)pow(2,2*num_aiguillage-1)) > 0;
 }
 
-void Aiguillage::GaucheCallback(const aiguillages::Msg_Aiguillage::ConstPtr& msg_aigs)
+void Aiguillage::GaucheCallback(const std_msgs::Int32::ConstPtr& msg_aigs)
 {
-	if (num_AIG.data==msg_aigs->Aiguillage)
+	if (num_aiguillage==msg_aigs->data)
 	{
-		ROS_INFO("On bouge a gauche");
+		ROS_INFO("On bouge a gauche, aig numero %d", num_aiguillage);
 		if(!Aig_G)
 		{
 			//Deverouillage de l'aiguillage
@@ -56,17 +56,18 @@ void Aiguillage::GaucheCallback(const aiguillages::Msg_Aiguillage::ConstPtr& msg
 
 			//Verouillage de l'aiguillage
 			AigVer.publish(num_AIG);
+
 		}
 		usleep(100000);
 	}
 }
 
 
-void Aiguillage::DroiteCallback(const aiguillages::Msg_Aiguillage::ConstPtr& msg_aigs)
+void Aiguillage::DroiteCallback(const std_msgs::Int32::ConstPtr& msg_aigs)
 {
-	if (num_AIG.data==msg_aigs->Aiguillage)
+	if (num_aiguillage==msg_aigs->data)
 	{
-		ROS_INFO("On bouge a droite");
+		ROS_INFO("On bouge a droite, aig numero %d", num_aiguillage);
 		if(!Aig_D)
 		{
 			//Deverouillage de l'aiguillage

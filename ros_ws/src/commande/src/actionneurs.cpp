@@ -9,10 +9,10 @@
 Actionneurs::Actionneurs(ros::NodeHandle noeud)
 {
 	// Publisher
-	pub_actionneurs_ligne = noeud.advertise<commande::Actionneurs>("/commande/Ligne_transitique/Actionneurs", 1);
-	pub_actionneurs_simu_aguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 1);
-	pub_actionneurs_simu_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 1);
-    pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 1);
+	pub_actionneurs_ligne = noeud.advertise<commande::Actionneurs>("/commande/Ligne_transitique/Actionneurs", 100);
+	pub_actionneurs_simu_aguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 100);
+	pub_actionneurs_simu_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 100);
+    pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 100);
 
 	Actionneurs_ligne=0;
 

@@ -34,8 +34,7 @@ private:
 
 	std::map<std::string,Product*>::iterator iteratorPMap;
 	std::map<std::string,Product*> ProductsMap;
-
-	ros::Publisher pubManualProduct;
+	
 	ros::Publisher pubProductAdd;
 
 	std_msgs::Int32 retourTraitement;

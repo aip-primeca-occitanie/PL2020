@@ -17,8 +17,6 @@ Configuration::Configuration(vrepController* VREPC)
 // Initialisation de l'objet
 bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 {
-	// Publishers Initialisation
-	pubManualProduct = nh.advertise<std_msgs::Bool>("/scheduling/ManualLaunch",10);
 	pubProductAdd= nh.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
 
 	// Récupération du chemin vers le Working_Folder

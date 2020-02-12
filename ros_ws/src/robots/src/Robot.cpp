@@ -173,9 +173,9 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 
 	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
 	msgSim_setJointState.data.clear();
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back((float)Rints[i]);
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back(Rpos[i]);
 
 	pubSim_setJointState.publish(msgSim_setJointState);

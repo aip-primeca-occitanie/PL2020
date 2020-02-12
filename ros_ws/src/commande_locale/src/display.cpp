@@ -33,7 +33,6 @@ void getSimuStream(const sensor_msgs::ImageConstPtr& msg)
 
 int main(int argc, char **argv)
 {
-
 	ros::init(argc, argv, "display_node");//numéro de l'aiguillage
 	ros::NodeHandle nh;
 
@@ -41,7 +40,7 @@ int main(int argc, char **argv)
     image_transport::ImageTransport it(nh);
 	subImage = it.subscribe("sim_ros_interface/VisionSensorData", 1, &getSimuStream);
 
-    //namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
+    sleep(2);
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
 

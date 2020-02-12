@@ -2,7 +2,7 @@
 
  	<node name="commande" pkg="commande" type="run" output="screen" launch-prefix="xterm -e"/>
 
-	<node name="aiguillage_3" pkg="aiguillages" type="run_A3"/> 
+	<node name="aiguillage_3" pkg="aiguillages" type="run_A3"/>
 	<node name="aiguillage_10" pkg="aiguillages" type="run_A10"/>
     <node name="aiguillage_1" pkg="aiguillages" type="run_A1" />
     <node name="aiguillage_2" pkg="aiguillages" type="run_A2"/>
@@ -14,7 +14,5 @@
 
 
     <node name="shuttleManager" pkg="shuttles" type="shuttlesManager" output="screen" launch-prefix="xterm -e"/>
-    <node name="scheduler" pkg="scheduling" type="ordonnancement" output="screen" launch-prefix="xterm -e"/>
-
 
 </launch>

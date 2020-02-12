@@ -12,7 +12,6 @@ find_package(catkin REQUIRED COMPONENTS
 	genmsg
 	message_generation
 	shuttles
-	scheduling
 	aiguillages)
 
 find_package(OpenCV)

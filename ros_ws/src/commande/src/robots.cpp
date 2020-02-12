@@ -40,11 +40,6 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
 	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
 
-	pub_robot_transport1=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras1",10);
-	pub_robot_transport2=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras2",10);
-	pub_robot_transport3=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras3",10);
-	pub_robot_transport4=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras4",10);
-
 	//Retour des robots vers la commande
 	sub_retourRobot1 = noeud.subscribe("/commande/Simulation/retourCommande1", 100, &Robots::RetourRobot1Callback,this);
 	sub_retourRobot2 = noeud.subscribe("/commande/Simulation/retourCommande2", 100, &Robots::RetourRobot2Callback,this);
@@ -621,27 +616,6 @@ int Robots::PinceEnPosition(int numRobot)
 	return Robot;
 }
 
-void Robots::RobotTransport(int num_robot,bool valeur)
-{
-	std_msgs::Bool msg;
-	msg.data=valeur;
-	switch(num_robot)
-	{
-		case 1:
-			pub_robot_transport1.publish(msg);
-			break;
-		case 2:
-			pub_robot_transport2.publish(msg);
-			break;
-		case 3:
-			pub_robot_transport3.publish(msg);
-			break;
-		case 4:
-			pub_robot_transport4.publish(msg);
-			break;
-	}
-}
-
 //Macro-fonction. Utilise les blocs élémentaires définis plus haut
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
@@ -653,8 +627,7 @@ void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 		while(BrasEnPosition(num_robot)!=BAS){usleep(100000);};
 
 		// Prise de pièce
-		Colorer(num_robot,positionA);//le robot a rien en mémoire, il décolore
-		RobotTransport(num_robot,true);
+		Colorer(num_robot,positionA,0);//le robot a rien en mémoire, il décolore
 		FermerPince(num_robot);
 		while(PinceEnPosition(num_robot)!=FERMEE){usleep(100000);};
 
@@ -666,8 +639,7 @@ void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 		while(BrasEnPosition(num_robot)!=BAS){usleep(100000);};
 
 		// Pose de pièce
-		Colorer(num_robot,positionB);//le robot a la couleur du produit en memoire, il colore
-		RobotTransport(num_robot,false);
+		Colorer(num_robot,positionB,1);//le robot a la couleur du produit en memoire, il colore
 		OuvrirPince(num_robot);
 		while(PinceEnPosition(num_robot)!=OUVERTE){usleep(100000);};
 
@@ -676,10 +648,11 @@ void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 	}
 }
 
-void Robots::Colorer(int num_robot,int position)
+void Robots::Colorer(int num_robot,int position, int type) // type : 0=prise 1=pose
 {
 	msgColor.num_robot=num_robot;
 	msgColor.position=position;
+	msgColor.type=type;
 	pub_colorer.publish(msgColor);
 
 	sleep(1);

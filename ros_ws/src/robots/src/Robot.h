@@ -15,6 +15,7 @@
 #include <std_msgs/Float32MultiArray.h>
 #include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/Byte.h>
+#include <std_msgs/Bool.h>
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
 #include <robots/Msg_numrobot.h>
@@ -98,6 +99,8 @@ private:
 	ros::Publisher pub_robotPosition, pub_robotBras, pub_robotPince;
 	ros::Publisher pub_retourCommande;
 
+	ros::Publisher pub_robot_transport;
+
 	/** Variables **/
 	float pi;
 	unsigned char mymodes[7];
@@ -129,6 +132,7 @@ public:
 	void init(ros::NodeHandle noeud);
 
 	int computeTableId(int position);
+	void transport(bool valeur);
 
 	/** Fonctions internes permettant le contrôle du robot **/
 	//Pour atteindre une position prédéfinie

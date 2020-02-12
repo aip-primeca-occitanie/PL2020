@@ -40,6 +40,6 @@ add_executable(simulation src/commande_locale.cpp src/UI.cpp src/inOutController
 target_link_libraries(simulation ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(simulation commande_locale_generate_messages_cpp)
 
-add_executable(display src/display.cpp)
-target_link_libraries(display ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(display commande_locale_generate_messages_cpp)
+add_executable(display_node src/display.cpp)
+target_link_libraries(display_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(display_node commande_locale_generate_messages_cpp)

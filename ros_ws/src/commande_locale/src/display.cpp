@@ -10,17 +10,18 @@ using namespace cv;
 using namespace std;
 
 cv::Mat imageSimu;
+cv::Mat imageSimuRenverse;
 
 void update()
 {
-    imshow( "Display window", imageSimu );                   // Show our image inside it.
+    imshow( "Display window", imageSimuRenverse);                   // Show our image inside it.
     waitKey(30);                                          // Wait for a keystroke in the window
 }
 
 void getSimuStream(const sensor_msgs::ImageConstPtr& msg)
 {
 	imageSimu = cv_bridge::toCvShare(msg, "bgr8")->image;
-	update();
+    flip(imageSimu, imageSimuRenverse, 0);
 }
 
 int main(int argc, char **argv)
@@ -36,9 +37,12 @@ int main(int argc, char **argv)
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
+    sleep(1);
+
 	while (ros::ok())
 	{
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées
+        update();
 		loop_rate.sleep(); //permet de synchroniser la boucle while. Il attend le temps qu'il reste pour faire le 25Hz (ou la fréquence indiquée dans le loop_rate)
 	}
 

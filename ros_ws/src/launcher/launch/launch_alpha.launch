@@ -4,6 +4,6 @@
 
 	<node name="commande_locale" pkg="commande_locale" type="simulation" output="screen" launch-prefix="xterm -e" args="$(arg simFile)" />
 
-	<node name="display_node" pkg="commande_locale" type="display_node" output="screen" launch-prefix="xterm -e" />
+	<node name="display_node" pkg="commande_locale" type="display_node"/>
 
 </launch>

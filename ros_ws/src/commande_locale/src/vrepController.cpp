@@ -161,8 +161,8 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 
 	char final_command[1000];
 	// on doit maintenant lancer coppelia a la main a coté et play la simu avant de launch
-	//sprintf(final_command, "cd %s &&(./coppeliaSim.sh ../sim/%s.ttt &)", VRepPath.c_str(), simulationFileName.c_str());
-	//system(final_command); // On execute VREP sans afficher la fenetre
+	sprintf(final_command, "cd %s &&(./coppeliaSim.sh -h -s0 ../sim/%s.ttt &)", VRepPath.c_str(), simulationFileName.c_str());
+	system(final_command); // On execute VREP sans afficher la fenetre
 
 
 	// Topic pour V-Rep

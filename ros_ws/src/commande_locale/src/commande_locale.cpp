@@ -50,6 +50,8 @@ int main(int argc, char **argv)
 	inOutController IOController(&VREPController, &config);
 	IOController.init(nh);
 
+	sleep(2);
+
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();
 	// Pause pour laisser à l'utilisateur le soin de lancer la simu avec le boutton Play
@@ -64,7 +66,7 @@ int main(int argc, char **argv)
 	}
 
 	thread spinnerThread(spinner);
-	
+
 	///////////////////////
 
 	int choix=0;

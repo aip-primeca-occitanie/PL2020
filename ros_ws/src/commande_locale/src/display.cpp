@@ -14,8 +14,15 @@ cv::Mat imageSimuRenverse;
 
 void update()
 {
-    imshow( "Display window", imageSimuRenverse);                   // Show our image inside it.
-    waitKey(30);                                          // Wait for a keystroke in the window
+    try
+    {
+        imshow( "Display window", imageSimuRenverse);                   // Show our image inside it.
+        waitKey(30);                                          // Wait for a keystroke in the window
+    }
+    catch(cv::Exception)
+    {
+        sleep(1);
+    }
 }
 
 void getSimuStream(const sensor_msgs::ImageConstPtr& msg)
@@ -26,6 +33,7 @@ void getSimuStream(const sensor_msgs::ImageConstPtr& msg)
 
 int main(int argc, char **argv)
 {
+
 	ros::init(argc, argv, "display_node");//numéro de l'aiguillage
 	ros::NodeHandle nh;
 
@@ -33,11 +41,9 @@ int main(int argc, char **argv)
     image_transport::ImageTransport it(nh);
 	subImage = it.subscribe("sim_ros_interface/VisionSensorData", 1, &getSimuStream);
 
-    namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
+    //namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
-
-    sleep(1);
 
 	while (ros::ok())
 	{

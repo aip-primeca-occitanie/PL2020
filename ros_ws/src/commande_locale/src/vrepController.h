@@ -37,12 +37,6 @@ class vrepController
 	private:
 		//** Topic V-Rep **//
 
-		// GetColor
-		ros::Publisher pubSim_getColor;
-		std_msgs::String msgSim_getColor;
-		ros::Subscriber subSim_getColor;
-		bool repSim_getColor;
-		int valueSim_getColor;
 
 		// StartSimulation
 		ros::Publisher pubSim_startSimulation;
@@ -77,6 +71,11 @@ class vrepController
 		bool repSim_getObjectHandle;
 		int valueSim_getObjectHandle;
 
+		// ChangeColor
+		ros::Publisher pubSim_changeColor;
+		std_msgs::Int32MultiArray msgSim_changeColor;
+		ros::Subscriber subSim_changeColor;
+		bool repSim_changeColor;
 
 		// Gestion de navettes
 		ros::Publisher pub_Shuttle_Handle;
@@ -85,8 +84,6 @@ class vrepController
 		ros::Subscriber DeleteShuttle;
 		ros::Publisher createShuttle;
 		shuttles::msgShuttleCreate Cr_Shuttle;
-
-		ros::Subscriber ChangeColor;
 
 		int nShuttleF;
 		std::string SimulationFileName;
@@ -107,11 +104,12 @@ class vrepController
 		void setSimulationFile(std::string);
 		void addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination);
 		void ColorCallBack(const commande_locale::Msg_Color::ConstPtr& msg);
+		
+		int computeTableId(int poste);
+		void addProduct(int produit, int poste);
 
 		// Callbacks pour V-Rep
-		void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);
 		void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);
-		void simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simStartSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simPauseSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg);

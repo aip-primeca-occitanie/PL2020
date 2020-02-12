@@ -2,12 +2,7 @@
 
  	<node name="commande" pkg="commande" type="run" output="screen" launch-prefix="xterm -e"/>
 
-	<node name="aiguillage_3" pkg="aiguillages" type="run_A3"/>
-	<node name="aiguillage_10" pkg="aiguillages" type="run_A10"/>
-    <node name="aiguillage_1" pkg="aiguillages" type="run_A1" />
-    <node name="aiguillage_2" pkg="aiguillages" type="run_A2"/>
-    <node name="aiguillage_11" pkg="aiguillages" type="run_A11"/>
-    <node name="aiguillage_12" pkg="aiguillages" type="run_A12"/>
+	<node name="aiguillage" pkg="aiguillages" type="run_Aiguillage"/>
 
 	<node name="Robot1" pkg="robots" type="robot1" output="screen" launch-prefix="xterm -e"/>
 	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -e"/>

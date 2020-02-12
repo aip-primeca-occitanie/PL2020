@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 		{
 			modif=1;
 			M[4]--;
-			robot.DeplacerPiece(1,2,4);
+			robot.DeplacerPiece(1,4,2);
 			cmd.Ouvrir_PS(21);
 			M[5]++;
 		}
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
 			aiguillage.Gauche(2);
 			aiguillage.Gauche(3);
 			aiguillage.Gauche(10);
-			robot.DoTask(1,4,0);
+			//robot.DoTask(1,4,0);
 			M[6]++;
 		}
 

@@ -88,9 +88,10 @@ int main(int argc, char **argv)
 			case 1:
 				cout << "ajout de produit : quel poste ?" << endl;
 				cin >> choixPoste;
-				cout << "Quel produit ?" << endl;
+				cout << "Quel produit ? [1..6]" << endl;
 				cin >> choixProduit;
-				config.ProductAddTable(choixProduit,choixPoste);
+				config.ProductAddTable(choixProduit*10,choixPoste);
+				VREPController.addProduct(choixProduit,choixPoste);
 				break;
 
 			case 2:

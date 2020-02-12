@@ -623,6 +623,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 		
 	// regarde la couleur de ce qu'on veut prendre (call shuttleManager si navette)
 		bool erreur=false;
+		bool couleur_vide=true;
 		int couleur[4];
 		char c=(char)(idNavette+64);
 		string signal;
@@ -666,6 +667,11 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 				repSim_getColor=false;
 				couleur[i]=valueSim_getColor;
 			}
+		}
+		for(int i=0; i<4; i++)
+		{
+			if(couleur[i]!=0)
+				couleur_vide=false;
 		}
 	
 		cout << "get color" << endl;
@@ -712,12 +718,28 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			repSim_changeColor=false;
 		}
 
-	// on met a jour la couleur en mémoire (qu'on transporte)
-		for(int i=0; i<4; i++)
+	// on met a jour la couleur en mémoire (qu'on transporte) seulement si prise
+		if(msg->type==0)
 		{
-			couleur_transportee[i]=couleur[i];
-			cout << "couleur_trasportee[" << i << "]=" << couleur_transportee[i] << endl;
+			for(int i=0; i<4; i++)
+				couleur_transportee[i]=couleur[i];
 		}
+		else
+		{
+			for(int i=0; i<4; i++)
+				couleur_transportee[i]=0;
+
+		}
+		for(int i=0; i<4; i++)
+			cout << "couleur_trasportee[" << i << "]=" << couleur_transportee[i] << endl;
+
+
+	// Mise jour modele pince (si tiens quelque chose, non vide)
+		if(msg->type==0 && !couleur_vide)	
+			transport(true);
+		else
+			transport(false);
+
 		cout << "fin" << endl;
 	}
 }
@@ -759,6 +781,12 @@ void Robot::ajouter_produitCallback(commande_locale::Msg_AddProduct msg)
 	}
 }
 
+void Robot::transport(bool valeur)
+{
+	std_msgs::Bool msg;
+	msg.data=valeur;
+	pub_robot_transport.publish(msg);
+}
 
 /*** Initialisation ***/
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
@@ -835,6 +863,9 @@ void Robot::init(ros::NodeHandle noeud)
 
 	pubSim_getColor = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetColor",100);
 	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColor",100,&Robot::simGetColorCallback,this);
+
+
+	pub_robot_transport=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras"+to_string(num_robot),10);
 
 
 	//Subscribers

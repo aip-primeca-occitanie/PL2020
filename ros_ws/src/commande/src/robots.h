@@ -75,7 +75,7 @@ public:
 	int BrasEnPosition(int numRobot);  //retourne 1 si le bras du robot numRobot est monté, -1 si le bras du robot numRobot est descendu
 	int PinceEnPosition(int numRobot); //retourne 1 si la pince du robot numRobot est fermée, -1 si elle est ouverte
 
-	void Colorer(int num_robot, int position);
+	void Colorer(int num_robot, int position, int type);
 	void RobotTransport(int num_robot, bool valeur);
 	void DoTask(int num_robot, int position, int num_tache);
 };

@@ -16,12 +16,12 @@ using namespace std;
 vrepController::vrepController(){
 	nShuttleF = 0;
 
-	repSim_getColor=false;
 	repSim_startSimulation=false;
 	repSim_pauseSimulation=false;
 	repSim_loadModel=false;
 	repSim_removeModel=false;
 	repSim_getObjectHandle=false;
+	repSim_changeColor=false;
 
 	loop_rate = new ros::Rate(25);
 }
@@ -166,9 +166,6 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 
 
 	// Topic pour V-Rep
-	pubSim_getColor = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/GetColor",100);
-	subSim_getColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetColor",100,&vrepController::simGetColorCallback,this);
-
 	pubSim_startSimulation = n.advertise<std_msgs::Byte>("/sim_ros_interface/services/vrep_controller/StartSimulation",100);
 	subSim_startSimulation = n.subscribe("/sim_ros_interface/services/response/vrep_controller/StartSimulation",100,&vrepController::simStartSimulationCallback,this);
 
@@ -184,6 +181,9 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	pubSim_getObjectHandle = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/GetObjectHandle",100);
 	subSim_getObjectHandle = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetObjectHandle",100,&vrepController::simGetObjectHandleCallback,this);
 
+        pubSim_changeColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/vrep_controller/ChangeColor",100);
+        subSim_changeColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/ChangeColor",100,&vrepController::simChangeColorCallback,this);
+
 	pub_Shuttle_Handle = n.advertise<aiguillages::ExchangeSh>("/commande_locale/New_Shuttle_Handle", 10);
 	DeleteShuttle = n.subscribe("/commande_locale/Delete_Shuttle", 10, &vrepController::deleteShuttleCallBack, this);
 	createShuttle = n.advertise<shuttles::msgShuttleCreate>("/commande_navette/AddShuttle",10);
@@ -196,12 +196,75 @@ void vrepController::setSimulationFile(std::string fileName){
 }
 
 
-/** Callbacks pour V-Rep **/
-void vrepController::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
+int vrepController::computeTableId(int poste)
 {
-	valueSim_getColor=msg->data;
+	int id=-1;
 
-	repSim_getColor=true;
+	switch(poste)
+	{
+		case 1:
+			id=0;
+			break;	
+		case 2:
+			id=1;
+			break;
+		case 3:
+			id=3;
+			break;
+		case 4:
+			id=4;
+			break;
+	}
+
+	return id;
+}
+
+void vrepController::addProduct(int produit, int poste)
+{
+	msgSim_changeColor.data.clear();
+	msgSim_changeColor.data.push_back(computeTableId(poste));
+	int couleur=-1;
+	switch(produit)
+	{
+		case 1:
+			couleur=14;
+			break;
+		case 2:
+			couleur=24;
+			break;
+		case 3:
+			couleur=34;
+			break;
+		case 4:
+			couleur=44;
+			break;
+		case 5:
+			couleur=54;
+			break;
+		case 6:
+			couleur=64;
+			break;
+	}
+	msgSim_changeColor.data.push_back(couleur);
+
+	msgSim_changeColor.data.push_back(0);
+	msgSim_changeColor.data.push_back(0);
+	msgSim_changeColor.data.push_back(0);
+
+	pubSim_changeColor.publish(msgSim_changeColor);
+	while(!repSim_changeColor && ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate->sleep();
+	}
+	repSim_changeColor=false;
+}
+
+
+/** Callbacks pour V-Rep **/
+void vrepController::simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+	repSim_changeColor=true;
 }
 
 
@@ -235,3 +298,4 @@ void vrepController::simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr&
 
 	repSim_getObjectHandle=true;
 }
+

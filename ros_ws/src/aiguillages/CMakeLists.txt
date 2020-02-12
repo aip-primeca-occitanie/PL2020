@@ -23,26 +23,6 @@ include_directories(${catkin_INCLUDE_DIRS})
 include_directories(include ${OpenCV_INCLUDE_DIRS})
 
 
-add_executable(run_A11 src/aiguillage_11.cpp src/Aiguillage.cpp)
-target_link_libraries(run_A11 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(run_A11 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(run_A12 src/aiguillage_12.cpp src/Aiguillage.cpp)
-target_link_libraries(run_A12 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(run_A12 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(run_A1 src/aiguillage_1.cpp src/Aiguillage.cpp)
-target_link_libraries(run_A1 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(run_A1 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(run_A2 src/aiguillage_2.cpp src/Aiguillage.cpp)
-target_link_libraries(run_A2 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(run_A2 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(run_A3 src/aiguillage_3.cpp src/Aiguillage.cpp)
-target_link_libraries(run_A3 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(run_A3 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(run_A10 src/aiguillage_10.cpp src/Aiguillage.cpp)
-target_link_libraries(run_A10 ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
-add_dependencies(run_A10 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
+add_executable(run_Aiguillage src/main_aiguillage.cpp src/Aiguillage.cpp)
+target_link_libraries(run_Aiguillage ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(run_Aiguillage ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})

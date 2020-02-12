@@ -4,50 +4,6 @@ using namespace std;
 
 Aiguillage::Aiguillage(ros::NodeHandle nh, int id_aiguillage)
 {
-	std::string num_str;
-	switch(id_aiguillage)
-	{
-			case 1:
-						num_str="1";
-						break;
-			case 2:
-						num_str="2";
-						break;
-			case 3:
-						num_str="3";
-						break;
-			case 4:
-						num_str="4";
-						break;
-			case 5:
-						num_str="5";
-						break;
-			case 6:
-						num_str="6";
-						break;
-			case 7:
-						num_str="7";
-						break;
-			case 8:
-						num_str="8";
-						break;
-			case 9:
-						num_str="9";
-						break;
-			case 10:
-						num_str="10";
-						break;
-			case 11:
-						num_str="11";
-						break;
-			case 12:
-						num_str="12";
-						break;
-			default:
-						ROS_INFO("CHOIX AIGUILLAGE INCORRECT");
-						break;
-	}
-
 	num_aiguillage=id_aiguillage;
 
 	loop_rate=new ros::Rate(25);

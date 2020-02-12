@@ -25,6 +25,8 @@ int main(int argc, char **argv)
 	AigsInterface aiguillage(noeud);
 	Capteurs capteur(noeud);
 
+	sleep(2);
+
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	cmd.Initialisation();

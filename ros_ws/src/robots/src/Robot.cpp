@@ -99,9 +99,9 @@ void Robot::EnvoyerRobot(int numposition)
 
 	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
 	msgSim_setJointState.data.clear();
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back((float)Rints[i]);
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back(Rpos[i]);
 
 	pubSim_setJointState.publish(msgSim_setJointState);
@@ -244,9 +244,9 @@ void Robot::DescendreBras()
 
 	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
 	msgSim_setJointState.data.clear();
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back((float)Rints[i]);
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back(Rpos[i]);
 
 	pubSim_setJointState.publish(msgSim_setJointState);
@@ -320,9 +320,9 @@ void Robot::MonterBras()
 
 	// Utilisation du topic SetJointState pour envoyer le robot dans la position souhaitée
 	msgSim_setJointState.data.clear();
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back((float)Rints[i]);
-	for(int i=0; i++; i<7)
+	for(int i=0; i<7; i++)
 		msgSim_setJointState.data.push_back(Rpos[i]);
 
 	pubSim_setJointState.publish(msgSim_setJointState);
@@ -405,7 +405,7 @@ void Robot::FermerPince()
 		t0 = valueSim_getTime;
 
 		time = t0;
-		while(time - t0 < 2)
+		while(time - t0 < 1)
 		{
 			pubSim_getTime.publish(msgSim_getTime);
 			while(!repSim_getTime&&ros::ok())

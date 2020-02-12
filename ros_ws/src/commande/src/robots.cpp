@@ -24,20 +24,26 @@ Robots::Robots(ros::NodeHandle noeud)
 		robotInit[i]=0;
 		robotBras[i]=0;
 		robotPosition[i]=0;
+		robotPince[i]=0;
 
 		bras[i]=-10;
 		pince[i]=-10;
 	}
 
-	pub_robot_position=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/SendPositionRobot",1);
-	pub_robot_joints=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot",1);
-	pub_pince_fermer=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/FermerPinceRobot",1);
-	pub_pince_ouvrir=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/OuvrirPinceRobot",1);
-	pub_descendre=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/DescendreBras",1);
-	pub_monter=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/MonterBras",1);
+	pub_robot_position=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/SendPositionRobot",10);
+	pub_robot_joints=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot",10);
+	pub_pince_fermer=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/FermerPinceRobot",10);
+	pub_pince_ouvrir=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/OuvrirPinceRobot",10);
+	pub_descendre=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/DescendreBras",10);
+	pub_monter=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/MonterBras",10);
 	pub_controler_robot=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras",10);
 	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
 	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
+
+	pub_robot_transport1=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras1",10);
+	pub_robot_transport2=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras2",10);
+	pub_robot_transport3=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras3",10);
+	pub_robot_transport4=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras4",10);
 
 	//Retour des robots vers la commande
 	sub_retourRobot1 = noeud.subscribe("/commande/Simulation/retourCommande1", 100, &Robots::RetourRobot1Callback,this);
@@ -347,7 +353,7 @@ void Robots::RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 2:
 			cout <<  BOLDCYAN << "Robot 1 en position" << RESET << endl;
-			robotPosition[0]=1;
+			robotPosition[0]=EN_POSITION;
 			break;
 
 		case 3:
@@ -357,22 +363,22 @@ void Robots::RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 1" << RESET << endl;
-			robotBras[0] = -1;
+			robotBras[0] = BAS;
 			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 1" << RESET << endl;
-			robotBras[0] = 1;
+			robotBras[0] = HAUT;
 			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 1" << RESET << endl;
-			robotPince[0] = 1;
+			robotPince[0] = FERMEE;
 			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 1" << RESET << endl;
-			robotPince[0] = -1;
+			robotPince[0] = OUVERTE;
 			break;
 	}
 }
@@ -397,7 +403,7 @@ void Robots::RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 2:
 			cout <<  BOLDCYAN << "Robot 2 en position" << RESET << endl;
-			robotPosition[1]=1;
+			robotPosition[1]=EN_POSITION;
 			break;
 
 		case 3:
@@ -407,22 +413,22 @@ void Robots::RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 2" << RESET << endl;
-			robotBras[1] = -1;
+			robotBras[1] = BAS;
 			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 2" << RESET << endl;
-			robotBras[1] = 1;
+			robotBras[1] = HAUT;
 			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 2" << RESET << endl;
-			robotPince[1] = 1;
+			robotPince[1] = FERMEE;
 			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 2" << RESET << endl;
-			robotPince[1] = -1;
+			robotPince[1] = OUVERTE;
 			break;
 	}
 }
@@ -448,7 +454,7 @@ void Robots::RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 2:
 			cout <<  BOLDCYAN << "Robot 3 en position" << RESET << endl;
-			robotPosition[2]=1;
+			robotPosition[2]=EN_POSITION;
 			break;
 
 		case 3:
@@ -458,22 +464,22 @@ void Robots::RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 3" << RESET << endl;
-			robotBras[2] = -1;
+			robotBras[2] = BAS;
 			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 3" << RESET << endl;
-			robotBras[2] = 1;
+			robotBras[2] = HAUT;
 			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 3" << RESET << endl;
-			robotPince[2] = 1;
+			robotPince[2] = FERMEE;
 			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 3" << RESET << endl;
-			robotPince[2] = -1;
+			robotPince[2] = OUVERTE;
 			break;
 	}
 }
@@ -499,7 +505,7 @@ void Robots::RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 2:
 			cout <<  BOLDCYAN << "Robot 4 en position" << RESET << endl;
-			robotPosition[3]=1;
+			robotPosition[3]=EN_POSITION;
 			break;
 
 		case 3:
@@ -509,22 +515,22 @@ void Robots::RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg)
 
 		case 4:
 			cout << BOLDCYAN << "Bras descendu pour le robot 4" << RESET << endl;
-			robotBras[3] = -1;
+			robotBras[3] = BAS;
 			break;
 
 		case 5:
 			cout << BOLDCYAN << "Bras monte pour le robot 4" << RESET << endl;
-			robotBras[3] = 1;
+			robotBras[3] = HAUT;
 			break;
 
 		case 6:
 			cout << BOLDCYAN << "Pince fermee pour le robot 4" << RESET << endl;
-			robotPince[3] = 1;
+			robotPince[3] = FERMEE;
 			break;
 
 		case 7:
 			cout << BOLDCYAN << "Pince ouverte pour le robot 4" << RESET << endl;
-			robotPince[3] = -1;
+			robotPince[3] = OUVERTE;
 			break;
 	}
 }
@@ -615,36 +621,58 @@ int Robots::PinceEnPosition(int numRobot)
 	return Robot;
 }
 
+void Robots::RobotTransport(int num_robot,bool valeur)
+{
+	std_msgs::Bool msg;
+	msg.data=valeur;
+	switch(num_robot)
+	{
+		case 1:
+			pub_robot_transport1.publish(msg);
+			break;
+		case 2:
+			pub_robot_transport2.publish(msg);
+			break;
+		case 3:
+			pub_robot_transport3.publish(msg);
+			break;
+		case 4:
+			pub_robot_transport4.publish(msg);
+			break;
+	}
+}
+
 //Macro-fonction. Utilise les blocs élémentaires définis plus haut
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
 	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0))
 	{
 		EnvoyerPosition(num_robot,positionA);
-		while(RobotEnPosition(num_robot)!=1){usleep(100000);};
+		while(RobotEnPosition(num_robot)!=EN_POSITION){usleep(100000);};
 		DescendreBras(num_robot);
-		while(BrasEnPosition(num_robot)!=-1){usleep(100000);};
-		FermerPince(num_robot);
-		while(PinceEnPosition(num_robot)!=1){usleep(100000);};
+		while(BrasEnPosition(num_robot)!=BAS){usleep(100000);};
 
-		//ici on considère qu'on a pris une pièce
-		//decoloration, donc
+		// Prise de pièce
 		Colorer(num_robot,positionA);//le robot a rien en mémoire, il décolore
+		RobotTransport(num_robot,true);
+		FermerPince(num_robot);
+		while(PinceEnPosition(num_robot)!=FERMEE){usleep(100000);};
 
 		MonterBras(num_robot);
-		while(BrasEnPosition(num_robot)!=1){usleep(100000);};
+		while(BrasEnPosition(num_robot)!=HAUT){usleep(100000);};
 		EnvoyerPosition(num_robot,positionB);
-		while(RobotEnPosition(num_robot)!=1){usleep(100000);};
+		while(RobotEnPosition(num_robot)!=EN_POSITION){usleep(100000);};
 		DescendreBras(num_robot);
-		while(BrasEnPosition(num_robot)!=-1){usleep(100000);};
-		OuvrirPince(num_robot);
-		while(PinceEnPosition(num_robot)!=-1){usleep(100000);};
+		while(BrasEnPosition(num_robot)!=BAS){usleep(100000);};
 
-		//ici on considère qu'on a déposé la pièce
-		//coloration, donc
+		// Pose de pièce
 		Colorer(num_robot,positionB);//le robot a la couleur du produit en memoire, il colore
+		RobotTransport(num_robot,false);
+		OuvrirPince(num_robot);
+		while(PinceEnPosition(num_robot)!=OUVERTE){usleep(100000);};
+
 		MonterBras(num_robot);
-		while(BrasEnPosition(num_robot)!=1){usleep(100000);};
+		while(BrasEnPosition(num_robot)!=HAUT){usleep(100000);};
 	}
 }
 
@@ -654,7 +682,7 @@ void Robots::Colorer(int num_robot,int position)
 	msgColor.position=position;
 	pub_colorer.publish(msgColor);
 
-	sleep(2);
+	sleep(1);
 }
 
 void Robots::DoTask(int num_robot, int position, int num_tache)

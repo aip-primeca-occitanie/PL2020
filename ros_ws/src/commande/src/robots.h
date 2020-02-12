@@ -7,9 +7,16 @@
 #include <robots/RobotJoints.h>
 #include <robots/MoveRobot.h>
 #include <std_msgs/Int32.h>
+#include <std_msgs/Bool.h>
 #include <robots/ColorMsg.h>
 #include "robots/DoTaskMsg.h"
 #include "robots/Msg_numrobot.h"
+
+#define HAUT		1
+#define BAS		-1
+#define FERMEE		1
+#define OUVERTE		-1
+#define EN_POSITION	1
 
 class Robots
 {
@@ -25,6 +32,10 @@ private:
 	ros::Publisher pub_controler_robot;
 	ros::Publisher pub_colorer;
 	ros::Publisher pub_doTask;
+	ros::Publisher pub_robot_transport1;
+	ros::Publisher pub_robot_transport2;
+	ros::Publisher pub_robot_transport3;
+	ros::Publisher pub_robot_transport4;
 
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
 
@@ -65,6 +76,7 @@ public:
 	int PinceEnPosition(int numRobot); //retourne 1 si la pince du robot numRobot est fermée, -1 si elle est ouverte
 
 	void Colorer(int num_robot, int position);
+	void RobotTransport(int num_robot, bool valeur);
 	void DoTask(int num_robot, int position, int num_tache);
 };
 #endif

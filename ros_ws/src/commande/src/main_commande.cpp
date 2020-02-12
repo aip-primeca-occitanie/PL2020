@@ -103,13 +103,13 @@ int main(int argc, char **argv)
 					M[64]++;break;
 			}
 			cmd.renitialiser_arrivee_nouveau_produit();
-  	}
+	  	}
 
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////DEBUT PETRI///////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-	if (M[11]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
+		if (M[11]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
 		{
 			modif=1;
 			M[11]--;
@@ -118,26 +118,26 @@ int main(int argc, char **argv)
 		}
 
 		if (M[4]!=0 && capteur.get_PS(21)==1) //Robot 1 fait la manip sur la navette
-			{
-				modif=1;
-				M[4]--;
-				robot.DeplacerPiece(1,2,4);
-				cmd.Ouvrir_PS(21);
-				M[5]++;
-			}
+		{
+			modif=1;
+			M[4]--;
+			robot.DeplacerPiece(1,2,4);
+			cmd.Ouvrir_PS(21);
+			M[5]++;
+		}
 
 
-			if (M[5]!=0 && capteur.get_PS(24)==1) //orientation des aiguillages pour la boucle principale
-				{
-					M[5]--;
-					modif=1;
-					aiguillage.Gauche(1);
-					aiguillage.Gauche(2);
-					aiguillage.Gauche(3);
-					aiguillage.Gauche(10);
-					robot.DoTask(1,4,0);
-					M[6]++;
-				}
+		if (M[5]!=0 && capteur.get_PS(24)==1) //orientation des aiguillages pour la boucle principale
+		{
+			M[5]--;
+			modif=1;
+			aiguillage.Gauche(1);
+			aiguillage.Gauche(2);
+			aiguillage.Gauche(3);
+			aiguillage.Gauche(10);
+			robot.DoTask(1,4,0);
+			M[6]++;
+		}
 
 ///////////////////////////////////////////////////////////////////////////
 ////////////////////AFFICHAGE//////////////////////////////////////////////
@@ -205,6 +205,4 @@ int main(int argc, char **argv)
 	}
 
 	return 0;
-
-
 }

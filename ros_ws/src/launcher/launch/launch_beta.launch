@@ -8,6 +8,6 @@
 	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -e"/>
 
 
-    <node name="shuttleManager" pkg="shuttles" type="shuttlesManager" output="screen" launch-prefix="xterm -e"/>
+    <node name="shuttleManager" pkg="shuttles" type="main_ShuttleManager" output="screen" launch-prefix="xterm -e"/>
 
 </launch>

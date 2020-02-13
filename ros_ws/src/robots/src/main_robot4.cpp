@@ -15,9 +15,15 @@ int main(int argc, char **argv)
 	Robot robot4(4);
 	robot4.init(nh);
 
+	int compteur=0;
 	ros::Rate loop_rate(25);
 	while(ros::ok())
 	{
+		if(compteur++>25)
+		{
+			robot4.update();
+			compteur=0;
+		}
 		ros::spinOnce();
 		loop_rate.sleep();
 	}

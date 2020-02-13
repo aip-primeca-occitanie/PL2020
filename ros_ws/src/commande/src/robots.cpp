@@ -26,9 +26,14 @@ Robots::Robots(ros::NodeHandle noeud)
 		robotPosition[i]=0;
 		robotPince[i]=0;
 
+
+		robotTask[i][0]=0;
+		robotTask[i][1]=0;
+
 		bras[i]=-10;
 		pince[i]=-10;
 	}
+
 
 	pub_robot_position=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/SendPositionRobot",10);
 	pub_robot_joints=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot",10);
@@ -375,6 +380,17 @@ void Robots::RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg)
 			cout << BOLDCYAN << "Pince ouverte pour le robot 1" << RESET << endl;
 			robotPince[0] = OUVERTE;
 			break;
+
+		case 8:
+			cout << BOLDCYAN << "Robot 1 : Tache du poste en position 1 terminée" << RESET << endl;
+			robotTask[0][0]=1;
+			break;
+
+		case 9:
+			cout << BOLDCYAN << "Robot 1 : Tache du poste en position 4 terminée" << RESET << endl;
+			robotTask[0][1]=1;
+			break;	
+			
 	}
 }
 
@@ -425,6 +441,16 @@ void Robots::RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg)
 			cout << BOLDCYAN << "Pince ouverte pour le robot 2" << RESET << endl;
 			robotPince[1] = OUVERTE;
 			break;
+
+		case 8:
+			cout << BOLDCYAN << "Robot 2 : Tache du poste en position 1 terminée" << RESET << endl;
+			robotTask[1][0]=1;
+			break;
+
+		case 9:
+			cout << BOLDCYAN << "Robot 2 : Tache du poste en position 4 terminée" << RESET << endl;
+			robotTask[1][1]=1;
+			break;	
 	}
 }
 
@@ -476,6 +502,16 @@ void Robots::RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg)
 			cout << BOLDCYAN << "Pince ouverte pour le robot 3" << RESET << endl;
 			robotPince[2] = OUVERTE;
 			break;
+
+		case 8:
+			cout << BOLDCYAN << "Robot 3 : Tache du poste en position 1 terminée" << RESET << endl;
+			robotTask[2][0]=1;
+			break;
+
+		case 9:
+			cout << BOLDCYAN << "Robot 3 : Tache du poste en position 4 terminée" << RESET << endl;
+			robotTask[2][1]=1;
+			break;	
 	}
 }
 
@@ -527,6 +563,16 @@ void Robots::RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg)
 			cout << BOLDCYAN << "Pince ouverte pour le robot 4" << RESET << endl;
 			robotPince[3] = OUVERTE;
 			break;
+
+		case 8:
+			cout << BOLDCYAN << "Robot 4 : Tache du poste en position 1 terminée" << RESET << endl;
+			robotTask[3][0]=1;
+			break;
+
+		case 9:
+			cout << BOLDCYAN << "Robot 4 : Tache du poste en position 4 terminée" << RESET << endl;
+			robotTask[3][1]=1;
+			break;	
 	}
 }
 
@@ -616,6 +662,33 @@ int Robots::PinceEnPosition(int numRobot)
 	return Robot;
 }
 
+int Robots::TaskPos1Etat(int numRobot)
+{
+	int Robot;
+	ros::spinOnce();
+	
+	if(numRobot<1 || numRobot>4)
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+	else
+		Robot=robotTask[numRobot-1][0];
+
+	return Robot;
+}
+
+int Robots::TaskPos4Etat(int numRobot)
+{
+	int Robot;
+	ros::spinOnce();
+	
+	if(numRobot<1 || numRobot>4)
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+	else
+		Robot=robotTask[numRobot-1][1];
+
+	return Robot;
+}
+
+
 //Macro-fonction. Utilise les blocs élémentaires définis plus haut
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
@@ -658,10 +731,16 @@ void Robots::Colorer(int num_robot,int position, int type) // type : 0=prise 1=p
 	sleep(1);
 }
 
-void Robots::DoTask(int num_robot, int position, int num_tache)
+void Robots::DoTask(int num_robot, int position, int duree)
 {
+	if(position==1)
+		robotTask[num_robot-1][0]=0;
+	if(position==4)
+		robotTask[num_robot-1][1]=0;
 	tache_msg.num_robot=num_robot;
 	tache_msg.position=position;
-	tache_msg.num_tache=num_tache;
+	tache_msg.duree=duree;
 	pub_doTask.publish(tache_msg);
+	
+	sleep(1);
 }

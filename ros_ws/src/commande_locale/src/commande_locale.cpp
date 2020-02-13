@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 	inOutController IOController(&VREPController, &config);
 	IOController.init(nh);
 
-	sleep(2);
+	sleep(3);
 
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();

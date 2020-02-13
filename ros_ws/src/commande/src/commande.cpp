@@ -75,7 +75,6 @@ void Commande::Initialisation()
 
 void Commande::NouveauProduitCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg)
 {
-	ROS_INFO("Je recois les messages trkl");
 	poste=msg->num_poste;
 	produit=msg->num_produit;
 	arrivee_produit=1;

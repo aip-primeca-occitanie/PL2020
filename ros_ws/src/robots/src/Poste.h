@@ -22,7 +22,11 @@ private:
   int sortie_tache_[3];
   int temps_operation_[3];
 
-  
+  int couleur_;
+
+  int duree_task_;
+  float temps_debut_task_;
+  bool task_en_cours_;
 
 public:
 	Poste();
@@ -34,5 +38,8 @@ public:
   int do_task(int num_tache);
   void ajouter_produit(int produit);
   int get_produit();
+  int get_color();
+  void debutTask(float VREPtime, int duree);
+  bool updateTask(float time);
 };
 #endif

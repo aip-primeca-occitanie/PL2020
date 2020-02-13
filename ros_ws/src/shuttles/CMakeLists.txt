@@ -5,7 +5,7 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  std_msgs 
+  std_msgs
   genmsg
   message_generation
 )
@@ -22,13 +22,11 @@ add_service_files(
 	srvGetEmptyShuttles.srv
 	)
 
-generate_messages( DEPENDENCIES std_msgs)
-catkin_package( CATKIN_DEPENDS roscpp message_runtime) 
-
+generate_messages(DEPENDENCIES std_msgs)
+catkin_package( CATKIN_DEPENDS roscpp message_runtime)
 
 include_directories(${catkin_INCLUDE_DIRS})
 
-
-add_executable(shuttlesManager src/mainCommandeShuttle.cpp src/shuttle.cpp src/shuttleManager.cpp)  
-target_link_libraries(shuttlesManager ${catkin_LIBRARIES})
-add_dependencies(shuttlesManager ${PROJECT_NAME}_gencpp ${${shuttles}_EXPORTED_TARGETS})
+add_executable(main_ShuttleManager src/main_ShuttleManager.cpp src/capteurs.cpp src/FileAttente.cpp)
+target_link_libraries(main_ShuttleManager ${catkin_LIBRARIES})
+add_dependencies(main_ShuttleManager ${PROJECT_NAME}_gencpp ${${shuttles}_EXPORTED_TARGETS})

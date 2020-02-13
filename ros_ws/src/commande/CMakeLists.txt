@@ -7,16 +7,16 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	std_msgs
 	genmsg
-	message_generation
 	robots
 	commande_locale
 	shuttles
+	message_generation
 	)
 
 add_message_files(FILES Capteurs.msg Actionneurs.msg)
-
-
+add_service_files(FILES srv_recup_capteur_info.srv)
 generate_messages(DEPENDENCIES std_msgs)
+
 catkin_package(CATKIN_DEPENDS roscpp message_runtime)
 
 include_directories(${catkin_INCLUDE_DIRS})

@@ -39,12 +39,14 @@ Robot::Robot(int num_du_robot)
 	msgSim_setJointState.layout.data_offset=0;
 
 	loop_rate = new ros::Rate(25);
+	loop_ok = new ros::Rate(2);
 }
 
 //Destructeur
 Robot::~Robot()
 {
 	delete loop_rate;
+	delete loop_ok;
 }
 
 /** Pour atteindre une position prédéfinie **/
@@ -144,6 +146,9 @@ void Robot::EnvoyerRobot(int numposition)
 			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
+
+			ros::spinOnce();
+			loop_ok->sleep();
 		}
 	}
 
@@ -218,6 +223,10 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
+
+
+			ros::spinOnce();
+			loop_ok->sleep();
 		}
 	}
 
@@ -288,6 +297,9 @@ void Robot::DescendreBras()
 			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
+
+			ros::spinOnce();
+			loop_ok->sleep();
 		}
 	}
 
@@ -364,6 +376,10 @@ void Robot::MonterBras()
 			}
 			repSim_getJointState=false;
 			Position = valueSim_getJointState;
+
+
+			ros::spinOnce();
+			loop_ok->sleep();
 		}
 	}
 
@@ -415,6 +431,9 @@ void Robot::FermerPince()
 			}
 			repSim_getTime=false;
 			time = valueSim_getTime;
+
+			ros::spinOnce();
+			loop_ok->sleep();
 		}
 
 		//Retour vers la commande
@@ -462,6 +481,9 @@ void Robot::OuvrirPince()
 			}
 			repSim_getTime=false;
 			time = valueSim_getTime;
+			
+			ros::spinOnce();
+			loop_ok->sleep();
 		}
 
 		//Retour vers la commande
@@ -613,7 +635,6 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 {
 	if (msg->num_robot==num_robot)
 	{
-		cout << "me concerne robot=" << msg->num_robot << " pos=" << msg->position << endl;
 		int idNavette=-1;
 		if(msg->position==2 || msg->position==3) // Si navette
 		{
@@ -644,7 +665,6 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			ROS_ERROR("ColorerCallback: msg->position incorrecte !!!");
 		}
 
-		cout << "signal=" << signal << endl;
 		string fin;
 
 		if(!erreur)
@@ -684,8 +704,6 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 		else if(msg->position==4)
 			poste_pos_4.ajouter_produit(produit_detecte);
 
-		cout << "ajout des produit" << endl;
-
 	// colore le poste ou navette en pos 1 avec couleur en mémoire
 		if(msg->position==2 || msg->position==3) // Si navette
 		{
@@ -709,7 +727,6 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			for(int i=0; i<4; i++)
 				msgSim_changeColor.data.push_back(couleur_transportee[i]);
 			pubSim_changeColor.publish(msgSim_changeColor);
-			cout << "apres publish" << endl;
 			while(!repSim_changeColor&&ros::ok())
 			{
 				ros::spinOnce();
@@ -739,31 +756,132 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			transport(true);
 		else
 			transport(false);
-
-		cout << "fin" << endl;
 	}
 }
 
-void Robot::colorerPoste(int produit, string poste)
+void Robot::colorerPosteTask(string poste, int couleur_poste)
 {
-	ROS_INFO("La je veux colorer le poste suite a quelquechose, ca arrive bientot");
-	ROS_INFO("produit:%d poste:%s",produit, poste.c_str());
+	string signal=poste;
+	string fin;
+	int couleur[4];
+	for(int i=0; i<4; couleur[i++]=0){}
+	int couleur_last(0);
+
+	int i=0;
+	do
+	{
+		fin.clear();
+		fin.append(signal);
+		fin.append("#");
+		fin.append(to_string(i));
+		fin.append("_color");
+		msgSim_getColor.data=fin;
+
+		pubSim_getColor.publish(msgSim_getColor);
+		while(!repSim_getColor&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
+		repSim_getColor=false;
+		couleur[i]=valueSim_getColor;
+		couleur_last=couleur[i];
+
+		i++;
+
+	}while(i<4 && couleur_last!=0);
+	
+	if(i==1)
+		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
+	else if(i==4 && couleur_last!=0)
+		ROS_ERROR("PRODUIT DEJA COMPLET !!!");
+	else
+	{
+		// mettre couleur sur signal i-1
+		msgSim_changeColor.data.clear();
+		string idStr= signal.substr(6);
+		int idPoste = atoi(idStr.c_str());
+		cout << "idPoste=" << idPoste << endl;
+		msgSim_changeColor.data.push_back(idPoste);
+
+		couleur[i-1]=couleur_poste;
+		cout << "couleur_poste=" << couleur_poste << endl;
+		
+		for(int i=0; i<4; i++)
+			msgSim_changeColor.data.push_back(couleur[i]);
+		pubSim_changeColor.publish(msgSim_changeColor);
+		while(!repSim_changeColor&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
+		repSim_changeColor=false;
+	}	
 }
 
 void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 {
-	if (msg->num_robot==num_robot)
+	if((msg->num_robot==num_robot)
+	&& (msg->position==1||msg->position==4)) // pas sur une navette
 	{
+		ROS_INFO("Debut tache pos=%d", msg->position);
 		if (msg->position==1)
 		{
-			produit_sur_poste=poste_pos_1.do_task(msg->num_tache);
-			colorerPoste(produit_sur_poste,poste_pos_1.get_nom());
+			//produit_sur_poste=poste_pos_1.do_task(msg->num_tache);
+			pubSim_getTime.publish(msgSim_getTime);
+			while(!repSim_getTime && ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_getTime=false;
+			float time=valueSim_getTime;
+
+			poste_pos_1.debutTask(time,msg->duree);
+
+			colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color());
 		}
 		if (msg->position==4)
 		{
-			produit_sur_poste=poste_pos_4.do_task(msg->num_tache);
-			colorerPoste(produit_sur_poste,poste_pos_4.get_nom());
+			pubSim_getTime.publish(msgSim_getTime);
+			while(!repSim_getTime && ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_getTime=false;
+			float time=valueSim_getTime;
+
+			poste_pos_4.debutTask(time,msg->duree);
+
+			colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color());
 		}
+		cout << "Fin tache" << endl;
+	}
+}
+
+void Robot::update()
+{
+	pubSim_getTimeUpdate.publish(msgSim_getTimeUpdate);
+	while(!repSim_getTimeUpdate && ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate->sleep();
+	}
+	repSim_getTimeUpdate=false;
+	float time=valueSim_getTimeUpdate;
+
+	cout << endl;
+	if(poste_pos_1.updateTask(time))
+	{
+		retour.data=8;	
+		pub_retourCommande.publish(retour);
+	}
+
+	if(poste_pos_4.updateTask(time))
+	{
+		retour.data=9;	
+		pub_retourCommande.publish(retour);
 	}
 }
 
@@ -771,13 +889,11 @@ void Robot::ajouter_produitCallback(commande_locale::Msg_AddProduct msg)
 {
 	if (poste_pos_1.get_numero()==msg.num_poste)
 	{
-		poste_pos_1.ajouter_produit(msg.num_produit);
-		colorerPoste(poste_pos_1.get_produit(),poste_pos_1.get_nom());
+		poste_pos_1.ajouter_produit(msg.num_produit); //
 	}
 	if (poste_pos_4.get_numero()==msg.num_poste)
 	{
-		poste_pos_4.ajouter_produit(msg.num_produit);
-		colorerPoste(poste_pos_4.get_produit(),poste_pos_4.get_nom());
+		poste_pos_4.ajouter_produit(msg.num_produit); //
 	}
 }
 
@@ -800,10 +916,10 @@ void Robot::init(ros::NodeHandle noeud)
 	case 1:
 		num_str="1";
 		nom="Table#1";
-		numero_poste=1;
+		numero_poste=2;
 		poste_pos_1.init(nom,numero_poste);
 		nom="Table#0";
-		numero_poste=2;
+		numero_poste=1;
 		poste_pos_4.init(nom,numero_poste);
 	break;
 
@@ -817,6 +933,7 @@ void Robot::init(ros::NodeHandle noeud)
 		poste_pos_4.init(nom,numero_poste);
 	break;
 
+	// A verif num en dessous
  	case 3:
 		num_str="3";
 		nom="Table#6";
@@ -854,6 +971,9 @@ void Robot::init(ros::NodeHandle noeud)
 
 	pubSim_getTime = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetTime",100);
 	subSim_getTime = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetTime",100,&Robot::simGetTimeCallback,this);
+
+	pubSim_getTimeUpdate = noeud.advertise<std_msgs::Byte>("/sim_ros_interface/services/robot"+to_string(num_robot)+"Update/GetTime",100);
+	subSim_getTimeUpdate = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"Update/GetTime",100,&Robot::simGetTimeUpdateCallback,this);
 
 	pubSim_changeColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/ChangeColor",100);
 	subSim_changeColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/ChangeColor",100,&Robot::simChangeColorCallback,this);
@@ -968,6 +1088,13 @@ void Robot::simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 	valueSim_getTime=msg->data;
 
         repSim_getTime=true;
+}
+
+void Robot::simGetTimeUpdateCallback(const std_msgs::Float32::ConstPtr& msg)
+{
+	valueSim_getTimeUpdate=msg->data;
+
+        repSim_getTimeUpdate=true;
 }
 
 void Robot::simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg)

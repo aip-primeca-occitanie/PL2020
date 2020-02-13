@@ -45,6 +45,7 @@ private:
 	int bras[4];
 	int robotPince[4];
 	int pince[4];
+	int robotTask[4][2];
 
 	robots::ColorMsg msgColor;
 	robots::DoTaskMsg tache_msg;
@@ -77,6 +78,8 @@ public:
 
 	void Colorer(int num_robot, int position, int type);
 	void RobotTransport(int num_robot, bool valeur);
-	void DoTask(int num_robot, int position, int num_tache);
+	void DoTask(int num_robot, int position, int duree);
+	int TaskPos1Etat(int num_robot);
+	int TaskPos4Etat(int num_robot);
 };
 #endif

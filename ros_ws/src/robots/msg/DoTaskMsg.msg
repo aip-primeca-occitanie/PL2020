@@ -1,3 +1,3 @@
 int32 num_robot
 int32 position
-int32 num_tache
+int32 duree

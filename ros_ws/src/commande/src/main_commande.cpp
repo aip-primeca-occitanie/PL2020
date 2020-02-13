@@ -116,29 +116,43 @@ int main(int argc, char **argv)
 			modif=1;
 			M[11]--;
 			cmd.Stop_PS(21);
+			robot.DoTask(1,4,2);
+			M[1]++;
+		}
+
+		if (M[1]!=0 && robot.TaskPos4Etat(1)==1)
+		{
+			modif=1;
+			M[1]--;
+			robot.DeplacerPiece(1,4,1);
+			M[2]++;
+		}
+
+		if (M[2]!=0 && capteur.get_PS(21)==1)
+		{
+			modif=1;
+			M[2]--;
+			robot.DoTask(1,1,3);
+			M[3]++;
+		}
+		if (M[3]!=0 && robot.TaskPos1Etat(1)==1)
+		{
+			modif=1;
+			M[3]--;
+			robot.DeplacerPiece(1,1,2);
+			cmd.Ouvrir_PS(21);
 			M[4]++;
 		}
 
-		if (M[4]!=0 && capteur.get_PS(21)==1) //Robot 1 fait la manip sur la navette
+		if (M[4]!=0 && capteur.get_PS(24)==1) //orientation des aiguillages pour la boucle principale
 		{
-			modif=1;
 			M[4]--;
-			robot.DeplacerPiece(1,4,2);
-			cmd.Ouvrir_PS(21);
-			M[5]++;
-		}
-
-
-		if (M[5]!=0 && capteur.get_PS(24)==1) //orientation des aiguillages pour la boucle principale
-		{
-			M[5]--;
 			modif=1;
 			aiguillage.Gauche(1);
 			aiguillage.Gauche(2);
 			aiguillage.Gauche(3);
 			aiguillage.Gauche(10);
-			//robot.DoTask(1,4,0);
-			M[6]++;
+			M[5]++;
 		}
 
 ///////////////////////////////////////////////////////////////////////////

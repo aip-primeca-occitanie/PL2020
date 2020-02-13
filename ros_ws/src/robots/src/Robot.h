@@ -63,6 +63,13 @@ private:
 	bool repSim_getTime;
 	float valueSim_getTime;
 
+	// GetTimeUpdate
+	ros::Publisher pubSim_getTimeUpdate;
+	std_msgs::Byte msgSim_getTimeUpdate;
+	ros::Subscriber subSim_getTimeUpdate;
+	bool repSim_getTimeUpdate;
+	float valueSim_getTimeUpdate;
+
 	// ChangeColor
 	ros::Publisher pubSim_changeColor;
 	std_msgs::Int32MultiArray msgSim_changeColor;
@@ -110,6 +117,7 @@ private:
 	// numero du robot
 	int num_robot;
 	ros::Rate* loop_rate;
+	ros::Rate* loop_ok;
 
 	/** Messages **/
 	std_msgs::Int32 robotPosition;
@@ -133,6 +141,7 @@ public:
 
 	int computeTableId(int position);
 	void transport(bool valeur);
+	void update();
 
 	/** Fonctions internes permettant le contrôle du robot **/
 	//Pour atteindre une position prédéfinie
@@ -171,13 +180,14 @@ public:
 	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
-	void colorerPoste(int produit, string poste);
+	void colorerPosteTask(string poste, int couleur_poste);
 
 	// Callbacks pour V-Rep
 	void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);
 	void simSetJointStateCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simGetJointStateCallback(const sensor_msgs::JointState::ConstPtr& msg);
 	void simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg);
+	void simGetTimeUpdateCallback(const std_msgs::Float32::ConstPtr& msg);
 	void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);

@@ -100,6 +100,7 @@ private:
 	ros::Subscriber sub_colorer;
 	ros::Subscriber sub_doTask;
 	ros::Subscriber sub_nouveau_produit;
+	ros::Subscriber sub_evacuer;
 
 	/** Publishers pour retours **/
 	ros::Publisher pub_pince;
@@ -181,6 +182,7 @@ public:
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
 	void colorerPosteTask(string poste, int couleur_poste);
+	void Evacuer(const std_msgs::Byte::ConstPtr& msg);
 
 	// Callbacks pour V-Rep
 	void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);

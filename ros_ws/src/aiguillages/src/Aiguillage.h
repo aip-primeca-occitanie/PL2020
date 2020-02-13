@@ -10,7 +10,6 @@ using namespace std;
 class Aiguillage
 {
 private:
-
 	ros::Subscriber VREPsubSwitchSensor;//Capteurs butée aiguillage
 	ros::Subscriber sub_cmd_Droite;
 	ros::Subscriber sub_cmd_Gauche;
@@ -22,15 +21,11 @@ private:
 	ros::Publisher AigGauche;
 	ros::Publisher AigDroite;
 
-	std_msgs::Int32 num_AIG;
-
-	bool Aig_D;//Capteurs butée
-	bool Aig_G;
-
-	int num_aiguillage;
+	bool Aig_D[12];//Capteurs butée
+	bool Aig_G[12];
 
 public:
-	Aiguillage(ros::NodeHandle nh, int id_aiguillage);
+	Aiguillage(ros::NodeHandle nh);
 	~Aiguillage();
 
 	void SwitchSensorCallback(const std_msgs::Int32::ConstPtr& msg);

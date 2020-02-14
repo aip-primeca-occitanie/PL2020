@@ -5,7 +5,6 @@
 #include <commande_locale/Msg_SensorState.h>
 #include "commande/Capteurs.h"
 #include <ros/ros.h>
-#include "commande/srv_recup_capteur_info.h"
 
 class Capteurs
 {
@@ -22,8 +21,6 @@ class Capteurs
 		void Actualiser(bool PS[],bool DD[],bool DG[],bool CP[],bool CPI[]);
 
 		void Callback_capteurs_simulation(const commande_locale::Msg_SensorState::ConstPtr& msg);
-
-		bool Srv_info_capteurs(commande::srv_recup_capteur_info::Request  &req, commande::srv_recup_capteur_info::Response &res);
 
 		bool get_CP(int num_CP);
 		bool get_CPI(int num_CPI);

@@ -6,7 +6,6 @@
 Capteurs::Capteurs(ros::NodeHandle noeud)
 {
 	sub_capteurs_simu = noeud.subscribe("/commande/Simulation/Capteurs", 1, &Capteurs::Callback_capteurs_simulation,this);
-	ros::ServiceServer service = noeud.advertiseService("srv_recup_capteur_info", &Capteurs::Srv_info_capteurs, this);
 	for(int i=0;i<25;i++) PSx[i]=0;
 	for(int i=0;i<13;i++) DxD[i]=0;
 	for(int i=0;i<13;i++) DxG[i]=0;
@@ -25,22 +24,6 @@ void Capteurs::Callback_capteurs_simulation(const commande_locale::Msg_SensorSta
 	for(int i=1;i<13;i++) DxG[i]=msg->DG[i];
 	for(int i=1;i<11;i++) CPx[i]=msg->CP[i];
 	for(int i=1;i<9;i++) CPIx[i]=msg->CPI[i];
-}
-
-bool Capteurs::Srv_info_capteurs(commande::srv_recup_capteur_info::Request  &req,
-         commande::srv_recup_capteur_info::Response &res)
-{
-	/*for(int i=1;i<25;i++) PSx[i]=msg->PS[i];
-	for(int i=1;i<13;i++) DxD[i]=msg->DD[i];
-	for(int i=1;i<13;i++) DxG[i]=msg->DG[i];
-	for(int i=1;i<11;i++) CPx[i]=msg->CP[i];
-	for(int i=1;i<9;i++) CPIx[i]=msg->CPI[i];
-  	res.data = msg;*/
-
-  	ROS_INFO("request");
-	res.b=req.a-1;
-  	ROS_INFO("sending back response: %d",res.b);
-  	return true;
 }
 
 bool Capteurs::get_PS(int num_PS)

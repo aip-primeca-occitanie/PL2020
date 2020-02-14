@@ -19,8 +19,8 @@ vrepController::vrepController(){
 	repSim_startSimulation=false;
 	repSim_pauseSimulation=false;
 	repSim_loadModel=false;
-	repSim_removeModel=false;
-	repSim_getObjectHandle=false;
+	//repSim_removeModel=false;
+	//repSim_getObjectHandle=false;
 	repSim_changeColor=false;
 
 	loop_rate = new ros::Rate(25);
@@ -54,23 +54,6 @@ void vrepController::play()
 	cout << "fin play" << endl;
 }
 
-void vrepController::addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination) {
-
-	char aux[1000];
-	sprintf(aux,"Shuttle%d",handle_navette);
-	std::string name(aux);
-
-	Cr_Shuttle.name = name;
-	Cr_Shuttle.product = type;
-	Cr_Shuttle.destination = destination;
-	Cr_Shuttle.handle = handle_navette;
-	Cr_Shuttle.handlePlatform = handle_plateforme;
-	Cr_Shuttle.zone = 0;
-
-	ROS_INFO( "Ajout navette d'handle : %d",handle_navette);
-	createShuttle.publish(Cr_Shuttle);
-}
-
 // Chargement des modèles dans la simulation lors de son lancement
 void vrepController::loadModelInit(int shuttleNumber)
 {
@@ -97,7 +80,7 @@ void vrepController::loadModelInit(int shuttleNumber)
 
 
 // Suppression des modèles dans la simulation
-void vrepController::removeModel(int handle)
+/*void vrepController::removeModel(int handle)
 
 //objectName (string): name of the object. If possibe, don't rely on the automatic name adjustment mechanism, and always specify the full object name, including the #: if the object is "myJoint", specify "myJoint#", if the object is "myJoint#0", specify "myJoint#0", etc.
 {
@@ -111,10 +94,10 @@ void vrepController::removeModel(int handle)
 	}
 	repSim_removeModel = false;
 	cout << "fin remove model" << endl;
-}
+}*/
 
 //Obtention d'un handle d'objet dans la simulation
-int32_t vrepController::getObjectHandle(std::string objectName)
+/*int32_t vrepController::getObjectHandle(std::string objectName)
 {
 	msgSim_getObjectHandle.data = objectName;
 	pubSim_getObjectHandle.publish(msgSim_getObjectHandle);
@@ -128,18 +111,12 @@ int32_t vrepController::getObjectHandle(std::string objectName)
 	cout << "fin getobjecthandle" << endl;
 	return valueSim_getObjectHandle;
 }
-
+*/
 
 // On ferme le processus vrep
 void vrepController::close()
 {
 	system("pkill vrep");
-}
-
-//Callback de suppression
-void vrepController::deleteShuttleCallBack(const aiguillages::ExchangeSh::ConstPtr& msg)
-{
-	this->removeModel(msg->handle);
 }
 
 void vrepController::init(ros::NodeHandle n,std::string executionPath, std::string simulationFileName)
@@ -175,18 +152,14 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	pubSim_loadModel = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/LoadModel",100);
 	subSim_loadModel = n.subscribe("/sim_ros_interface/services/response/vrep_controller/LoadModel",100,&vrepController::simLoadModelCallback,this);
 
-	pubSim_removeModel = n.advertise<std_msgs::Int32>("/sim_ros_interface/services/vrep_controller/RemoveModel",100);
-	subSim_removeModel = n.subscribe("/sim_ros_interface/services/response/vrep_controller/RemoveModel",100,&vrepController::simRemoveModelCallback,this);
+	//pubSim_removeModel = n.advertise<std_msgs::Int32>("/sim_ros_interface/services/vrep_controller/RemoveModel",100);
+	//subSim_removeModel = n.subscribe("/sim_ros_interface/services/response/vrep_controller/RemoveModel",100,&vrepController::simRemoveModelCallback,this);
 
-	pubSim_getObjectHandle = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/GetObjectHandle",100);
-	subSim_getObjectHandle = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetObjectHandle",100,&vrepController::simGetObjectHandleCallback,this);
+	//pubSim_getObjectHandle = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/GetObjectHandle",100);
+	//subSim_getObjectHandle = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetObjectHandle",100,&vrepController::simGetObjectHandleCallback,this);
 
-        pubSim_changeColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/vrep_controller/ChangeColor",100);
-        subSim_changeColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/ChangeColor",100,&vrepController::simChangeColorCallback,this);
-
-	pub_Shuttle_Handle = n.advertise<aiguillages::ExchangeSh>("/commande_locale/New_Shuttle_Handle", 10);
-	DeleteShuttle = n.subscribe("/commande_locale/Delete_Shuttle", 10, &vrepController::deleteShuttleCallBack, this);
-	createShuttle = n.advertise<shuttles::msgShuttleCreate>("/commande_navette/AddShuttle",10);
+    pubSim_changeColor = n.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/vrep_controller/ChangeColor",100);
+    subSim_changeColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/ChangeColor",100,&vrepController::simChangeColorCallback,this);
 
 	sleep(1);
 }
@@ -204,7 +177,7 @@ int vrepController::computeTableId(int poste)
 	{
 		case 1:
 			id=0;
-			break;	
+			break;
 		case 2:
 			id=1;
 			break;
@@ -285,17 +258,16 @@ void vrepController::simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg)
 	repSim_loadModel=true;
 }
 
-void vrepController::simRemoveModelCallback(const std_msgs::Int32::ConstPtr& msg)
+/*void vrepController::simRemoveModelCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_removeModel=msg->data;
 
 	repSim_removeModel=true;
-}
+}*/
 
-void vrepController::simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg)
+/*void vrepController::simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_getObjectHandle=msg->data;
 
 	repSim_getObjectHandle=true;
-}
-
+}*/

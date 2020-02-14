@@ -105,7 +105,8 @@ private:
 
 	/** Publishers pour retours **/
 	ros::Publisher pub_pince;
-	ros::Publisher pub_robotPosition, pub_robotBras, pub_robotPince;
+	//ros::Publisher pub_robotPosition, pub_robotBras,
+	//ros::Publisher pub_robotPince;
 	ros::Publisher pub_retourCommande;
 
 	ros::Publisher pub_robot_transport;

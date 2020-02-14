@@ -158,8 +158,7 @@ void Robot::EnvoyerRobot(int numposition)
 	retour.data = 2;
 	pub_retourCommande.publish(retour);
 
-	//Retour de la position actuelle du robot
-	pub_robotPosition.publish(robotPosition);
+	//pub_robotPosition.publish(robotPosition);
 }
 
 /** Pour atteindre une position définie manuellement **/
@@ -312,7 +311,7 @@ void Robot::DescendreBras()
 
 	//Retour de l'état actuel du bras
 	robotBras.data = 0;
-	pub_robotBras.publish(robotBras);
+	//pub_robotBras.publish(robotBras);
 }
 
 
@@ -392,7 +391,7 @@ void Robot::MonterBras()
 
 	//Retour de l'état actuel du bras
 	robotBras.data = 1;
-	pub_robotBras.publish(robotBras);
+	//pub_robotBras.publish(robotBras);
 }
 
 /** Pour fermer ou ouvrir la pince **/
@@ -443,7 +442,7 @@ void Robot::FermerPince()
 
 	//Retour de l'état de la pince
 	robotPince.data=1;
-	pub_robotPince.publish(robotPince);
+	//pub_robotPince.publish(robotPince);
 }
 
 //Fonction permettant d'ouvrir la pince du robot en envoyant une commande sur le topic correspondant
@@ -493,7 +492,7 @@ void Robot::OuvrirPince()
 
 	//Retour de l'état de la pince
 	robotPince.data=0;
-	pub_robotPince.publish(robotPince);
+	//pub_robotPince.publish(robotPince);
 }
 
 /*** Fonctions permettant de controler le robot avec des ordres du noeud commande ***/
@@ -1054,9 +1053,9 @@ void Robot::init(ros::NodeHandle noeud)
 
 	//Publishers
 	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+num_str, 10);
-	pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+num_str,10);
-	pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+num_str,10);
-	pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
+	//pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+num_str,10);
+	//pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+num_str,10);
+	//pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
 	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande"+num_str, 10);
 
 	client = noeud.serviceClient<shuttles::shuttle_id>("get_id_shuttle_at_poste");

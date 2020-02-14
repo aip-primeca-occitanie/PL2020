@@ -22,7 +22,6 @@
 #include <std_msgs/Byte.h>
 #include <std_msgs/Int32MultiArray.h>
 #include <shuttles/msgShuttleChange.h>
-#include <shuttles/msgShuttleCreate.h>
 
 #include "commande_locale/Msg_Color.h"
 
@@ -33,7 +32,6 @@ class vrepController
 {
 	private:
 		//** Topic V-Rep **//
-
 
 		// StartSimulation
 		ros::Publisher pubSim_startSimulation;
@@ -62,11 +60,13 @@ class vrepController
 		int valueSim_removeModel;
 
 		// GetObjectHandle
+		/*
 		ros::Publisher pubSim_getObjectHandle;
 		std_msgs::String msgSim_getObjectHandle;
 		ros::Subscriber subSim_getObjectHandle;
 		bool repSim_getObjectHandle;
 		int valueSim_getObjectHandle;
+		*/
 
 		// ChangeColor
 		ros::Publisher pubSim_changeColor;
@@ -75,12 +75,10 @@ class vrepController
 		bool repSim_changeColor;
 
 		// Gestion de navettes
-		ros::Publisher pub_Shuttle_Handle;
-		aiguillages::ExchangeSh Sh_Handle;
+		//ros::Publisher pub_Shuttle_Handle;
 
 		ros::Subscriber DeleteShuttle;
 		ros::Publisher createShuttle;
-		shuttles::msgShuttleCreate Cr_Shuttle;
 
 		int nShuttleF;
 		std::string SimulationFileName;
@@ -91,12 +89,11 @@ class vrepController
 		void init(ros::NodeHandle n,std::string executionPath, std::string simulationFileName);
 		void close();
 		void loadModelInit(int shuttleNumber);
-		void removeModel(int32_t handle);
-		int32_t getObjectHandle(std::string);
+		//void removeModel(int32_t handle);
+		//int32_t getObjectHandle(std::string);
 		void waitVrep();
 		void play();
 		void pause();
-		void deleteShuttleCallBack(const aiguillages::ExchangeSh::ConstPtr& msg);
 
 		void setSimulationFile(std::string);
 		void addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination);
@@ -110,8 +107,8 @@ class vrepController
 		void simStartSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simPauseSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg);
-		void simRemoveModelCallback(const std_msgs::Int32::ConstPtr& msg);
-		void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);
+		//void simRemoveModelCallback(const std_msgs::Int32::ConstPtr& msg);
+		//void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);
 };
 
 #endif

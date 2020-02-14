@@ -44,6 +44,7 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_controler_robot=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras",10);
 	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
 	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
+	pub_evacuer_piece=noeud.advertise<std_msgs::Byte>("/commande/Simulation/Evacuer",10);
 
 	//Retour des robots vers la commande
 	sub_retourRobot1 = noeud.subscribe("/commande/Simulation/retourCommande1", 100, &Robots::RetourRobot1Callback,this);
@@ -743,4 +744,12 @@ void Robots::DoTask(int num_robot, int position, int duree)
 	pub_doTask.publish(tache_msg);
 	
 	sleep(1);
+}
+
+void Robots::Evacuer()
+{
+	std_msgs::Byte msg;
+	pub_evacuer_piece.publish(msg);
+
+	cout << BOLDCYAN << "Evacuation !" << RESET << endl;
 }

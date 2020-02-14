@@ -8,6 +8,7 @@
 #include <robots/MoveRobot.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
+#include <std_msgs/Byte.h>
 #include <robots/ColorMsg.h>
 #include "robots/DoTaskMsg.h"
 #include "robots/Msg_numrobot.h"
@@ -36,6 +37,7 @@ private:
 	ros::Publisher pub_robot_transport2;
 	ros::Publisher pub_robot_transport3;
 	ros::Publisher pub_robot_transport4;
+	ros::Publisher pub_evacuer_piece;
 
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
 
@@ -81,5 +83,6 @@ public:
 	void DoTask(int num_robot, int position, int duree);
 	int TaskPos1Etat(int num_robot);
 	int TaskPos4Etat(int num_robot);
+	void Evacuer();
 };
 #endif

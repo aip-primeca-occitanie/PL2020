@@ -904,6 +904,53 @@ void Robot::transport(bool valeur)
 	pub_robot_transport.publish(msg);
 }
 
+// On definit qui evacue et comment
+void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
+{
+	if(num_robot==2) 
+	{
+		int position=1;  // on evacue sur la position 1 du robot 2 <=> poste 3
+
+		int couleur[4];
+		string signal=poste_pos_1.get_nom();
+		string fin;
+		for(int i=0; i<4; i++)
+		{
+			fin.clear();
+			fin.append(signal);
+			fin.append("#");
+			fin.append(to_string(i));
+			fin.append("_color");
+			msgSim_getColor.data=fin;
+
+			pubSim_getColor.publish(msgSim_getColor);
+			while(!repSim_getColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_getColor=false;
+			couleur[i]=valueSim_getColor;
+		}
+
+		// On ecrit les couleurs dans un log pour checkeur
+		// couleur[i]
+
+		// On fait disparaitre
+		msgSim_changeColor.data.clear();
+		msgSim_changeColor.data.push_back(computeTableId(position));
+		for(int i=0; i<4; i++)
+			msgSim_changeColor.data.push_back(0);
+		pubSim_changeColor.publish(msgSim_changeColor);
+		while(!repSim_changeColor&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
+		repSim_changeColor=false;
+	}
+}
+
 /*** Initialisation ***/
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
@@ -998,7 +1045,8 @@ void Robot::init(ros::NodeHandle noeud)
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras",10,&Robot::ControlerRobotCallback,this);
 	sub_colorer = noeud.subscribe("/commande/Simulation/Colorer",10,&Robot::ColorerCallback,this);
 	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
-	sub_nouveau_produit= noeud.subscribe("/commande_locale/AddProduct", 1, &Robot::ajouter_produitCallback,this);
+	sub_nouveau_produit= noeud.subscribe("/commande_locale/AddProduct", 10, &Robot::ajouter_produitCallback,this);
+	sub_evacuer=noeud.subscribe("/commande/Simulation/Evacuer",10,&Robot::Evacuer,this);
 
 
 	//Publishers

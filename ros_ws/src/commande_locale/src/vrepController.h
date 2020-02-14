@@ -21,9 +21,6 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Byte.h>
 #include <std_msgs/Int32MultiArray.h>
-
-#include <shuttles/srvGetShuttleStatus.h>
-#include <shuttles/srvGetEmptyShuttles.h>
 #include <shuttles/msgShuttleChange.h>
 #include <shuttles/msgShuttleCreate.h>
 
@@ -104,7 +101,7 @@ class vrepController
 		void setSimulationFile(std::string);
 		void addNewShuttle(int handle_navette, int handle_plateforme, int type, int destination);
 		void ColorCallBack(const commande_locale::Msg_Color::ConstPtr& msg);
-		
+
 		int computeTableId(int poste);
 		void addProduct(int produit, int poste);
 

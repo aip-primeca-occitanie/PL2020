@@ -19,8 +19,6 @@ add_message_files(
 add_service_files(
 	FILES
     shuttle_id.srv
-	srvGetShuttleStatus.srv
-	srvGetEmptyShuttles.srv
 	)
 
 generate_messages(DEPENDENCIES std_msgs)

@@ -17,9 +17,11 @@ class FileAttente
     public:
 	    FileAttente(int id_aiguillage, int successeur_droite, int successeur_gauche, queue<char> spec_queue);
 	    ~FileAttente();
-        int maj();
+        int maj(int DD, int DG);
         char get_first_navette();
         void add_navette_in_queue(char navette);
-
+        void delete_navette_in_queue();
+        int get_id_aiguillage();
+        queue<char> get_queue();
 };
 #endif

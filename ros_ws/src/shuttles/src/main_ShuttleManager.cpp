@@ -16,18 +16,32 @@ int main(int argc, char **argv)
 
 	Capteurs capteur(noeud);
 	queue<char> queue_vide;
+	queue<char> queue1;
+	queue<char> queue2;
+	queue<char> queue3;
+
+	queue1.push('A');
+	queue1.push('B');
+	queue1.push('C');
+
+	queue2.push('D');
+	queue2.push('E');
+
+	queue3.push('F');
+
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	vector<FileAttente*> liste_file;
 
 	//liste_file.push_back(FileAttente FileAttentePS(id_aiguillage,successeur_droite,successeur_gauche,queue));
-	liste_file.push_back(new FileAttente(1,1+24,2+24,queue_vide));//filePS1
+	liste_file.push_back(0);
+	liste_file.push_back(new FileAttente(1,1+24,2+24,queue_vide));//PS1
 	liste_file.push_back(new FileAttente(0,3,3,queue_vide));//PS2
-	liste_file.push_back(new FileAttente(0,5,5,queue_vide));
+	liste_file.push_back(new FileAttente(0,5,5,queue3));
 	liste_file.push_back(new FileAttente(2,0,6,queue_vide));
 	liste_file.push_back(new FileAttente(2,6,0,queue_vide));
-	liste_file.push_back(new FileAttente(3,20,3+24,queue_vide)); // Deux aiguillages ??
-	liste_file.push_back(new FileAttente(4,8,0,queue_vide));
+	liste_file.push_back(new FileAttente(3,24+3,20,queue_vide)); // Deux aiguillages ??
+	liste_file.push_back(new FileAttente(4,8,0,queue2));
 	liste_file.push_back(new FileAttente(5,4+24,5+24,queue_vide));
 	liste_file.push_back(new FileAttente(0,10,10,queue_vide));
 	liste_file.push_back(new FileAttente(0,12,12,queue_vide));
@@ -39,7 +53,7 @@ int main(int argc, char **argv)
 	liste_file.push_back(new FileAttente(8,0,18,queue_vide));
 	liste_file.push_back(new FileAttente(8,18,0,queue_vide));
 	liste_file.push_back(new FileAttente(9,8+24,8,queue_vide));
-	liste_file.push_back(new FileAttente(10,20,0,queue_vide));
+	liste_file.push_back(new FileAttente(10,20,0,queue1));
 	liste_file.push_back(new FileAttente(11,9+24,10+24,queue_vide));
 	liste_file.push_back(new FileAttente(0,22,22,queue_vide));
 	liste_file.push_back(new FileAttente(0,24,24,queue_vide));
@@ -57,81 +71,77 @@ int main(int argc, char **argv)
 	liste_file.push_back(new FileAttente(0,21,21,queue_vide));
 	liste_file.push_back(new FileAttente(0,23,23,queue_vide));
 
-    //ros::ServiceClient client = noeud.serviceClient<commande::srv_recup_capteur_info>("srv_recup_capteur_info");
-    //commande::srv_recup_capteur_info srv;
+	vector<int> mem_capteur;
+	vector<int> etat_capteur;
+
+	vector<queue<char>> debug_tralala;
+
+
+	int file_attente_suivante;
+	int id_aiguillage;
+
+	for (int i=1;i<36;i++)
+	{
+		etat_capteur.push_back(0);
+	}
+
+
+
 	while (ros::ok())
 	{
-		/*ROS_INFO("Je boucle wesh");
-        srv.request.a = 42;
-        if(client.call(srv))
-        {
-            ROS_INFO("J'ai une réponse ");
-            ROS_INFO("c'est %d", srv.response.b);
-        }
-		else
+		mem_capteur=etat_capteur;
+		etat_capteur.clear();
+		etat_capteur.push_back(0);
+		debug_tralala.push_back(queue_vide);
+
+		for (int i=1;i<25;i++)
 		{
-			ROS_ERROR("Fail to call ZE service");
-		}*/
-
-
-
-		/*if(modif)
-		{
-
-			cout<<"D0 : M[0]="<<M[0]<<endl<<endl;
-			cout<<"Robot 1 libre : M[50]="<<M[50]<<endl<<endl;
-			cout<<"Robot 2 libre : M[250]="<<M[250]<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T1;i++)
-			{
-				if(M[i]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i<<"] = "<<M[i]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i<<"] = "<<M[i]<<", ";
-				}
-			}
-			cout<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T2;i++)
-			{
-				if(M[i+100]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i+100<<"] = "<<M[i+100]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i+100<<"] = "<<M[i+100]<<", ";
-				}
-			}
-			cout<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T3;i++)
-			{
-				if(M[i+200]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i+200<<"] = "<<M[i+200]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i+200<<"] = "<<M[i+200]<<", ";
-				}
-			}
-			cout<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T4;i++)
-			{
-				if(M[i+300]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i+300<<"] = "<<M[i+300]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i+300<<"] = "<<M[i+300]<<", ";
-				}
-			}
-			cout<<endl<<endl;
+			etat_capteur.push_back(capteur.get_PS(i));
 		}
-		modif=0;
-        */
+		for (int i=1;i<11;i++)
+		{
+			etat_capteur.push_back(capteur.get_CP(i));
+		}
+
+		for (int i=1;i<35;i++)
+		{
+			if(etat_capteur[i]==0 && mem_capteur[i]==1)
+			{
+				id_aiguillage=liste_file[i]->get_id_aiguillage();
+				file_attente_suivante=liste_file[i]->maj(capteur.get_DD(id_aiguillage),capteur.get_DG(id_aiguillage));
+				if (file_attente_suivante>0)
+				{
+					liste_file[file_attente_suivante]->add_navette_in_queue(liste_file[i]->get_first_navette());
+					liste_file[i]->delete_navette_in_queue();
+				}
+				if (file_attente_suivante==-1)
+				{
+					//ROS_INFO("J'ai paumé la navette, elle va moins bien marcher maintenant");
+					liste_file[i]->delete_navette_in_queue();
+				}
+			file_attente_suivante=-2;
+			}
+
+			debug_tralala.push_back(liste_file[i]->get_queue());
+
+		}
+
+		for (int i=1;i<35;i++)
+		{
+			cout << "La file " << i <<" contient : ";
+			while (!debug_tralala[i].empty())
+			{
+				cout << ' ' << debug_tralala[i].front();
+				debug_tralala[i].pop();
+			}
+			cout << endl;
+		}
+
+		cout<<endl;
+
+		debug_tralala.clear();
+		mem_capteur.clear();
+
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées
 		loop_rate.sleep(); //permet de synchroniser la boucle while. Il attend le temps qu'il reste pour faire le 25Hz (ou la fréquence indiquée dans le loop_rate)
 	}

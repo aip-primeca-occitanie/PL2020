@@ -49,8 +49,3 @@ bool Capteurs::get_CPI(int num_CPI)
 {
 	return CPIx[num_CPI];
 }
-
-bool MASK(long int registre,int numero_bit)
-{
-	return (bool)((registre & (long int)(pow(2,numero_bit)))/pow(2,numero_bit));
-}

@@ -3,7 +3,7 @@
 using namespace std;
 
 
-FileAttente::FileAttente(int id_aiguillage, int successeur_droite, int successeur_gauche, queue<char> spec_queue)
+FileAttente::FileAttente(int id_aiguillage, int successeur_droite, int successeur_gauche, queue<int> spec_queue)
 {
     id_aiguillage_=id_aiguillage;
     successeur_droite_=successeur_droite;
@@ -42,12 +42,12 @@ int FileAttente::maj(int DD, int DG)
     }
 }
 
-char FileAttente::get_first_navette()
+int FileAttente::get_first_navette()
 {
     return queue_.front();
 }
 
-void FileAttente::add_navette_in_queue(char navette)
+void FileAttente::add_navette_in_queue(int navette)
 {
     queue_.push(navette);
 }
@@ -56,7 +56,7 @@ void FileAttente::delete_navette_in_queue()
 {
     if (queue_.empty())
     {
-        ROS_INFO("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        ROS_INFO("Attention, ça va segfault dans 10 secondes, désolé");
         usleep(10000000);
     }
     queue_.pop();
@@ -67,7 +67,7 @@ int FileAttente::get_id_aiguillage()
     return id_aiguillage_;
 }
 
-queue<char> FileAttente::get_queue()
+queue<int> FileAttente::get_queue()
 {
     return queue_;
 }

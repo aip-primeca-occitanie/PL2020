@@ -27,6 +27,7 @@
 #include <string>
 #include <unistd.h>
 #include "Poste.h"
+#include "shuttles/shuttle_id.h"
 
 
 class Robot
@@ -108,6 +109,9 @@ private:
 	ros::Publisher pub_retourCommande;
 
 	ros::Publisher pub_robot_transport;
+
+	ros::ServiceClient client;
+	shuttles::shuttle_id srv;
 
 	/** Variables **/
 	float pi;

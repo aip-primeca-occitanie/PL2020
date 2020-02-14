@@ -481,7 +481,7 @@ void Robot::OuvrirPince()
 			}
 			repSim_getTime=false;
 			time = valueSim_getTime;
-			
+
 			ros::spinOnce();
 			loop_ok->sleep();
 		}
@@ -627,7 +627,7 @@ int Robot::computeTableId(int position)
 				id=9;
 			break;
 	}
-	
+
 	return id;
 }
 
@@ -638,10 +638,13 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 		int idNavette=-1;
 		if(msg->position==2 || msg->position==3) // Si navette
 		{
-			//idNavette = shuttleManager.getIdNavette(robot=,pos=);
-			idNavette=1;
+			srv.request.robot=msg->num_robot;
+			srv.request.position=msg->position;
+			client.call(srv);
+			idNavette = srv.response.IdShuttle;
+			ROS_INFO("merci poteau, tu m'as dit que c'etait la navette %d", idNavette);
 		}
-		
+
 	// regarde la couleur de ce qu'on veut prendre (call shuttleManager si navette)
 		bool erreur=false;
 		bool couleur_vide=true;
@@ -693,11 +696,11 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			if(couleur[i]!=0)
 				couleur_vide=false;
 		}
-	
+
 		cout << "get color" << endl;
 		for(int i=0; i<4; i++)
 			cout << "couleur[" << i << "]=" << couleur[i] << endl;
-	
+
 		int produit_detecte=1;
 		if(msg->position==1)
 			poste_pos_1.ajouter_produit(produit_detecte);
@@ -752,7 +755,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 
 
 	// Mise jour modele pince (si tiens quelque chose, non vide)
-		if(msg->type==0 && !couleur_vide)	
+		if(msg->type==0 && !couleur_vide)
 			transport(true);
 		else
 			transport(false);
@@ -790,7 +793,7 @@ void Robot::colorerPosteTask(string poste, int couleur_poste)
 		i++;
 
 	}while(i<4 && couleur_last!=0);
-	
+
 	if(i==1)
 		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
 	else if(i==4 && couleur_last!=0)
@@ -806,7 +809,7 @@ void Robot::colorerPosteTask(string poste, int couleur_poste)
 
 		couleur[i-1]=couleur_poste;
 		cout << "couleur_poste=" << couleur_poste << endl;
-		
+
 		for(int i=0; i<4; i++)
 			msgSim_changeColor.data.push_back(couleur[i]);
 		pubSim_changeColor.publish(msgSim_changeColor);
@@ -816,7 +819,7 @@ void Robot::colorerPosteTask(string poste, int couleur_poste)
 			loop_rate->sleep();
 		}
 		repSim_changeColor=false;
-	}	
+	}
 }
 
 void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
@@ -874,13 +877,13 @@ void Robot::update()
 	cout << endl;
 	if(poste_pos_1.updateTask(time))
 	{
-		retour.data=8;	
+		retour.data=8;
 		pub_retourCommande.publish(retour);
 	}
 
 	if(poste_pos_4.updateTask(time))
 	{
-		retour.data=9;	
+		retour.data=9;
 		pub_retourCommande.publish(retour);
 	}
 }
@@ -907,7 +910,7 @@ void Robot::transport(bool valeur)
 // On definit qui evacue et comment
 void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 {
-	if(num_robot==2) 
+	if(num_robot==2)
 	{
 		int position=1;  // on evacue sur la position 1 du robot 2 <=> poste 3
 
@@ -1056,6 +1059,7 @@ void Robot::init(ros::NodeHandle noeud)
 	pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
 	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande"+num_str, 10);
 
+	client = noeud.serviceClient<shuttles::shuttle_id>("get_id_shuttle_at_poste");
 
 	sleep(1);
 

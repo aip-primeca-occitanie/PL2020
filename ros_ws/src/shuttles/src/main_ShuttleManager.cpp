@@ -5,33 +5,69 @@
 #include "capteurs.h"
 
 #include <iostream>
-#include "commande/srv_recup_capteur_info.h"
+#include "shuttles/shuttle_id.h"
 
 using namespace std;
+
+int num_capteur;
+vector<FileAttente*> liste_file;
+
+bool shuttle_at_poste(shuttles::shuttle_id::Request  &req, shuttles::shuttle_id::Response &res)
+{
+	switch (req.robot) {
+		case 1:
+			if (req.position==2){num_capteur=21;}
+			if (req.position==3){num_capteur=22;}
+			break;
+		case 2:
+			if (req.position==2){num_capteur=2;}
+			if (req.position==3){num_capteur=3;}
+			break;
+		case 3:
+			if (req.position==2){num_capteur=14;}
+			if (req.position==3){num_capteur=15;}
+			break;
+		case 4:
+			if (req.position==2){num_capteur=9;}
+			if (req.position==3){num_capteur=10;}
+			break;
+	}
+	
+	if (!liste_file[num_capteur]->get_queue().empty())
+	{
+		res.IdShuttle=liste_file[num_capteur]->get_first_navette();
+	}
+	else
+	{
+		res.IdShuttle=66;
+	}
+  	return true;
+}
 
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "Shuttle_manager");
 	ros::NodeHandle noeud;
 
+	ros::ServiceServer service = noeud.advertiseService("get_id_shuttle_at_poste", shuttle_at_poste);
+
 	Capteurs capteur(noeud);
-	queue<char> queue_vide;
-	queue<char> queue1;
-	queue<char> queue2;
-	queue<char> queue3;
-
-	queue1.push('A');
-	queue1.push('B');
-	queue1.push('C');
-
-	queue2.push('D');
-	queue2.push('E');
-
-	queue3.push('F');
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
-	vector<FileAttente*> liste_file;
+	queue<int> queue_vide;
+	queue<int> queue1;
+	queue<int> queue2;
+	queue<int> queue3;
+
+	queue1.push(1);
+	queue1.push(2);
+	queue1.push(3);
+
+	queue2.push(4);
+	queue2.push(5);
+
+	queue3.push(0);
 
 	//liste_file.push_back(FileAttente FileAttentePS(id_aiguillage,successeur_droite,successeur_gauche,queue));
 	liste_file.push_back(0);
@@ -74,7 +110,7 @@ int main(int argc, char **argv)
 	vector<int> mem_capteur;
 	vector<int> etat_capteur;
 
-	vector<queue<char>> debug_tralala;
+	vector<queue<int>> debug_tralala;
 
 
 	int file_attente_suivante;

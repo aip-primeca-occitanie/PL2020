@@ -1,24 +1,19 @@
-/*
- * ********************************* *
- * Copyright 2016, STEC Projet Long. *
- * All rights reserved.  	     *
- * ********************************* *
- * Mise à jour par le Projet Long    *
- * ENSEEIHT 2017		     *
- * ********************************* *
-*/
-
-
 using namespace std;
 
 #include <iostream>
 #include "vrepController.h"
 #include "inOutController.h"
 #include "configuration.h"
+#include "commande_locale/SrvAddProduct.h"
 #include <unistd.h>
 #include <thread>
 
 #include <ros/ros.h>
+
+vrepController VREPController;
+Configuration config(&VREPController);
+
+
 
 void spinner()
 {
@@ -30,20 +25,27 @@ void spinner()
 	}
 }
 
+bool AddProduct(commande_locale::SrvAddProduct::Request &req, commande_locale::SrvAddProduct::Response &res)
+{
+	config.ProductAddTable(req.choixProduit*10,req.choixPoste);
+	VREPController.addProduct(req.choixProduit,req.choixPoste);
+	return true;
+}
+
 int main(int argc, char **argv)
 {
 	//Initialisation du noeud ROS
 	ros::init(argc, argv, "commande_locale");
 	ros::NodeHandle nh;
 
+	ros::ServiceServer service = nh.advertiseService("srv_add_product", AddProduct);
+
 	ROS_INFO("Simulation file: %s \n", argv[1]);
 
 	// VREP CONTROLLER
-	vrepController VREPController;
 	VREPController.init(nh,argv[0], argv[1]);
 
 	// CONFIGURATION
-	Configuration config(&VREPController);
 	config.init(nh, argv[0]);
 
 	// IN & OUT CONTROLLER

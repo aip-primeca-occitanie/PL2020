@@ -52,6 +52,8 @@ Robots::Robots(ros::NodeHandle noeud)
 	sub_retourRobot3 = noeud.subscribe("/commande/Simulation/retourCommande3", 100, &Robots::RetourRobot3Callback,this);
 	sub_retourRobot4 = noeud.subscribe("/commande/Simulation/retourCommande4", 100, &Robots::RetourRobot4Callback,this);
 
+	client = noeud.serviceClient<commande_locale::SrvAddProduct>("srv_add_product");
+
 	sleep(1);
 }
 
@@ -390,8 +392,8 @@ void Robots::RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 9:
 			cout << BOLDCYAN << "Robot 1 : Tache du poste en position 4 terminée" << RESET << endl;
 			robotTask[0][1]=1;
-			break;	
-			
+			break;
+
 	}
 }
 
@@ -451,7 +453,7 @@ void Robots::RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 9:
 			cout << BOLDCYAN << "Robot 2 : Tache du poste en position 4 terminée" << RESET << endl;
 			robotTask[1][1]=1;
-			break;	
+			break;
 	}
 }
 
@@ -512,7 +514,7 @@ void Robots::RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 9:
 			cout << BOLDCYAN << "Robot 3 : Tache du poste en position 4 terminée" << RESET << endl;
 			robotTask[2][1]=1;
-			break;	
+			break;
 	}
 }
 
@@ -573,7 +575,7 @@ void Robots::RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg)
 		case 9:
 			cout << BOLDCYAN << "Robot 4 : Tache du poste en position 4 terminée" << RESET << endl;
 			robotTask[3][1]=1;
-			break;	
+			break;
 	}
 }
 
@@ -667,7 +669,7 @@ int Robots::TaskPos1Etat(int numRobot)
 {
 	int Robot;
 	ros::spinOnce();
-	
+
 	if(numRobot<1 || numRobot>4)
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 	else
@@ -680,7 +682,7 @@ int Robots::TaskPos4Etat(int numRobot)
 {
 	int Robot;
 	ros::spinOnce();
-	
+
 	if(numRobot<1 || numRobot>4)
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
 	else
@@ -742,7 +744,7 @@ void Robots::DoTask(int num_robot, int position, int duree)
 	tache_msg.position=position;
 	tache_msg.duree=duree;
 	pub_doTask.publish(tache_msg);
-	
+
 	sleep(1);
 }
 
@@ -752,4 +754,11 @@ void Robots::Evacuer()
 	pub_evacuer_piece.publish(msg);
 
 	cout << BOLDCYAN << "Evacuation !" << RESET << endl;
+}
+
+void Robots::AjouterProduit(int poste, int produit)
+{
+	srv.request.choixPoste = poste;
+	srv.request.choixProduit = produit;
+	client.call(srv);
 }

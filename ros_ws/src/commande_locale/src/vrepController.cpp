@@ -22,8 +22,6 @@ vrepController::vrepController(){
 	//repSim_removeModel=false;
 	//repSim_getObjectHandle=false;
 	repSim_changeColor=false;
-
-	loop_rate = new ros::Rate(25);
 }
 
 // PAUSE
@@ -121,7 +119,7 @@ void vrepController::close()
 
 void vrepController::init(ros::NodeHandle n,std::string executionPath, std::string simulationFileName)
 {
-
+	loop_rate = new ros::Rate(25);
 	// Launch of V-Rep
 	int count = 0 ;
 	int pos = executionPath.length()-1;

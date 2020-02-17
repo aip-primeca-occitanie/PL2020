@@ -117,6 +117,7 @@ int main(int argc, char **argv)
 			M[11]--;
 			cmd.Stop_PS(21);
 			robot.DoTask(1,4,1);
+			robot.AjouterProduit(3,6);
 			M[1]++;
 		}
 

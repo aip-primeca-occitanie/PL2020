@@ -21,6 +21,8 @@ include_directories(include ${OpenCV_INCLUDE_DIRS})
 #set(EXECUTABLE_OUTPUT_PATH ../../../)
 #set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 
+add_service_files(FILES SrvAddProduct.srv)
+
 add_message_files(
 	FILES
   Msg_AddProduct.msg

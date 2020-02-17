@@ -131,8 +131,6 @@ bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 	return false;
 }
 
-
-//Faire apparaitre le produit sur la table 2 (est appelé dans UI)
 void Configuration::ProductAddTable(int typeProduct, int poste)
 {
 	commande_locale::Msg_AddProduct msg0;
@@ -140,7 +138,6 @@ void Configuration::ProductAddTable(int typeProduct, int poste)
 	msg0.num_produit = typeProduct;
 	pubProductAdd.publish(msg0);
 }
-
 
 int Configuration::getNbNavettes()
 {

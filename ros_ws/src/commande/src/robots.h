@@ -12,6 +12,7 @@
 #include <robots/ColorMsg.h>
 #include "robots/DoTaskMsg.h"
 #include "robots/Msg_numrobot.h"
+#include "commande_locale/SrvAddProduct.h"
 
 #define HAUT		1
 #define BAS		-1
@@ -40,6 +41,9 @@ private:
 	ros::Publisher pub_evacuer_piece;
 
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
+
+	ros::ServiceClient client;
+	commande_locale::SrvAddProduct srv;
 
 	int robotInit[4];
 	int robotPosition[4];
@@ -84,5 +88,6 @@ public:
 	int TaskPos1Etat(int num_robot);
 	int TaskPos4Etat(int num_robot);
 	void Evacuer();
+	void AjouterProduit(int poste, int produit);
 };
 #endif

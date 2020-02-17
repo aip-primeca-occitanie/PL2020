@@ -41,5 +41,7 @@ public:
   int get_color();
   void debutTask(float VREPtime, int duree);
   bool updateTask(float time);
+  bool isTaskEnCours();
+  void stopTask();
 };
 #endif

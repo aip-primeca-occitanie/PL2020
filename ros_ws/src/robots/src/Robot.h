@@ -90,6 +90,12 @@ private:
 	bool repSim_getColor;
 	int valueSim_getColor;
 
+	// OpacColor
+	ros::Publisher pubSim_opacColor;
+	std_msgs::Int32MultiArray msgSim_opacColor;
+	ros::Subscriber subSim_opacColor;
+	bool repSim_opacColor;
+
 	/** Subscribers aux topics de la commande **/
 	ros::Subscriber planifSendPosition;
 	ros::Subscriber planifSendJoints;
@@ -186,7 +192,7 @@ public:
 	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
-	void colorerPosteTask(string poste, int couleur_poste);
+	void colorerPosteTask(string poste, int couleur_poste, bool fromDo);
 	void Evacuer(const std_msgs::Byte::ConstPtr& msg);
 
 	// Callbacks pour V-Rep
@@ -198,6 +204,7 @@ public:
 	void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);
+	void simOpacColorCallback(const std_msgs::Byte::ConstPtr& msg);
 };
 
 

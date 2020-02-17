@@ -27,6 +27,7 @@ Robot::Robot(int num_du_robot)
 	repSim_changeColor=false;
 	repSim_changeShuttleColor=false;
 	repSim_getColor=false;
+	repSim_opacColor=false;
 
 	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
 	msgSim_setJointState.layout.dim[0].label="handles";
@@ -657,9 +658,23 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 		else if(msg->position==1 || msg->position==4) // Si poste
 		{
 			if(msg->position==1)
+			{
 				signal=poste_pos_1.get_nom();
+				if(poste_pos_1.isTaskEnCours())
+				{
+					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:1]", num_robot);
+					poste_pos_1.stopTask();
+				}
+			}
 			else
-				signal=poste_pos_4.get_nom();
+			{
+				signal=poste_pos_4.get_nom();	
+				if(poste_pos_4.isTaskEnCours())
+				{
+					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:4]", num_robot);
+					poste_pos_4.stopTask();
+				}
+			}
 		}
 		else
 		{
@@ -761,7 +776,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 	}
 }
 
-void Robot::colorerPosteTask(string poste, int couleur_poste)
+void Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 {
 	string signal=poste;
 	string fin;
@@ -800,13 +815,16 @@ void Robot::colorerPosteTask(string poste, int couleur_poste)
 	else
 	{
 		// mettre couleur sur signal i-1
-		msgSim_changeColor.data.clear();
 		string idStr= signal.substr(6);
 		int idPoste = atoi(idStr.c_str());
 		cout << "idPoste=" << idPoste << endl;
+		msgSim_changeColor.data.clear();
 		msgSim_changeColor.data.push_back(idPoste);
 
-		couleur[i-1]=couleur_poste;
+		if(fromDo)
+			couleur[i-1]=couleur_poste;
+		else
+			couleur[i-2]=couleur_poste;
 		cout << "couleur_poste=" << couleur_poste << endl;
 
 		for(int i=0; i<4; i++)
@@ -841,7 +859,7 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 
 			poste_pos_1.debutTask(time,msg->duree);
 
-			colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color());
+			colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true); // couleur poste 50% opacité
 		}
 		if (msg->position==4)
 		{
@@ -856,7 +874,7 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 
 			poste_pos_4.debutTask(time,msg->duree);
 
-			colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color());
+			colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1, true);
 		}
 		cout << "Fin tache" << endl;
 	}
@@ -876,12 +894,14 @@ void Robot::update()
 	cout << endl;
 	if(poste_pos_1.updateTask(time))
 	{
+		colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color(),false);
 		retour.data=8;
 		pub_retourCommande.publish(retour);
 	}
 
 	if(poste_pos_4.updateTask(time))
 	{
+		colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color(),false);
 		retour.data=9;
 		pub_retourCommande.publish(retour);
 	}
@@ -1033,6 +1053,9 @@ void Robot::init(ros::NodeHandle noeud)
 	pubSim_getColor = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetColor",100);
 	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColor",100,&Robot::simGetColorCallback,this);
 
+	pubSim_opacColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/OpacColor",100);
+	subSim_opacColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/OpacColor",100,&Robot::simOpacColorCallback, this);
+
 
 	pub_robot_transport=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras"+to_string(num_robot),10);
 
@@ -1162,4 +1185,9 @@ void Robot::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_getColor=msg->data;
 	repSim_getColor=true;
+}
+
+void Robot::simOpacColorCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+	repSim_opacColor=true;
 }

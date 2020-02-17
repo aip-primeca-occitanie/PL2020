@@ -101,3 +101,13 @@ bool Poste::updateTask(float time)
 
 	return fin_tache;		
 }
+
+bool Poste::isTaskEnCours()
+{
+	return task_en_cours_;
+}
+
+void Poste::stopTask()
+{
+	task_en_cours_=false;
+}

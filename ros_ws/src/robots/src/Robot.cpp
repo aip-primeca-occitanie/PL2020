@@ -668,7 +668,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			}
 			else
 			{
-				signal=poste_pos_4.get_nom();	
+				signal=poste_pos_4.get_nom();
 				if(poste_pos_4.isTaskEnCours())
 				{
 					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:4]", num_robot);
@@ -955,15 +955,14 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 			couleur[i]=valueSim_getColor;
 		}
 
-		// On ecrit les couleurs dans un log pour checkeur
-		// couleur[i]
-
 		// On fait disparaitre
 		msgSim_changeColor.data.clear();
 		msgSim_changeColor.data.push_back(computeTableId(position));
 		for(int i=0; i<4; i++)
 			msgSim_changeColor.data.push_back(0);
 		pubSim_changeColor.publish(msgSim_changeColor);
+		//et pour le log
+		pub_produitEvac.publish(msgSim_changeColor);
 		while(!repSim_changeColor&&ros::ok())
 		{
 			ros::spinOnce();
@@ -1080,6 +1079,9 @@ void Robot::init(ros::NodeHandle noeud)
 	//pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+num_str,10);
 	//pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
 	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande"+num_str, 10);
+
+	pub_produitEvac = noeud.advertise<std_msgs::Int32MultiArray>("/commande/Simulation/produitEvac", 10);
+
 
 	client = noeud.serviceClient<shuttles::shuttle_id>("get_id_shuttle_at_poste");
 

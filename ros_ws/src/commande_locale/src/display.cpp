@@ -38,7 +38,7 @@ ros::Publisher pub;
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "display_node");//numéro de l'aiguillage
+	ros::init(argc, argv, "display_node");
 	ros::NodeHandle nh;
 
 	cv::namedWindow("Display window",CV_WINDOW_AUTOSIZE | CV_GUI_NORMAL);

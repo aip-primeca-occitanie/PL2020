@@ -136,6 +136,8 @@ private:
 	std_msgs::Int32 robotPince;
 	std_msgs::Int32 retour;
 
+	std_msgs::Int32MultiArray msg_log_couleur;
+
 	int produit_sur_poste;
 	Poste poste_pos_1;
 	Poste poste_pos_4;

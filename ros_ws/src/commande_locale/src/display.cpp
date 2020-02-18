@@ -33,7 +33,7 @@ void getSimuStream(const sensor_msgs::ImageConstPtr& msg)
 
 int main(int argc, char **argv)
 {
-	ros::init(argc, argv, "display_node");//numéro de l'aiguillage
+	ros::init(argc, argv, "display_node");
 	ros::NodeHandle nh;
 
     image_transport::Subscriber subImage;	// Subscriber pour recuperer l'image depuis la simu V-rep

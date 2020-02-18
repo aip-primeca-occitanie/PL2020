@@ -44,3 +44,7 @@ add_dependencies(simulation commande_locale_generate_messages_cpp)
 add_executable(display_node src/display.cpp)
 target_link_libraries(display_node ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(display_node commande_locale_generate_messages_cpp)
+
+add_executable(log_manager src/LogManager.cpp)
+target_link_libraries(log_manager ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+add_dependencies(log_manager commande_locale_generate_messages_cpp)

@@ -1,5 +1,3 @@
-/**** Projet long N7 2020 ****/
-
 #ifndef ROBOT
 #define ROBOT
 
@@ -116,6 +114,7 @@ private:
 	ros::Publisher pub_retourCommande;
 
 	ros::Publisher pub_robot_transport;
+	ros::Publisher pub_produitEvac;
 
 	ros::ServiceClient client;
 	shuttles::shuttle_id srv;

@@ -776,13 +776,14 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 	}
 }
 
-void Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
+int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 {
 	string signal=poste;
 	string fin;
 	int couleur[4];
 	for(int i=0; i<4; couleur[i++]=0){}
 	int couleur_last(0);
+	int retour=-1;
 
 	int i=0;
 	do
@@ -808,9 +809,9 @@ void Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 
 	}while(i<4 && couleur_last!=0);
 
-	if(i==1)
+	if(i==1 && fromDo)
 		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
-	else if(i==4 && couleur_last!=0)
+	else if(i==4 && couleur_last!=0 && fromDo)
 		ROS_ERROR("PRODUIT DEJA COMPLET !!!");
 	else
 	{
@@ -821,7 +822,7 @@ void Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 		msgSim_changeColor.data.clear();
 		msgSim_changeColor.data.push_back(idPoste);
 
-		if(fromDo)
+		if(fromDo || (i==4 && couleur_last!=0))
 			couleur[i-1]=couleur_poste;
 		else
 			couleur[i-2]=couleur_poste;
@@ -836,7 +837,14 @@ void Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 			loop_rate->sleep();
 		}
 		repSim_changeColor=false;
+
+		if(fromDo || (i==4 && couleur_last!=0))
+			retour = i-1;
+		else
+			retour=i-2;
 	}
+
+	return retour;
 }
 
 void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
@@ -892,16 +900,65 @@ void Robot::update()
 	float time=valueSim_getTimeUpdate;
 
 	cout << endl;
-	if(poste_pos_1.updateTask(time))
+	if(poste_pos_1.updateTask(time)) // si tache poste pos 1 finie
 	{
-		colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color(),false);
+		string signal=poste_pos_1.get_nom();
+		int indice=colorerPosteTask(signal, poste_pos_1.get_color(),false);
+		if(indice==-1)
+			ROS_ERROR("ColorerPosteTask Probleme !!");
+		string fin;
+		fin.append(signal);
+		fin.append("#");
+		fin.append(to_string(indice));
+		fin.append("_color");
+		msgSim_getColor.data=fin;
+		int couleur;
+
+		do
+		{
+			pubSim_getColor.publish(msgSim_getColor);
+			while(!repSim_getColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_getColor=false;
+			couleur=valueSim_getColor;
+
+			loop_rate->sleep();
+		}while(couleur!=poste_pos_1.get_color());
+
 		retour.data=8;
 		pub_retourCommande.publish(retour);
 	}
 
-	if(poste_pos_4.updateTask(time))
+	if(poste_pos_4.updateTask(time)) // si tache poste pos 4 finie
 	{
-		colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color(),false);
+		string signal=poste_pos_4.get_nom();
+		int indice=colorerPosteTask(signal, poste_pos_4.get_color(),false);
+		if(indice==-1)
+			ROS_ERROR("ColorerPosteTask Probleme !!");
+		string fin;
+		fin.append(signal);
+		fin.append("#");
+		fin.append(to_string(indice));
+		fin.append("_color");
+		msgSim_getColor.data=fin;
+		int couleur;
+
+		do
+		{
+			pubSim_getColor.publish(msgSim_getColor);
+			while(!repSim_getColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_getColor=false;
+			couleur=valueSim_getColor;
+
+			loop_rate->sleep();
+		}while(couleur!=poste_pos_4.get_color());
 		retour.data=9;
 		pub_retourCommande.publish(retour);
 	}
@@ -931,6 +988,7 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 {
 	if(num_robot==2)
 	{
+		cout << "Evacuer" << endl;
 		int position=1;  // on evacue sur la position 1 du robot 2 <=> poste 3
 
 		int couleur[4];
@@ -953,7 +1011,9 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 			}
 			repSim_getColor=false;
 			couleur[i]=valueSim_getColor;
+			cout << "couleur[" << i << "]=" << couleur[i] << endl;
 		}
+
 
 		// On fait disparaitre
 		msgSim_changeColor.data.clear();

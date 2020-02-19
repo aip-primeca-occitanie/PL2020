@@ -27,7 +27,6 @@ Robot::Robot(int num_du_robot)
 	repSim_changeColor=false;
 	repSim_changeShuttleColor=false;
 	repSim_getColor=false;
-	repSim_opacColor=false;
 
 	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
 	msgSim_setJointState.layout.dim[0].label="handles";
@@ -1114,10 +1113,6 @@ void Robot::init(ros::NodeHandle noeud)
 	pubSim_getColor = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetColor",100);
 	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColor",100,&Robot::simGetColorCallback,this);
 
-	pubSim_opacColor = noeud.advertise<std_msgs::Int32MultiArray>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/OpacColor",100);
-	subSim_opacColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/OpacColor",100,&Robot::simOpacColorCallback, this);
-
-
 	pub_robot_transport=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras"+to_string(num_robot),10);
 
 
@@ -1251,7 +1246,3 @@ void Robot::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
 	repSim_getColor=true;
 }
 
-void Robot::simOpacColorCallback(const std_msgs::Byte::ConstPtr& msg)
-{
-	repSim_opacColor=true;
-}

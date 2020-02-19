@@ -88,12 +88,6 @@ private:
 	bool repSim_getColor;
 	int valueSim_getColor;
 
-	// OpacColor
-	ros::Publisher pubSim_opacColor;
-	std_msgs::Int32MultiArray msgSim_opacColor;
-	ros::Subscriber subSim_opacColor;
-	bool repSim_opacColor;
-
 	/** Subscribers aux topics de la commande **/
 	ros::Subscriber planifSendPosition;
 	ros::Subscriber planifSendJoints;
@@ -205,7 +199,6 @@ public:
 	void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);
-	void simOpacColorCallback(const std_msgs::Byte::ConstPtr& msg);
 };
 
 

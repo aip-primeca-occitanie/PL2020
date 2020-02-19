@@ -778,6 +778,8 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 		if(msg->type==1 && !couleur_vide)
 		{
 			ROS_ERROR("ON A ECRASE UN PRODUIT !!!");
+			msg_erreur.data=66; //66=code ecrasement produit
+			pub_erreur_log.publish(msg_erreur);
 		}
 	}
 }

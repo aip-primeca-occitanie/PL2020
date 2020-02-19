@@ -50,59 +50,59 @@ int main(int argc, char **argv)
 			code_arrivee=cmd.get_code_arrivee();
 			switch(code_arrivee)
 			{
-				case 11: //Produit A sur poste 1
-					M[11]++;break;
-				case 12: //Produit A sur poste 2
-					M[12]++;break;
-				case 13: //Produit A sur poste 3
-					M[13]++;break;
-				case 14: //Produit A sur poste 4
-					M[14]++;break;
+				case 15: //Produit A sur poste 1
+					M[15]++;break;
+				case 16: //Produit A sur poste 2
+					M[16]++;break;
+				case 17: //Produit A sur poste 3
+					M[17]++;break;
+				case 18: //Produit A sur poste 4
+					M[18]++;break;
 
-				case 21: //Produit B sur poste 1
-					M[21]++;break;
-				case 22: //Produit B sur poste 2
-					M[22]++;break;
-				case 23: //Produit B sur poste 3
-					M[23]++;break;
-				case 24: //Produit B sur poste 4
-					M[24]++;break;
+				case 25: //Produit B sur poste 1
+					M[26]++;break;
+				case 27: //Produit B sur poste 2
+					M[27]++;break;
+				case 28: //Produit B sur poste 3
+					M[28]++;break;
+				case 29: //Produit B sur poste 4
+					M[29]++;break;
 
-				case 31: //Produit C sur poste 1
-					M[31]++;break;
-				case 32: //Produit C sur poste 2
-					M[32]++;break;
-				case 33: //Produit C sur poste 3
-					M[33]++;break;
-				case 34: //Produit C sur poste 4
-					M[34]++;break;
+				case 35: //Produit C sur poste 1
+					M[35]++;break;
+				case 36: //Produit C sur poste 2
+					M[36]++;break;
+				case 37: //Produit C sur poste 3
+					M[37]++;break;
+				case 38: //Produit C sur poste 4
+					M[38]++;break;
 
-				case 41: //Produit D sur poste 1
-					M[41]++;break;
-				case 42: //Produit D sur poste 2
-					M[42]++;break;
-				case 43: //Produit D sur poste 3
-					M[43]++;break;
-				case 44: //Produit D sur poste 4
-					M[44]++;break;
+				case 45: //Produit D sur poste 1
+					M[45]++;break;
+				case 46: //Produit D sur poste 2
+					M[46]++;break;
+				case 47: //Produit D sur poste 3
+					M[47]++;break;
+				case 48: //Produit D sur poste 4
+					M[48]++;break;
 
-				case 51: //Produit E sur poste 1
-					M[51]++;break;
-				case 52: //Produit E sur poste 2
-					M[52]++;break;
-				case 53: //Produit E sur poste 3
-					M[53]++;break;
-				case 54: //Produit E sur poste 4
-					M[54]++;break;
+				case 55: //Produit E sur poste 1
+					M[55]++;break;
+				case 56: //Produit E sur poste 2
+					M[56]++;break;
+				case 57: //Produit E sur poste 3
+					M[57]++;break;
+				case 58: //Produit E sur poste 4
+					M[58]++;break;
 
-				case 61: //Produit F sur poste 1
-					M[61]++;break;
-				case 62: //Produit F sur poste 2
-					M[62]++;break;
-				case 63: //Produit F sur poste 3
-					M[63]++;break;
-				case 64: //Produit F sur poste 4
-					M[64]++;break;
+				case 65: //Produit F sur poste 1
+					M[65]++;break;
+				case 66: //Produit F sur poste 2
+					M[66]++;break;
+				case 67: //Produit F sur poste 3
+					M[67]++;break;
+				case 68: //Produit F sur poste 4
+					M[68]++;break;
 			}
 			cmd.renitialiser_arrivee_nouveau_produit();
 	  	}
@@ -111,10 +111,10 @@ int main(int argc, char **argv)
 //////////////////////////DEBUT PETRI///////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-		if (M[11]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
+		if (M[15]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
 		{
 			modif=1;
-			M[11]--;
+			M[15]--;
 			cmd.Stop_PS(21);
 			robot.DoTask(1,4,1);
 			robot.AjouterProduit(3,6);

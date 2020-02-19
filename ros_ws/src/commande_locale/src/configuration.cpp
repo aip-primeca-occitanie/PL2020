@@ -135,7 +135,7 @@ void Configuration::ProductAddTable(int typeProduct, int poste)
 {
 	commande_locale::Msg_AddProduct msg0;
 	msg0.num_poste = poste;
-	msg0.num_produit = typeProduct;
+	msg0.num_produit = typeProduct*10+4;
 	pubProductAdd.publish(msg0);
 }
 

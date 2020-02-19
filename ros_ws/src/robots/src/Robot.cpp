@@ -630,7 +630,7 @@ int Robot::computeTableId(int position)
 	return id;
 }
 
-void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'est forcement quand on transporte !!
+void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'est forcement quand on transporte !! // msg->type==0 <=> prise /  =1 <=> pose
 {
 	if (msg->num_robot==num_robot)
 	{
@@ -773,6 +773,12 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			transport(true);
 		else
 			transport(false);
+
+	// Detecte si on a écrasé un produit
+		if(msg->type==1 && !couleur_vide)
+		{
+			ROS_ERROR("ON A ECRASE UN PRODUIT !!!");
+		}
 	}
 }
 

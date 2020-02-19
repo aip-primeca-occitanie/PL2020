@@ -864,9 +864,8 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 			repSim_getTime=false;
 			float time=valueSim_getTime;
 
-			poste_pos_1.debutTask(time,msg->duree);
-
-			colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true); // couleur poste 50% opacité
+			if(colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true)!=-1); // get_color()-1 = couleur poste 50% opacité
+				poste_pos_1.debutTask(time,msg->duree);
 		}
 		if (msg->position==4)
 		{
@@ -879,9 +878,8 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 			repSim_getTime=false;
 			float time=valueSim_getTime;
 
-			poste_pos_4.debutTask(time,msg->duree);
-
-			colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1, true);
+			if(colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1,true)!=-1); // get_color()-1 = couleur poste 50% opacité
+				poste_pos_4.debutTask(time,msg->duree);
 		}
 		cout << "Fin tache" << endl;
 	}

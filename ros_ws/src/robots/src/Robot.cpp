@@ -864,6 +864,10 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo, int du
 		{
 			int n_poste=(couleur_poste-3)/10;
 			ROS_INFO("Task Po:%d, Pr:%d, Du%d",n_poste,couleur[0],duree);
+			msg_tache_finie.num_poste=n_poste;
+			msg_tache_finie.num_produit=couleur[0];
+			msg_tache_finie.duree=duree;
+			pub_tache_finie.publish(msg_tache_finie);
 		}
 	}
 
@@ -1139,6 +1143,7 @@ void Robot::init(ros::NodeHandle noeud)
 	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColor",100,&Robot::simGetColorCallback,this);
 
 	pub_robot_transport=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras"+to_string(num_robot),10);
+	pub_tache_finie=noeud.advertise<robots::TacheFinieMsg>("/commande/Simulation/TacheFinie",10);
 
 	//Subscribers
 	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
@@ -1271,4 +1276,3 @@ void Robot::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
 	valueSim_getColor=msg->data;
 	repSim_getColor=true;
 }
-

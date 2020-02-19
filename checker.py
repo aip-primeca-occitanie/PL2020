@@ -289,18 +289,22 @@ for i in range(6):
         else:
             verif_temps[i][j] = 0 # si on met pas ce else alors tout ce met à 1 à partir du premier 0 détecter (on sait pas expliquer pourquoi, bizarre)
 
-# Comparer temps et temps_log, en complétant verif_temps à 1 si temps respecter, sinon reste à 0, on fait comme ça pour par la suite connaitre exactement quel temps est incorrecte
+# Comparer temps et temps_log, en complétant verif_temps à 1 si temps respecter, 2 sinon
+# on fait comme ça pour par la suite connaitre exactement sur quelle tache la durée n'a pas été respecté
 for i in range(6):
     for j in range(8):
-        if temps[i][j] >= temps_log[i][j]:
+        if temps[i][j] == temps_log[i][j]:
             verif_temps[i][j] = 1
+        else:
+            verif_temps[i][j] = 2
+
 
 # Si au moins une cellule de verif_temps est à 0, ça signifie qu'un temps n'a pas été respecté et donc test = 0 (erreur)
 for i in range(6):
     for j in range(8):
-        if verif_temps[i][j] == 0:
+        if verif_temps[i][j] == 2:
             test = 0
-            print('ERREUR : durée tâche {} du produit {} doit être <= à {}s, ici durée = {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
+            print('ERREUR : durée tâche {} du produit {} doit être égale à {}s, ici durée tâche est {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
 
 # Compare nb_produit et nb_produit_log pour voir si le bon nombre de produit est bien sorti
 # Si bon nombre de produit sorti attendu, on compare nb_produit_log et nb_produit_new pour voir s'il y a eu autant de produit apparu que de produit sorti

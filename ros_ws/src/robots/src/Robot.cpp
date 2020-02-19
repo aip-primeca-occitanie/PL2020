@@ -779,6 +779,8 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 
 int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 {
+	//couleur_poste mes fesses
+	//attention le fromDo apelle couleur_poste à -1
 	string signal=poste;
 	string fin;
 	int couleur[4];
@@ -811,12 +813,14 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 	}while(i<4 && couleur_last!=0);
 
 	if(i==1 && fromDo)
+	{
 		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
-		int n_poste=(couleur_poste-3)/10; //bon courage pour les suivants
-		//non en vrai on passe de la couleur du poste (num_poste*10+3) au num du poste
-		msg_erreur.data=
+		int n_poste=(couleur_poste-2)/10; //bon courage pour les suivants
+		cout << "COULEUR"<< couleur_poste << endl;
+		//non en vrai on passe de la couleur du poste (num_poste*10+3-1 (fromDo)) au num du poste
+		msg_erreur.data=n_poste;
 		pub_erreur_log.publish(msg_erreur);
-/////
+	}
 
 	else if(i==4 && couleur_last!=0 && fromDo)
 		ROS_ERROR("PRODUIT DEJA COMPLET !!!");
@@ -1127,7 +1131,6 @@ void Robot::init(ros::NodeHandle noeud)
 
 	pub_robot_transport=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras"+to_string(num_robot),10);
 
-
 	//Subscribers
 	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
 	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot",10,&Robot::SendJointsCallback,this);
@@ -1142,6 +1145,7 @@ void Robot::init(ros::NodeHandle noeud)
 	sub_evacuer=noeud.subscribe("/commande/Simulation/Evacuer",10,&Robot::Evacuer,this);
 
 
+
 	//Publishers
 	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+num_str, 10);
 	//pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+num_str,10);
@@ -1151,6 +1155,7 @@ void Robot::init(ros::NodeHandle noeud)
 
 	pub_produitEvac = noeud.advertise<std_msgs::Int32MultiArray>("/commande/Simulation/produitEvac", 10);
 
+	pub_erreur_log=noeud.advertise<std_msgs::Int32>("/commande/Simulation/Erreur_log",10);
 
 	client = noeud.serviceClient<shuttles::shuttle_id>("get_id_shuttle_at_poste");
 

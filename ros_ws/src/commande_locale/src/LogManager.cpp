@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <ros/package.h>
+#include <std_msgs/Int32.h>
 #include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/Byte.h>
 #include <std_msgs/Float32.h>
@@ -71,8 +72,18 @@ void NewProductCallback(commande_locale::Msg_AddProduct msg)
 	ROS_INFO("NewProduct: %d",msg.num_produit);
 }
 
+void ErreurPosteVideCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	monFlux<<"OperationPosteVide: ";
+	monFlux<<msg->data;
+	monFlux<<endl;
 
-void getTimeCallback(const std_msgs::Float32::ConstPtr msg)
+	//a supprimer plus tard
+	ROS_INFO("ERREUR poste Vide");
+	ROS_INFO("sur le poste: %d",msg->data);
+}
+
+void getTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 {
 	valueSim_getTime=msg->data;
 	repSim_getTime=true;
@@ -89,12 +100,12 @@ int main(int argc, char **argv)
 	//ros::Subscriber subTacheFinie;
 	ros::Subscriber subProduitEvac;
 	ros::Subscriber subNewProduit;
-	//ros::Subscriber subErreurTraitement;
+	ros::Subscriber subPosteVideErreur;
 
 	//subTacheFinie = nh.subscribe("", 1, &Tachefinie);
 	subNewProduit = nh.subscribe("/commande_locale/AddProduct", 1, &NewProductCallback);
 	subProduitEvac = nh.subscribe("/commande/Simulation/produitEvac", 1, &ProduitEvacCallback);
-	//subErreurTraitement = nh.subscribe("", 1, &ErreurTraitement);
+	subPosteVideErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurPosteVideCallback);
 
 	// GetTime VREP
 	pubSim_getTime=nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/LogManager/GetTime",100);

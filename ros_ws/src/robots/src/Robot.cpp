@@ -776,7 +776,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 	}
 }
 
-int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
+int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo, int duree)
 {
 	//couleur_poste mes fesses
 	//attention le fromDo apelle couleur_poste à -1
@@ -852,6 +852,13 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 			retour = i-1;
 		else
 			retour=i-2;
+
+		// pour le log
+		if(!fromDo)
+		{
+			int n_poste=(couleur_poste-3)/10;
+			ROS_INFO("Task Po:%d, Pr:%d, Du%d",n_poste,couleur[0],duree);
+		}
 	}
 
 	return retour;
@@ -875,7 +882,7 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 			repSim_getTime=false;
 			float time=valueSim_getTime;
 
-			int retour = colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true); // get_color()-1 = couleur poste 50% opacité
+			int retour = colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true,0); // get_color()-1 = couleur poste 50% opacité  // ici duree inutile
 			cout << "retour=" << retour << endl;
 			if(retour!=-1)
 				poste_pos_1.debutTask(time,msg->duree);
@@ -891,7 +898,7 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 			repSim_getTime=false;
 			float time=valueSim_getTime;
 
-			int retour = colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1,true); // get_color()-1 = couleur poste 50% opacité
+			int retour = colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1,true,0); // get_color()-1 = couleur poste 50% opacité // ici duree inutile
 			cout << "retour=" << retour << endl;
 			if(retour!=-1)
 				poste_pos_4.debutTask(time,msg->duree);
@@ -914,7 +921,7 @@ void Robot::update()
 	if(poste_pos_1.updateTask(time)) // si tache poste pos 1 finie
 	{
 		string signal=poste_pos_1.get_nom();
-		int indice=colorerPosteTask(signal, poste_pos_1.get_color(),false);
+		int indice=colorerPosteTask(signal, poste_pos_1.get_color(),false,poste_pos_1.get_duree());
 		if(indice==-1)
 			ROS_ERROR("ColorerPosteTask Probleme !!");
 		string fin;
@@ -946,7 +953,7 @@ void Robot::update()
 	if(poste_pos_4.updateTask(time)) // si tache poste pos 4 finie
 	{
 		string signal=poste_pos_4.get_nom();
-		int indice=colorerPosteTask(signal, poste_pos_4.get_color(),false);
+		int indice=colorerPosteTask(signal, poste_pos_4.get_color(),false,poste_pos_4.get_duree());
 		if(indice==-1)
 			ROS_ERROR("ColorerPosteTask Probleme !!");
 		string fin;

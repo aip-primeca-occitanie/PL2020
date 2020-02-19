@@ -49,6 +49,11 @@ int Poste::get_numero()
 	return numero_poste_;
 }
 
+int Poste::get_duree()
+{
+	return duree_task_;
+}
+
 int Poste::do_task(int num_tache)
 {
 	if (num_tache<11 && num_tache>-1)

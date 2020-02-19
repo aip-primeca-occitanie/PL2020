@@ -6,6 +6,12 @@ from importlib import import_module
 # 1 - LIRE LE CONFIG
 # 2 - LIRE LE LOG
 # 3 - COMPARER LOG ET CONFIG
+# 4 - AFFICHER INFOS FINALS
+
+# On considère que:
+# - Il y a max 6 produits
+# - Il y a 8 taches possible, correspondant aux 8 postes
+# - Chaque produit peut subir 3 tâches maximum
 
 test = 1 # Cette variable indique s'il y a une erreur ou non: 1 - PAS D'ERREUR  /  0 - ERREUR
 
@@ -36,13 +42,13 @@ dure = [] # contient les durées de chaque tache
 nb_produit = [] # contient le nombre de fois qu'un même produit doit être créer
 
 verif_config = [] # sert juste a créer temps
-temps = []
+temps = [] # contient la durée des taches
 
 production = []
 
 
 for i in range(6):
-        temps.append([0, 0, 0, 0]) # Initialisation de la matrice temps 6x4 (car 6 produits et 4 postes/taches)
+        temps.append([0, 0, 0, 0, 0, 0, 0, 0]) # Initialisation de la matrice temps 6x8 ( car 6 produits et 8 postes (ou taches) )
 
 
 for ligne in contenu : # on travail ligne par ligne, donc produit par produit
@@ -102,6 +108,7 @@ for i in range(taille):
     temps[verif_config[i][0]-1][verif_config[i][1]-1] = verif_config[i][2]
 
 
+
 # RECAP: Donc maintenant on a: temps / nb_produit / production (ET verif_config mais ne servira pas a comparer)
 
 
@@ -113,7 +120,13 @@ for i in range(taille):
 verif_config_log = [] # sert juste a créer temps_log
 produit_final = []
 temps_log = []
+taches_time = [] # contient le temps où les taches sont effectuer (utile pour afficher le temps de simulation où il y a une erreur)
 nb_produit_log = []
+
+produit_entree = [] # Affichera à la suite de la lecture du log les produits qui apparaisent sur les postes produit_entree[i] = [P, time]; donc ce tableau est dans l'odre chronologique d'apparition des produits
+produit_duree = [] # Contient la durée totale de présence des produits dans la simulation. A la fin on divisera cette somme par le nombre de produit pour avoir une moyenne de temps de présence de chaque produit
+for i in range(6): # Pour sommer les durée ont les initialise à 0, 6 ligne pour chaque produit
+    produit_duree.append(0.0)
 
 for i in range(6):
     nb_produit_log.append(0)
@@ -121,53 +134,85 @@ for i in range(6):
 
 for i in range(6):
     produit_final.append([0, 0, 0, 0]) # Ce tableau aura la forme produit_final[j] = [P, D1, D2, D3]
-    temps_log.append([0, 0, 0, 0]) # Initialisation de la matrice temps 6x4 (car 6 produits et 4 postes/taches)
+    temps_log.append([0, 0, 0, 0, 0, 0, 0, 0]) # Initialisation de la matrice temps_log 6x8 ( car 6 produits et 8 postes (ou taches) )
+    taches_time.append([0, 0, 0, 0, 0, 0, 0, 0]) # Initialisation de la matrice comme temps_log
 
 
-Log = open("ModelLog.txt","r") # voir si on peut créer une variable strg qui contient le contenu de Log comme ca on peut tout de suite fermer le Log
-
+Log_file = open("ModelLog.txt","r") # voir si on peut créer une variable strg qui contient le contenu de Log comme ca on peut tout de suite fermer le Log
+Log=Log_file.readlines()
+Log_file.close()
 
 for line in Log :
     info=line.replace(" ","") #on enleve tous les espaces de la ligne
     info=info.split(":") #on decoupe on fonction de ":"
     ID=info[0] #le premier terme est l'identifiant ID
 
+    if ID == "OperationPosteVide":
+        poste = int(info[1])
+        time = float(info[2].strip('\n'))
+        print ('ERREUR à t={}s: operation sur poste vide numero {} '.format(time, poste))
+        test = 0
+
+    if ID == "EvacuationVide":
+        time = float(info[1].strip('\n'))
+        print ('ERREUR à t={}s: il y a une evacuation vide au poste 4'.format(time))
+        test = 0
+
+    if ID == "EcrasementProduit":
+        poste = int(info[1])
+        produit = int(info[2])
+        time = float(info[3].strip('\n'))
+        print ('ERREUR à t={}s: il y a un produit {} écrasé au poste {} '.format(time,produit,poste))
+        test = 0
+
     if ID == "TempoT" : #identification de la ligne de Log
         P=int(info[1])
         D=int(info[2])
-        T=float(info[3].strip('\n')) #car c est le dernier element du tableau
+        T=float(info[3])
+        time = float(info[4].strip('\n')) #car c est le dernier element du tableau
         #print ('Le temps T= {2} s de la tache {1} sur le produit {0}'.format(P,D,T))
-        verif_config_log.append([P, D, T])
+        verif_config_log.append([P, D, T, time])
 
     if ID == "Sortie" :
         P=int(info[1])
         D1=int(info[2])
         D2=int(info[3])
-        D3=int(info[4].strip('\n'))
+        D3=int(info[4])
+        time = float(info[5].strip('\n'))
         #print ('Le produit {0} est sortie avec l empilement {1},{2},{3}'.format(P,D1,D2,D3))
         produit_final = [P, D1, D2, D3] # on ecrasera cette ligne du tableau apres le test
         nb_produit_log[P-1] = nb_produit_log[P-1] + 1
+        # durée de vie du produit
+        k = 0 # variable qui compte à quelle ligne dans produit_entree se trouve le plus ancien produit apparu
+        while(1): # On considère que c'est impossible d'avoir dans le log plus de "Sortie" que de "NewProduct". Il n'est donc pas nécessaire d'afficher une erreur sur ça car quoique fasse l'étudiant il y aura forcément plus ou le même nombre de NewProduct que de Sortie
+            if produit_entree[k][0] == P: # lorsqu'on a trouver la ligne où se trouve le plus ancien produit apparu
+                produit_duree[P-1] = produit_duree[P-1] + (time - produit_entree[k][1]) # Somme du temps de présence du produit P
+                produit_entree[k][0] = 0.0 # Comme le produit est sortie on initialise sa ligne dans produit_entree à 0 comme ça elle ne pourra plus servir à calculer produit_duree
+                break
+            else:
+                k = k+1
+
         # Vérifie si produit sortie est dans le bon ordre
         if produit_final != production[P-1]:
             test = 0
-            print('ERREUR d ordre: enchainement taches du produit {} doit être D1={}, D2={}, D3={} et non pas D1={}, D2={}, D3={}'.format(P,production[P-1][1],production[P-1][2],production[P-1][3],D1,D2,D3))
+            print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
 
+    if ID == "NewProduct":
+        P = int(info[1])
+        time = float(info[2].strip('\n'))
+        produit_entree.append([P, time]) # A chaque fois qu'un produit apparait sur un post on l'ajoute dans le tableau en indiquant le temps d'apparition. Ce tableau servira ensuite a calculer le temps de présence du produit jusqu'ç ce qu'il sorte
 
-    if ID == "OperationPosteVide":
-        print ('ERREUR: operation sur poste vide numero {} '.format(info[1].strip('\n')))
-
-    if ID == "EvacuationVide":
-        print ("ERREUR: il y a une evacuation vide au poste 4")
-
-    if ID == "EcrasementProduit":
-        print ('ERREUR: il y a un produit {} ecrase au poste {} au temps T={} '.format(info[2],info[1],info[3].strip('\n')))
-
-Log.close()
 
 # REMPLIR TABLEAU temps_log
 taille = len(verif_config_log)
 for i in range(taille):
     temps_log[verif_config_log[i][0]-1][verif_config_log[i][1]-1] = verif_config_log[i][2]
+    taches_time[verif_config_log[i][0]-1][verif_config_log[i][1]-1] = verif_config_log[i][3]
+
+for i in range(6):
+    if nb_produit_log[i] != 0:
+        produit_duree[i] = produit_duree[i]/nb_produit_log[i] # On calcule le temps de présence moyen pour chaque produit (comme il peut y avoir plusieurs fois le même produit)
+
 
 
 # RECAP: Donc maintenant on a: temps_log / produit_final / nb_produit_log (ET verif_config_log mais ne servira pas à comparer)
@@ -175,6 +220,9 @@ for i in range(taille):
 
 
 # --------------- 3 - COMPARAISON ENTRE LOG ET CONFIG ---------------
+
+
+
 # 3 trucs a verifier:
 #   - temps et temps_log via verif_temps: vérifie que le temps de chaque actions et bon ET que chaque actions a été réaliser (actions = taches)
 #   - production et produit_final: vérifie la bon ordre des tâches de chaque produit --> SE FAIT DANS PARTI 2 !
@@ -185,9 +233,9 @@ for i in range(taille):
 # Initialisation de verif_temps
 verif_temps = []
 for i in range(6):
-        verif_temps.append([0, 0, 0, 0]) # Pour définir la taille de verif_temp
+        verif_temps.append([0, 0, 0, 0, 0, 0, 0, 0]) # Pour définir la taille de verif_temp, qui a la meme forme que temps et temps_log mais ne contient pas de temps mais du booléen (0 ou 1)
 for i in range(6):
-    for j in range(4):
+    for j in range(8):
         if temps[i][j] == 0:
             verif_temps[i][j] = 1
         else:
@@ -195,23 +243,36 @@ for i in range(6):
 
 # Comparer temps et temps_log, en complétant verif_temps à 1 si temps respecter, sinon reste à 0, on fait comme ça pour par la suite connaitre exactement quel temps est incorrecte
 for i in range(6):
-    for j in range(4):
+    for j in range(8):
         if temps[i][j] >= temps_log[i][j]:
             verif_temps[i][j] = 1
 
 # Si au moins une cellule de verif_temps est à 0, ça signifie qu'un temps n'a pas été respecté et donc test = 0 (erreur)
 for i in range(6):
-    for j in range(4):
+    for j in range(8):
         if verif_temps[i][j] == 0:
             test = 0
-            print('ERREUR de temps: tache {} du produit {} doit être <= à {}s, ici temps = {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
+            print('ERREUR à t={}s: durée tache {} du produit {} doit être <= à {}s, ici durée = {}s'.format(taches_time[i][j],j+1,i+1,temps[i][j],temps_log[i][j]))
 
 # Compare nb_produit et nb_produit_log pour voir si le bon nombre de produit est bien sorti
 for i in range(6):
     if nb_produit[i] != nb_produit_log[i]:
         test = 0
-        print('ERREUR de nombre de produit: le produit {} doit être crée {} fois or vous l avez créer {} fois'.format(i+1,nb_produit[i],nb_produit_log[i]))
+        print('ERREUR: le produit {} doit être crée {} fois or vous l avez créer {} fois'.format(i+1,nb_produit[i],nb_produit_log[i]))
 
+
+
+# --------------- 4 - AFFICHER INFOS FINALS ---------------
+
+
+
+# S'affiche seulement s'il n'y a aucune erreur donc si test = 1
+
+if test == 1:
+    for i in range(6):
+        print('Le produit {} a été assemblé {} fois avec l empilement de tâche {}'.format(i+1, nb_produit_log[i], production[i][1:4]))
+        print('Le temps moyen d assemblage de ce produit est de {}s'.format(produit_duree[i]))
+        print(' ')
 
 
 
@@ -231,6 +292,8 @@ for i in range(6):
 #print(produit_final); print(" ")
 #print(temps_log); print(" ")
 #print(nb_produit_log); print(" ")
+#print(produit_entree); print(" ")
+#print(produit_duree); print(" ")
 
 #print(verif_temps); print(" ")
-print(test); print(" ")
+#print(test); print(" ")

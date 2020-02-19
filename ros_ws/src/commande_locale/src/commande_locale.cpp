@@ -27,7 +27,8 @@ void spinner()
 
 bool AddProduct(commande_locale::SrvAddProduct::Request &req, commande_locale::SrvAddProduct::Response &res)
 {
-	config.ProductAddTable(req.choixProduit*10,req.choixPoste);
+	config.ProductAddTable(req.choixProduit,req.choixPoste);
+	//rappel, code produit A:14, B:24, C:34 etc.
 	VREPController.addProduct(req.choixProduit,req.choixPoste);
 	return true;
 }
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
 				cin >> choixPoste;
 				cout << "Quel produit ? [1..6]" << endl;
 				cin >> choixProduit;
-				config.ProductAddTable(choixProduit*10,choixPoste);
+				config.ProductAddTable(choixProduit,choixPoste);
 				VREPController.addProduct(choixProduit,choixPoste);
 				break;
 

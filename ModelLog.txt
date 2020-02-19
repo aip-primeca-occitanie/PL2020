@@ -1,50 +1,75 @@
 // ATTENTION ceci est un document modele consistant a donner une liste d'information nécessaire devrant apparaitre dans le vrai log
 //Les messages sont identifié par le pemier mot, on repectera donc la synthaxe donné
 
-- Le temps T d'une tache D sur un produit P, synthaxe = TempoT: P D T
-TempoT:1 :1 :10
-TempoT:1 :2 :3
-TempoT:1 :3 :19
-TempoT:5 :4 :24
-TempoT:4 :3 :11
-TempoT:2 :4 :4
-TempoT:2 :3 :1
-TempoT:3 :2 :22
-TempoT:3 :4 :1
-TempoT:4 :4 :7
-TempoT:2 :1 :1
-TempoT:4 :4 :7
-TempoT:5 :1 :12
-TempoT:6 :2 :5
-TempoT:6 :3 :6
-TempoT:3 :1 :8
 
+- si on fait une operation sur un poste vide NumPoste, synthaxe = OperationPosteVide : NumPoste :temps
+Operation Poste Vide : 3 :45.6
 
-- la sortie d'un produit et son empilement de 3 taches (D1, D2 et D3) , synthaxe = Sortie : Produit: D1 :D2 :D3
-Sortie :1 :1 :2 :3
-Sortie :2 :1 :3 :4
-Sortie :2 :1 :3 :4
-Sortie :2 :1 :3 :4
-Sortie :2 :1 :3 :4
-Sortie :2 :1 :3 :4
-Sortie :2 :1 :3 :4
-Sortie :2 :1 :3 :4
-Sortie :3 :1 :2 :4
-Sortie :3 :1 :2 :4
-Sortie :4 :4 :3 :4
-Sortie :4 :4 :3 :4
-Sortie :4 :4 :3 :4
-Sortie :5 :1 :4 :0
-Sortie :5 :1 :4 :0
-Sortie :6 :2 :3 :0
-
-- si on fait une operation sur un poste vide NumPoste, synthaxe = OperationPosteVide : NumPoste
-Operation Poste Vide : 3
-
--si il y a une évacuation d'un poste vide, synthaxe = EvacuationVide:
-EvacuationVide:
+-si il y a une évacuation d'un poste vide, synthaxe = EvacuationVide: temps
+EvacuationVide: 15.4
 
 - si il y a un ecrasement de produit lors d'une tache, synthaxe= EcrasementProduit: Poste : Produit : temps
-EcrasementProduit:2:5:32
+EcrasementProduit: 2 :5 :32.4
+
+- si un produit P est crée sur un poste quelconque, synthaxe = NewProduct: Produit :temps
+NewProduct: 1 :2.5
+NewProduct: 2 :2.5
+NewProduct: 2 :2.5
+NewProduct: 2 :2.5
+NewProduct: 2 :2.5
+NewProduct: 2 :2.5
+NewProduct: 2 :2.5
+NewProduct: 2 :2.5
+NewProduct: 3 :2.5
+NewProduct: 3 :2.5
+NewProduct: 4 :2.5
+NewProduct: 4 :2.5
+NewProduct: 4 :2.5
+NewProduct: 5 :2.5
+NewProduct: 5 :2.5
+NewProduct: 6 :2.5
+NewProduct: 5 :2.5
+NewProduct: 5 :2.5
+NewProduct: 6 :2.5
+
+
+- Le temps T d'une tache D sur un produit P, synthaxe = TempoT:P :D :T :temps
+TempoT:1 :1 :10 :12.5
+TempoT:1 :2 :3 :14.6
+TempoT:1 :3 :19 :17.8
+TempoT:5 :4 :24 :18.5
+TempoT:4 :3 :10 :20.4
+TempoT:2 :4 :4 :21.7
+TempoT:2 :3 :1 :54.8
+TempoT:3 :2 :22 :34.2
+TempoT:3 :7 :1 :36.1
+TempoT:4 :4 :7 :14.2
+TempoT:2 :1 :1 :2.5
+TempoT:4 :4 :7 :456.2
+TempoT:5 :1 :12 :45.2
+TempoT:6 :2 :5 :45.2
+TempoT:6 :3 :6 :14.5
+TempoT:3 :1 :8 :48.5
+
+
+- la sortie d'un produit et son empilement de 3 taches (D1, D2 et D3) , synthaxe = Sortie : Produit: D1 :D2 :D3 :temps
+Sortie :1 :1 :2 :3 :487.5
+Sortie :2 :1 :3 :4 :45.2
+Sortie :2 :1 :3 :4 :453.8
+Sortie :2 :1 :3 :4 :14520.2
+Sortie :2 :1 :3 :4 :45.5
+Sortie :2 :1 :3 :4 :45.4
+Sortie :2 :1 :3 :4 :78.6
+Sortie :2 :1 :3 :4 :14.5
+Sortie :3 :1 :2 :7 :10.2
+Sortie :3 :1 :2 :7 :15.6
+Sortie :4 :4 :3 :4 :47.5
+Sortie :4 :4 :3 :4 :45.6
+Sortie :4 :4 :3 :4 :458.5
+Sortie :5 :1 :4 :0 :1235.4
+Sortie :5 :1 :4 :0 :95.98
+Sortie :6 :2 :3 :0 :745.8
+
+
 
 End et oui : et non

@@ -1004,6 +1004,7 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 			msgSim_getColor.data=fin;
 
 			pubSim_getColor.publish(msgSim_getColor);
+
 			while(!repSim_getColor&&ros::ok())
 			{
 				ros::spinOnce();
@@ -1011,9 +1012,12 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 			}
 			repSim_getColor=false;
 			couleur[i]=valueSim_getColor;
+			msg_log_couleur.data.push_back(couleur[i]);
 			cout << "couleur[" << i << "]=" << couleur[i] << endl;
 		}
 
+		//pour le log
+		pub_produitEvac.publish(msg_log_couleur);
 
 		// On fait disparaitre
 		msgSim_changeColor.data.clear();
@@ -1021,8 +1025,6 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 		for(int i=0; i<4; i++)
 			msgSim_changeColor.data.push_back(0);
 		pubSim_changeColor.publish(msgSim_changeColor);
-		//et pour le log
-		pub_produitEvac.publish(msgSim_changeColor);
 		while(!repSim_changeColor&&ros::ok())
 		{
 			ros::spinOnce();

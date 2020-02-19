@@ -5,6 +5,7 @@
 #include <std_msgs/Byte.h>
 #include <std_msgs/Float32.h>
 #include "commande_locale/Msg_AddProduct.h"
+#include "robots/TacheFinieMsg.h"
 #include <iostream>
 #include <fstream>
 
@@ -43,7 +44,7 @@ void ProduitEvacCallback(std_msgs::Int32MultiArray msg)
 	monFlux<<endl;
 
 	//a supprimer plus tard
-	ROS_INFO("Evacuation TionTion");
+	ROS_INFO("Evacuation sion sion");
 	for (int i=0;i<4;i++)
 	{
 		couleur[i]=msg.data[i];
@@ -68,7 +69,7 @@ void NewProductCallback(commande_locale::Msg_AddProduct msg)
 	monFlux<<endl;
 
 	//a supprimer plus tard
-	ROS_INFO("Add Product tucttuct");
+	ROS_INFO("Add Product tuct tuct");
 	ROS_INFO("NewProduct: %d",msg.num_produit);
 }
 
@@ -79,8 +80,21 @@ void ErreurPosteVideCallback(const std_msgs::Int32::ConstPtr& msg)
 	monFlux<<endl;
 
 	//a supprimer plus tard
-	ROS_INFO("ERREUR poste Vide");
+	ROS_INFO("ERREUR poste Vide ide ide");
 	ROS_INFO("sur le poste: %d",msg->data);
+}
+
+void TachefinieCallback(const robots::TacheFinieMsg::ConstPtr& msg)
+{
+	monFlux<<"TempoT";
+	monFlux<<": "<<msg->num_produit;
+	monFlux<<": "<<msg->num_poste;
+	monFlux<<": "<<msg->duree;
+	monFlux<<endl;
+
+	//a supprimer plus tard
+	ROS_INFO("Tache finie nie nie");
+	ROS_INFO("sur le poste: %d, le produit: %d, pendant la durée : %d",msg->num_poste, msg->num_produit, msg->duree);
 }
 
 void getTimeCallback(const std_msgs::Float32::ConstPtr& msg)
@@ -97,12 +111,12 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "log_manager");
 	ros::NodeHandle nh;
 
-	//ros::Subscriber subTacheFinie;
+	ros::Subscriber subTacheFinie;
 	ros::Subscriber subProduitEvac;
 	ros::Subscriber subNewProduit;
 	ros::Subscriber subPosteVideErreur;
 
-	//subTacheFinie = nh.subscribe("", 1, &Tachefinie);
+	subTacheFinie = nh.subscribe("/commande/Simulation/TacheFinie", 1, &TachefinieCallback);
 	subNewProduit = nh.subscribe("/commande_locale/AddProduct", 1, &NewProductCallback);
 	subProduitEvac = nh.subscribe("/commande/Simulation/produitEvac", 1, &ProduitEvacCallback);
 	subPosteVideErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurPosteVideCallback);

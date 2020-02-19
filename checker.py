@@ -186,7 +186,7 @@ for line in Log :
         time = float(info[2].strip('\n'))
         nb_produit_new[P-1] = nb_produit_new[P-1] + 1
         produit_entree.append([P, time]) # A chaque fois qu'un produit apparait sur un post on l'ajoute dans le tableau en indiquant le temps d'apparition. Ce tableau servira ensuite a calculer le temps de présence du produit jusqu'ç ce qu'il sorte
-        if P_type != 4:
+        if P_type != 4 and nb_produit[P-1] != 0:
             test = 0
             print("ERREUR à t={}s: l'apparition de la version {} du produit {} n'est pas définit comme produit".format(time,nb_produit_new[P-1],P))
 
@@ -224,33 +224,35 @@ for line in Log :
                 else:
                     k = k+1
             # Vérifie si produit sortie est dans le bon ordre
-            if produit_final != production[P-1]:
-                test = 0
-                print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
-            if P_type != 4:
-                test = 0
-                print("ERREUR à t={}s: la base de la version {} du produit {} n'est pas défini comme un produit".format(time,nb_produit_log[P-1],P))
-            if D1_type == 2:
-                test = 0
-                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D1,nb_produit_log[P-1],P))
-            if D2_type == 2:
-                test = 0
-                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D2,nb_produit_log[P-1],P))
-            if D3_type == 2:
-                test = 0
-                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D3,nb_produit_log[P-1],P))
-            if D1_type != 2 and D1_type != 3:
-                test = 0
-                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D1,nb_produit_log[P-1],P))
-            if D2_type != 2 and D2_type != 3:
-                test = 0
-                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D2,nb_produit_log[P-1],P))
-            if D3_type != 2 and D3_type != 3:
-                test = 0
-                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D3,nb_produit_log[P-1],P))
-        else: # Donc si P = 0 et qu'aucun produit est sorti
-            print ('ERREUR: il y a une évacuation vide au poste 4')
-            test = 0
+            if nb_produit[P-1] != 0:
+                if P != 0:
+                    if produit_final != production[P-1]:
+                        test = 0
+                        print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
+                    if P_type != 4:
+                        test = 0
+                        print("ERREUR à t={}s: la base de la version {} du produit {} n'est pas défini comme un produit".format(time,nb_produit_log[P-1],P))
+                    if D1_type == 2:
+                        test = 0
+                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D1,nb_produit_log[P-1],P))
+                    if D2_type == 2:
+                        test = 0
+                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D2,nb_produit_log[P-1],P))
+                    if D3_type == 2:
+                        test = 0
+                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D3,nb_produit_log[P-1],P))
+                    if D1_type != 2 and D1_type != 3:
+                        test = 0
+                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D1,nb_produit_log[P-1],P))
+                    if D2_type != 2 and D2_type != 3:
+                        test = 0
+                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D2,nb_produit_log[P-1],P))
+                    if D3_type != 2 and D3_type != 3:
+                        test = 0
+                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D3,nb_produit_log[P-1],P))
+                else: # Donc si P = 0 et qu'aucun produit est sorti
+                    print ('ERREUR: il y a une évacuation vide au poste 4')
+                    test = 0
 
 
 
@@ -307,20 +309,23 @@ for i in range(6):
 # Si au moins une cellule de verif_temps est à 0, ça signifie qu'un temps n'a pas été respecté et donc test = 0 (erreur)
 for i in range(6):
     for j in range(8):
-        if verif_temps[i][j] == 2:
+        if verif_temps[i][j] == 2 and nb_produit[i] != 0:
             test = 0
-            print('ERREUR : durée tâche {} du produit {} doit être égale à {}s, ici durée tâche est {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
+            print('ERREUR: durée tâche {} du produit {} doit être égale à {}s, ici durée tâche est {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
 
 # Compare nb_produit et nb_produit_log pour voir si le bon nombre de produit est bien sorti
 # Si bon nombre de produit sorti attendu, on compare nb_produit_log et nb_produit_new pour voir s'il y a eu autant de produit apparu que de produit sorti
 for i in range(6):
-    if nb_produit[i] != nb_produit_log[i]:
-        test = 0
-        print("ERREUR: le produit {} doit être crée {} fois or vous l'avez crée {} fois".format(i+1,nb_produit[i],nb_produit_log[i]))
-    else:
-        if nb_produit_log[i] != nb_produit_new[i]:
+    if nb_produit[i] != nb_produit_new[i]:
+        if nb_produit[i] == 0:
             test = 0
-            print('ERREUR: Le bon nombre de produit est sorti, mais vous avez fait apparaitre {} produit n°{} en trop'.format(nb_produit_new[i]-nb_produit_log[i],i+1))
+            print("ERREUR: le produit {} est apparu {} fois or il n'est pas censé apparaître".format(i+1,nb_produit_new[i]))
+        else:
+            test = 0
+            print("ERREUR: le produit {} doit apparaître {} fois or vous l'avez fait apparaître {} fois".format(i+1,nb_produit[i],nb_produit_new[i]))
+    if nb_produit[i] != nb_produit_log[i] and nb_produit[i] != 0:
+        test = 0
+        print('ERREUR: le produit {} est sortie {} fois or il doit être sortie {} fois'.format(i+1,nb_produit_log[i],nb_produit[i]))
 
 
 

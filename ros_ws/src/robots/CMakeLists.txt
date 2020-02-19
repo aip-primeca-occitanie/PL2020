@@ -23,6 +23,7 @@ add_message_files(
    ColorMsg.msg
    DoTaskMsg.msg
    Msg_numrobot.msg
+   TacheFinieMsg.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

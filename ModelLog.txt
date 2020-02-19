@@ -5,9 +5,6 @@
 - si on fait une operation sur un poste vide NumPoste, synthaxe = OperationPosteVide : NumPoste
 Operation Poste Vide : 3
 
--si il y a une évacuation d'un poste vide, synthaxe = EvacuationVide:
-EvacuationVide:
-
 - si il y a un ecrasement de produit lors d'une tache, synthaxe= EcrasementProduit: Poste
 EcrasementProduit: 2
 

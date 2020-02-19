@@ -124,7 +124,9 @@ for i in range(taille):
 
 # --------------- 2 - LIRE LE LOG ---------------
 
-
+# Différents syntaxe dans le log:
+#   - Sortie: 14: 13: 23: 33: 15.2 --> format P: D1: D2: D3: time
+#       ! Si moins de 3 tâches alors met des 0 à D2 et/ou D3. Et si evacuation vide met Sortie: 0: 0: 0: 0: 15.2
 
 verif_config_log = [] # sert juste a créer temps_log
 produit_final = []
@@ -163,10 +165,6 @@ for line in Log :
         print ('ERREUR: operation sur poste vide numero {} '.format(poste))
         test = 0
 
-    if ID == "EvacuationVide":
-        print ('ERREUR: il y a une évacuation vide au poste 4')
-        test = 0
-
     if ID == "EcrasementProduit":
         poste = int(info[1].strip('\n'))
         print ('ERREUR: il y a un produit écrasé au poste {} '.format(poste))
@@ -199,7 +197,8 @@ for line in Log :
         D3_list = list(info[4])
         time = float(info[5].strip('\n'))
         P = int(P_list[0])
-        P_type = int(P_list[1])
+        if P != 0:
+            P_type = int(P_list[1])
         D1 = int(D1_list[0])
         D1_type = int(D1_list[1])
         D2 = int(D2_list[0])
@@ -212,42 +211,48 @@ for line in Log :
             D3_type = int(D3_list[1])
         else:
             D3_type = 3
-        produit_final = [P, D1, D2, D3] # on ecrasera cette ligne du tableau apres le test
-        nb_produit_log[P-1] = nb_produit_log[P-1] + 1
-        # durée de vie du produit
-        k = 0 # variable qui compte à quelle ligne dans produit_entree se trouve le plus ancien produit apparu
-        while(1): # On considère que c'est impossible d'avoir dans le log plus de "Sortie" que de "NewProduct". Il n'est donc pas nécessaire d'afficher une erreur sur ça car quoique fasse l'étudiant il y aura forcément plus ou le même nombre de NewProduct que de Sortie
-            if produit_entree[k][0] == P: # lorsqu'on a trouver la ligne où se trouve le plus ancien produit apparu
-                produit_duree[P-1] = produit_duree[P-1] + (time - produit_entree[k][1]) # Somme du temps de présence du produit P
-                produit_entree[k][0] = 0.0 # Comme le produit est sortie on initialise sa ligne dans produit_entree à 0 comme ça elle ne pourra plus servir à calculer produit_duree
-                break
-            else:
-                k = k+1
-        # Vérifie si produit sortie est dans le bon ordre
-        if produit_final != production[P-1]:
+        if P != 0: # Donc si la sortie n'est pas vide, qu'il y a bien un produit qui est evacuer
+            produit_final = [P, D1, D2, D3] # on ecrasera cette ligne du tableau apres le test
+            nb_produit_log[P-1] = nb_produit_log[P-1] + 1
+            # durée de vie du produit
+            k = 0 # variable qui compte à quelle ligne dans produit_entree se trouve le plus ancien produit apparu
+            while(1): # On considère que c'est impossible d'avoir dans le log plus de "Sortie" que de "NewProduct". Il n'est donc pas nécessaire d'afficher une erreur sur ça car quoique fasse l'étudiant il y aura forcément plus ou le même nombre de NewProduct que de Sortie
+                if produit_entree[k][0] == P: # lorsqu'on a trouver la ligne où se trouve le plus ancien produit apparu
+                    produit_duree[P-1] = produit_duree[P-1] + (time - produit_entree[k][1]) # Somme du temps de présence du produit P
+                    produit_entree[k][0] = 0.0 # Comme le produit est sortie on initialise sa ligne dans produit_entree à 0 comme ça elle ne pourra plus servir à calculer produit_duree
+                    break
+                else:
+                    k = k+1
+            # Vérifie si produit sortie est dans le bon ordre
+            if produit_final != production[P-1]:
+                test = 0
+                print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
+            if P_type != 4:
+                test = 0
+                print("ERREUR à t={}s: la base de la version {} du produit {} n'est pas défini comme un produit".format(time,nb_produit_log[P-1],P))
+            if D1_type == 2:
+                test = 0
+                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D1,nb_produit_log[P-1],P))
+            if D2_type == 2:
+                test = 0
+                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D2,nb_produit_log[P-1],P))
+            if D3_type == 2:
+                test = 0
+                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D3,nb_produit_log[P-1],P))
+            if D1_type != 2 and D1_type != 3:
+                test = 0
+                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D1,nb_produit_log[P-1],P))
+            if D2_type != 2 and D2_type != 3:
+                test = 0
+                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D2,nb_produit_log[P-1],P))
+            if D3_type != 2 and D3_type != 3:
+                test = 0
+                print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D3,nb_produit_log[P-1],P))
+        else: # Donc si P = 0 et qu'aucun produit est sorti
+            print ('ERREUR: il y a une évacuation vide au poste 4')
             test = 0
-            print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
-        if P_type != 4:
-            test = 0
-            print("ERREUR à t={}s: la base de la version {} du produit {} n'est pas défini comme un produit".format(time,nb_produit_log[P-1],P))
-        if D1_type == 2:
-            test = 0
-            print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D1,nb_produit_log[P-1],P))
-        if D2_type == 2:
-            test = 0
-            print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D2,nb_produit_log[P-1],P))
-        if D3_type == 2:
-            test = 0
-            print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D3,nb_produit_log[P-1],P))
-        if D1_type != 2 and D1_type != 3:
-            test = 0
-            print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D1,nb_produit_log[P-1],P))
-        if D2_type != 2 and D2_type != 3:
-            test = 0
-            print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D2,nb_produit_log[P-1],P))
-        if D3_type != 2 and D3_type != 3:
-            test = 0
-            print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D3,nb_produit_log[P-1],P))
+
+
 
 
 

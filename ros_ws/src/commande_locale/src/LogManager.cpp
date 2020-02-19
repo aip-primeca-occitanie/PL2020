@@ -94,7 +94,7 @@ void TachefinieCallback(const robots::TacheFinieMsg::ConstPtr& msg)
 
 	//a supprimer plus tard
 	ROS_INFO("Tache finie nie nie");
-	ROS_INFO("sur le poste: %d, le produit: %d, pendant la durée : %d",msg->num_poste, msg->num_produit, msg->duree);
+	ROS_INFO("sur le poste: %d, le produit: %d, pendant la duree : %d",msg->num_poste, msg->num_produit, msg->duree);
 }
 
 void getTimeCallback(const std_msgs::Float32::ConstPtr& msg)

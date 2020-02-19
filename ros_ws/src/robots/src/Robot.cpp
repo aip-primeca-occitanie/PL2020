@@ -838,8 +838,8 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 			couleur[i-2]=couleur_poste;
 		cout << "couleur_poste=" << couleur_poste << endl;
 
-		for(int i=0; i<4; i++)
-			msgSim_changeColor.data.push_back(couleur[i]);
+		for(int j=0; j<4; j++)
+			msgSim_changeColor.data.push_back(couleur[j]);
 		pubSim_changeColor.publish(msgSim_changeColor);
 		while(!repSim_changeColor&&ros::ok())
 		{
@@ -875,7 +875,9 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 			repSim_getTime=false;
 			float time=valueSim_getTime;
 
-			if(colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true)!=-1); // get_color()-1 = couleur poste 50% opacité
+			int retour = colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true); // get_color()-1 = couleur poste 50% opacité
+			cout << "retour=" << retour << endl;
+			if(retour!=-1)
 				poste_pos_1.debutTask(time,msg->duree);
 		}
 		if (msg->position==4)
@@ -889,10 +891,11 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 			repSim_getTime=false;
 			float time=valueSim_getTime;
 
-			if(colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1,true)!=-1); // get_color()-1 = couleur poste 50% opacité
+			int retour = colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1,true); // get_color()-1 = couleur poste 50% opacité
+			cout << "retour=" << retour << endl;
+			if(retour!=-1)
 				poste_pos_4.debutTask(time,msg->duree);
 		}
-		cout << "Fin tache" << endl;
 	}
 }
 

@@ -31,22 +31,22 @@ NewProduct: 64 :2.5
 
 
 - Le temps T d'une tache D sur un produit P, synthaxe = TempoT:P :D :durée
-TempoT:14 :1 :10
-TempoT:14 :2 :3
-TempoT:14 :3 :19
-TempoT:54 :4 :24
-TempoT:44 :3 :10
-TempoT:24 :4 :4
+TempoT:14 :1 :11
+TempoT:14 :2 :4
+TempoT:14 :3 :20
+TempoT:54 :4 :25
+TempoT:44 :3 :12
+TempoT:24 :4 :5
 TempoT:24 :3 :1
-TempoT:34 :2 :22
+TempoT:34 :2 :23
 TempoT:34 :7 :1
-TempoT:44 :4 :7
-TempoT:24 :1 :1
-TempoT:44 :4 :7
-TempoT:54 :1 :12
-TempoT:64 :2 :5
-TempoT:64 :3 :6
-TempoT:34 :1 :8
+TempoT:44 :4 :8
+TempoT:24 :1 :2
+TempoT:44 :4 :8
+TempoT:54 :1 :13
+TempoT:64 :2 :6
+TempoT:64 :3 :7
+TempoT:34 :1 :9
 
 
 - la sortie d'un produit et son empilement de 3 taches (D1, D2 et D3) , synthaxe = Sortie : Produit: D1 :D2 :D3 :temps

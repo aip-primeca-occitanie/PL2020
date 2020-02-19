@@ -116,6 +116,8 @@ private:
 	ros::Publisher pub_robot_transport;
 	ros::Publisher pub_produitEvac;
 
+	ros::Publisher pub_erreur_log;
+
 	ros::ServiceClient client;
 	shuttles::shuttle_id srv;
 
@@ -135,6 +137,8 @@ private:
 	std_msgs::Int32 robotBras;
 	std_msgs::Int32 robotPince;
 	std_msgs::Int32 retour;
+	std_msgs::Int32 msg_erreur;
+
 
 	std_msgs::Int32MultiArray msg_log_couleur;
 

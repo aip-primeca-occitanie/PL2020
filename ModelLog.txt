@@ -3,7 +3,7 @@
 
 
 - si on fait une operation sur un poste vide NumPoste, synthaxe = OperationPosteVide : NumPoste
-Operation Poste Vide : 3
+OperationPosteVide: 3
 
 -si il y a une évacuation d'un poste vide, synthaxe = EvacuationVide:
 EvacuationVide:

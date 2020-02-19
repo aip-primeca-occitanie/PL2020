@@ -17,6 +17,7 @@
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
 #include <robots/Msg_numrobot.h>
+#include <robots/TacheFinieMsg.h>
 
 #include <vector>
 #include <sstream>
@@ -111,6 +112,9 @@ private:
 	ros::Publisher pub_produitEvac;
 
 	ros::Publisher pub_erreur_log;
+	ros::Publisher pub_tache_finie;
+
+	robots::TacheFinieMsg msg_tache_finie;
 
 	ros::ServiceClient client;
 	shuttles::shuttle_id srv;
@@ -191,7 +195,7 @@ public:
 	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
-	int colorerPosteTask(string poste, int couleur_poste, bool fromDo);
+	int colorerPosteTask(string poste, int couleur_poste, bool fromDo, int duree);
 	void Evacuer(const std_msgs::Byte::ConstPtr& msg);
 
 	// Callbacks pour V-Rep

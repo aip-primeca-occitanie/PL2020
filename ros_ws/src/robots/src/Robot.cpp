@@ -663,6 +663,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 				if(poste_pos_1.isTaskEnCours())
 				{
 					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:1]", num_robot);
+
 					poste_pos_1.stopTask();
 				}
 			}
@@ -811,6 +812,12 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo)
 
 	if(i==1 && fromDo)
 		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
+		int n_poste=(couleur_poste-3)/10; //bon courage pour les suivants
+		//non en vrai on passe de la couleur du poste (num_poste*10+3) au num du poste
+		msg_erreur.data=
+		pub_erreur_log.publish(msg_erreur);
+/////
+
 	else if(i==4 && couleur_last!=0 && fromDo)
 		ROS_ERROR("PRODUIT DEJA COMPLET !!!");
 	else

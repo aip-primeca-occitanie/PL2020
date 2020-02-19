@@ -17,7 +17,7 @@ float valueSim_getTime;
 string path=ros::package::getPath("commande_locale");
 string filepath=path.substr(0,path.length()-(15+11))+"log.txt"; // 15="commande_locale.length 11="ros_ws/src/".length
 
-ofstream monFlux(filepath, ios::app);  //On essaye d'ouvrir le fichier 
+ofstream monFlux(filepath, ios::app);  //On essaye d'ouvrir le fichier
 
 void ProduitEvacCallback(std_msgs::Int32MultiArray msg)
 {
@@ -50,7 +50,7 @@ void ProduitEvacCallback(std_msgs::Int32MultiArray msg)
 	}
 }
 void NewProductCallback(commande_locale::Msg_AddProduct msg)
-{	
+{
 	ros::Rate loop_rate(25);
 	pubSim_getTime.publish(std_msgs::Byte());
 	while(!repSim_getTime && ros::ok())
@@ -85,12 +85,6 @@ int main(int argc, char **argv)
 
 	ros::init(argc, argv, "log_manager");
 	ros::NodeHandle nh;
-
-	if(!monFlux)
-	{
-		ROS_ERROR("ERREUR : Impossible d'ouvrir le fichier log.");
-		exit(-1);
-	}
 
 	//ros::Subscriber subTacheFinie;
 	ros::Subscriber subProduitEvac;

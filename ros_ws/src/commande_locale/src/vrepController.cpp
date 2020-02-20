@@ -14,8 +14,6 @@ using namespace std;
 
 // Initialisation du nombre de plateformes F
 vrepController::vrepController(){
-	nShuttleF = 0;
-
 	repSim_startSimulation=false;
 	repSim_pauseSimulation=false;
 	repSim_loadModel=false;
@@ -75,7 +73,6 @@ void vrepController::loadModelInit(int shuttleNumber)
 	}
 }
 
-
 // On ferme le processus vrep
 void vrepController::close()
 {
@@ -95,15 +92,11 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	}
 	if(pos<0) ROS_ERROR("pos negative !!!");
 
-
 	std::string VRepPath = executionPath.substr(0,pos+2)+ "CoppeliaSim";
 
-
 	char final_command[1000];
-	// on doit maintenant lancer coppelia a la main a coté et play la simu avant de launch
 	sprintf(final_command, "cd %s &&(./coppeliaSim.sh -h -s0 ../sim/%s.ttt &)", VRepPath.c_str(), simulationFileName.c_str());
 	system(final_command); // On execute VREP sans afficher la fenetre
-
 
 	// Topic pour V-Rep
 	pubSim_startSimulation = n.advertise<std_msgs::Byte>("/sim_ros_interface/services/vrep_controller/StartSimulation",100);
@@ -121,10 +114,8 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	pubSim_getColor = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/GetColor",100);
 	subSim_getColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetColor",100,&vrepController::simGetColorCallback,this);
 
-
 	pubStopTacheRobot1 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot1/StopTache",100);
 	pubStopTacheRobot2 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot2/StopTache",100);
-
 
 	pub_erreur_log = n.advertise<std_msgs::Int32>("/commande/Simulation/Erreur_log",100);
 
@@ -136,11 +127,9 @@ void vrepController::setSimulationFile(std::string fileName)
 	this->SimulationFileName = fileName;
 }
 
-
 int vrepController::computeTableId(int poste)
 {
 	int id=-1;
-
 	switch(poste)
 	{
 		case 1:
@@ -156,7 +145,6 @@ int vrepController::computeTableId(int poste)
 			id=4;
 			break;
 	}
-
 	return id;
 }
 
@@ -261,13 +249,11 @@ void vrepController::addProduct(int produit, int poste)
 	repSim_changeColor=false;
 }
 
-
 /** Callbacks pour V-Rep **/
 void vrepController::simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg)
 {
 	repSim_changeColor=true;
 }
-
 
 void vrepController::simStartSimulationCallback(const std_msgs::Byte::ConstPtr& msg)
 {
@@ -282,14 +268,11 @@ void vrepController::simPauseSimulationCallback(const std_msgs::Byte::ConstPtr& 
 void vrepController::simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_loadModel=msg->data;
-
 	repSim_loadModel=true;
 }
 
 void vrepController::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_getColor=msg->data;
-
 	repSim_getColor=true;
 }
-

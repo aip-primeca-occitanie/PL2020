@@ -134,7 +134,7 @@ int main(int argc, char **argv)
 
 	vector<int> mem_capteur;
 	vector<int> etat_capteur;
-	vector<queue<int>> debug_display;
+	//vector<queue<int>> debug_display;
 
 	int file_attente_suivante;
 	int id_aiguillage;
@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 		mem_capteur=etat_capteur;
 		etat_capteur.clear();
 		etat_capteur.push_back(0);
-		debug_display.push_back(queue_vide);
+		//debug_display.push_back(queue_vide);
 
 		for (int i=1;i<25;i++)
 		{
@@ -178,10 +178,10 @@ int main(int argc, char **argv)
 			file_attente_suivante=-2;
 			}
 
-			debug_display.push_back(liste_file[i]->get_queue());
+			//debug_display.push_back(liste_file[i]->get_queue());
 		}
 
-		for (int i=1;i<35;i++)
+		/*for (int i=1;i<35;i++)
 		{
 			cout << "La file " << i <<" contient : ";
 			while (!debug_display[i].empty())
@@ -191,10 +191,10 @@ int main(int argc, char **argv)
 			}
 			cout << endl;
 		}
-
 		cout<<endl;
-
 		debug_display.clear();
+		*/
+
 		mem_capteur.clear();
 
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées

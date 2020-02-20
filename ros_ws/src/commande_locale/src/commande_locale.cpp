@@ -1,5 +1,3 @@
-using namespace std;
-
 #include <iostream>
 #include "vrepController.h"
 #include "inOutController.h"
@@ -7,8 +5,9 @@ using namespace std;
 #include "commande_locale/Msg_AddProduct.h"
 #include <unistd.h>
 #include <thread>
-
 #include <ros/ros.h>
+
+using namespace std;
 
 vrepController VREPController;
 commande_locale::Msg_AddProduct msg0;
@@ -146,7 +145,6 @@ int main(int argc, char **argv)
 			}
 		}
 	}
-
 
 	VREPController.close();
 	return 0;

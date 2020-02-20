@@ -40,7 +40,6 @@ private:
 	ros::Subscriber planifSubSwitchState;
 	ros::Subscriber planifSubStopState;
 	ros::Subscriber planifSubPinState;
-	ros::Subscriber subScheduler;
 
 	commande_locale::Msg_StopControl StopControl;
 	commande_locale::Msg_PinControl PinControl;

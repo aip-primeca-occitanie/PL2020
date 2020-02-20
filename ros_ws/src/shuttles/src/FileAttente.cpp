@@ -14,7 +14,6 @@ FileAttente::~FileAttente()
 {
 }
 
-
 int FileAttente::maj(int DD, int DG)
 {
 	//on est là suite au front descendant du capteur concerné
@@ -34,6 +33,7 @@ int FileAttente::maj(int DD, int DG)
 		{
 			ROS_INFO("J'ai perdu une navette, a partir de maintenant, les deposes de pièces vont faire n'importe quoi");
 			ROS_INFO("Vous feriez mieux de relancer la simulation. J'ai perdu une navette car un aiguillage n'était pas en butee droite ou gauche au moment ou une navette c'est engage");
+			usleep(10000000);
 			return 0;
 		}
 	}

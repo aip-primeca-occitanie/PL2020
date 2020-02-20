@@ -1,22 +1,10 @@
-/*
- * ********************************* *
- * Copyright 2016, STEC Projet Long. *
- * All rights reserved.  	     *
- * ********************************* *
- * Mise à jour par le Projet Long    *
- * ENSEEIHT 2017		     *
- * ********************************* *
-*/
-
 #include "inOutController.h"
-
 
 // inOutController doit pouvoir actualiser l'UI à chaque actualisation de capteurs
 inOutController::inOutController(vrepController* vrepSA)
 {
 	vrepServiceAcces = vrepSA;
 }
-
 
 // Fonction Callback pour les capteurs sur les rails
 void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
@@ -72,7 +60,7 @@ void inOutController::StateSwitchCallBack(const commande_locale::Msg_SwitchContr
 // Fonction Callback pour les actionneurs sur les stops
 void inOutController::StateStopCallBack(const commande_locale::Msg_StopControl::ConstPtr&  msg)
 {
-  int StopControlInt(0), GoControlInt(0);
+	int StopControlInt(0), GoControlInt(0);
     std_msgs::Int32 Stop, Go;
 
 	StopControl.STOP = msg->STOP;
@@ -85,13 +73,11 @@ void inOutController::StateStopCallBack(const commande_locale::Msg_StopControl::
 			GoControlInt+=pow(2,i-1);
 	}
 
-
 	Stop.data=StopControlInt;
 	VREPStopController.publish(Stop);
 	Go.data=GoControlInt;
 	VREPGoController.publish(Go);
 }
-
 
 // Fonction Callback pour les actionneurs sur les ergots + capteurs des ergots
 void inOutController::StatePinCallBack(const commande_locale::Msg_PinControl::ConstPtr&  msg)
@@ -102,26 +88,19 @@ void inOutController::StatePinCallBack(const commande_locale::Msg_PinControl::Co
     PinControl.PINON = msg->PINON;
     PinControl.PINOFF = msg->PINOFF;
 
-
     for (int i=1;i<=8;i++){
         if (msg->PINON[i]==true)
             PinOnControlInt+=pow(2,i-1);
         if (msg->PINOFF[i]==true)
             PinOffControlInt+=pow(2,i-1);
     }
-
     PinOn.data=PinOnControlInt;
 
     PinOff.data=PinOffControlInt;
 
-
-
-
-
     for(int i=1;i<=8;i++) SensorState.CPI[i] = (PinOn.data & (int32_t)pow(2,i-1)) > 0;
 
     planifRailSensorState.publish(SensorState);
-
 }
 
 // On s'abonne aux topic de VREP et du noeud Commande + On se prepare à publier sur les topic de la commande_locale

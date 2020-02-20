@@ -5,8 +5,11 @@
 - si on fait une operation sur un poste vide NumPoste, synthaxe = OperationPosteVide : NumPoste
 OperationPosteVide: 3
 
-- si il y a un ecrasement de produit lors d'une tache, synthaxe= EcrasementProduit: Poste
+- si il y a un ecrasement de produit lors d'une tache, synthaxe= EcrasementProduit: NumRobot
 EcrasementProduit: 2
+
+- si on fait une opération sur un produit qui a déjà les 3 taches maximale, synthaxe = OperationProduitPlein : NumPoste
+OperationProduitPlein: 2
 
 - si un produit P est crée sur un poste quelconque, synthaxe = NewProduct: Produit :temps
 NewProduct: 14 :2.5

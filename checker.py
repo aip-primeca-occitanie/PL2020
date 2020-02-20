@@ -38,8 +38,8 @@ while(1):
         break
 
 contenu_ligne=mon_config.readline() # Enregistre la ligne dans contenu_ligne
-nbre_shuttle = contenu_ligne.split(":") # Split la ligne en tableau, séparation des ":"
-nbre_shuttle = int(nbre_shuttle[1]) # le tableau précédement est de type str, on le met de type int
+#nbre_shuttle = contenu_ligne.split(":") # Split la ligne en tableau, séparation des ":"
+#nbre_shuttle = int(nbre_shuttle[1]) # le tableau précédement est de type str, on le met de type int
 
 contenu=mon_config.readlines()
 # contenu est de type "list" et contient toutes les lignes decrivant les produit du fichier .config
@@ -178,6 +178,11 @@ for line in Log :
     if ID == "OperationPosteVide":
         poste = int(info[1].strip('\n'))
         print ('ERREUR: operation sur poste vide numero {} '.format(poste))
+        test = 0
+
+    if ID == "OperationProduitPlein":
+        poste = int(info[1].strip('\n'))
+        print ("ERREUR: operation sur un produit qui a déjà les 3 tâches maximale sur le poste {} ".format(poste))
         test = 0
 
     if ID == "EcrasementProduit":

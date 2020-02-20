@@ -121,6 +121,9 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	pubSim_getColor = n.advertise<std_msgs::String>("/sim_ros_interface/services/vrep_controller/GetColor",100);
 	subSim_getColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetColor",100,&vrepController::simGetColorCallback,this);
 
+
+	pub_erreur_log = n.advertise<std_msgs::Int32>("/commande/Simulation/Erreur_log",100);
+
 	sleep(1);
 }
 
@@ -164,12 +167,14 @@ void vrepController::addProduct(int produit, int poste)
 		loop_rate->sleep();
 	}
 	repSim_getColor=false;
-	int couleur=valueSim_getColor;
+	int couleurLue=valueSim_getColor;
 
-	if(couleur!=0)
+	if(couleurLue!=0)
 	{
 		ROS_ERROR("ERREUR : On ecrase un produit !!");
-		
+		std_msgs::Int32 msgErreur;
+		msgErreur.data=66; // 66=code ecrasement de produit
+		pub_erreur_log.publish(msgErreur);	
 	}
 
 	// On ajoute le produit
@@ -237,10 +242,10 @@ void vrepController::simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg)
 	repSim_loadModel=true;
 }
 
-void vrepController::simGetColorCallback(const std_msgs::String::ConstPtr& msg)
+void vrepController::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_getColor=msg->data;
 
-	reSim_getColor=true;
+	repSim_getColor=true;
 }
 

@@ -76,6 +76,8 @@ class vrepController
 		ros::Subscriber DeleteShuttle;
 		ros::Publisher createShuttle;
 
+		ros::Publisher pub_erreur_log;
+
 		int nShuttleF;
 		std::string SimulationFileName;
 
@@ -103,7 +105,7 @@ class vrepController
 		void simStartSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simPauseSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg);
-		void simGetColorCallback(const std_msgs::String::ConstPtr& msg);
+		void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);
 };
 
 #endif

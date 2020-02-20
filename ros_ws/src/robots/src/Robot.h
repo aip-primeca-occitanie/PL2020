@@ -101,6 +101,7 @@ private:
 	ros::Subscriber sub_doTask;
 	ros::Subscriber sub_nouveau_produit;
 	ros::Subscriber sub_evacuer;
+	ros::Subscriber subStopTache;
 
 	/** Publishers pour retours **/
 	ros::Publisher pub_pince;
@@ -173,7 +174,6 @@ public:
 	void FermerPince();
 	void OuvrirPince();
 
-
 	/** Fonctions permettant de controler le robot avec des ordres du noeud commande **/
 	//Pour atteindre une position prédéfinie
 	void SendPositionCallback(const robots::Msg_numrobot::ConstPtr& msg);
@@ -195,8 +195,11 @@ public:
 	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
-	int colorerPosteTask(string poste, int couleur_poste, bool fromDo, int duree);
+	int colorerPosteDebutTask(int positionPoste);
+	int colorerPosteFinTask(int positionPoste, int duree);
 	void Evacuer(const std_msgs::Byte::ConstPtr& msg);
+
+	void stopTacheCallback(const std_msgs::Int32::ConstPtr& msg);
 
 	// Callbacks pour V-Rep
 	void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);

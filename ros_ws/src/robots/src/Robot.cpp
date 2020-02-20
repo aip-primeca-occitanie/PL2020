@@ -314,8 +314,6 @@ void Robot::DescendreBras()
 	//pub_robotBras.publish(robotBras);
 }
 
-
-
 //Fonction permettant de mettre le bras en position haute
 void Robot::MonterBras()
 {
@@ -662,8 +660,11 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 				if(poste_pos_1.isTaskEnCours())
 				{
 					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:1]", num_robot);
+					//loggggg
 
 					poste_pos_1.stopTask();
+					retour.data=8;
+					pub_retourCommande.publish(retour);
 				}
 			}
 			else
@@ -673,6 +674,8 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 				{
 					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:4]", num_robot);
 					poste_pos_4.stopTask();
+					retour.data=9;
+					pub_retourCommande.publish(retour);
 				}
 			}
 		}
@@ -784,17 +787,31 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 	}
 }
 
-int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo, int duree)
+int Robot::colorerPosteDebutTask(int positionPoste)
 {
-	//couleur_poste mes fesses
-	//attention le fromDo apelle couleur_poste à -1
-	string signal=poste;
+	string signal;
 	string fin;
 	int couleur[4];
 	for(int i=0; i<4; couleur[i++]=0){}
 	int couleur_last(0);
 	int retour=-1;
+	int n_poste;
+	int couleur_a_ajouter;
 
+	if(positionPoste==1)
+	{
+		signal=poste_pos_1.get_nom();
+		n_poste=poste_pos_1.get_numero();
+		couleur_a_ajouter=poste_pos_1.get_color()-1; // -1 pour opacité 50%
+	}
+	if(positionPoste==4)
+	{
+		signal=poste_pos_4.get_nom();
+		n_poste=poste_pos_4.get_numero();
+		couleur_a_ajouter=poste_pos_4.get_color()-1;
+	}
+
+	// On cherche la 1ere case vide
 	int i=0;
 	do
 	{
@@ -819,32 +836,28 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo, int du
 
 	}while(i<4 && couleur_last!=0);
 
-	if(i==1 && fromDo)
+	if(i==1)
 	{
 		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
-		int n_poste=(couleur_poste-2)/10; //bon courage pour les suivants
-		cout << "COULEUR"<< couleur_poste << endl;
+		cout << "COULEUR"<< couleur_a_ajouter << endl;
 		//non en vrai on passe de la couleur du poste (num_poste*10+3-1 (fromDo)) au num du poste
 		msg_erreur.data=n_poste;
 		pub_erreur_log.publish(msg_erreur);
 	}
 
-	else if(i==4 && couleur_last!=0 && fromDo)
+	else if(i==4 && couleur_last!=0)
 		ROS_ERROR("PRODUIT DEJA COMPLET !!!");
 	else
 	{
-		// mettre couleur sur signal i-1
+		// mettre couleur sur signal/case i-1
 		string idStr= signal.substr(6);
 		int idPoste = atoi(idStr.c_str());
 		cout << "idPoste=" << idPoste << endl;
 		msgSim_changeColor.data.clear();
 		msgSim_changeColor.data.push_back(idPoste);
 
-		if(fromDo || (i==4 && couleur_last!=0))
-			couleur[i-1]=couleur_poste;
-		else
-			couleur[i-2]=couleur_poste;
-		cout << "couleur_poste=" << couleur_poste << endl;
+		couleur[i-1]=couleur_a_ajouter;
+		cout << "couleur_a_ajouter=" << couleur_a_ajouter << endl;
 
 		for(int j=0; j<4; j++)
 			msgSim_changeColor.data.push_back(couleur[j]);
@@ -856,22 +869,96 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo, int du
 		}
 		repSim_changeColor=false;
 
-		if(fromDo || (i==4 && couleur_last!=0))
-			retour = i-1;
-		else
-			retour=i-2;
-
-		// pour le log
-		if(!fromDo)
-		{
-			int n_poste=(couleur_poste-3)/10;
-			ROS_INFO("Task Po:%d, Pr:%d, Du%d",n_poste,couleur[0],duree);
-			msg_tache_finie.num_poste=n_poste;
-			msg_tache_finie.num_produit=couleur[0];
-			msg_tache_finie.duree=duree;
-			pub_tache_finie.publish(msg_tache_finie);
-		}
+		retour = i-1;
 	}
+
+	return retour;
+}
+
+int Robot::colorerPosteFinTask(int positionPoste, int duree)
+{
+	string signal;
+	string fin;
+	int couleur[4];
+	for(int i=0; i<4; couleur[i++]=0){}
+	int couleur_last(0);
+	int retour=-1;
+	int n_poste;
+	int couleur_a_ajouter;
+
+	if(positionPoste==1)
+	{
+		signal=poste_pos_1.get_nom();
+		n_poste=poste_pos_1.get_numero();
+		couleur_a_ajouter=poste_pos_1.get_color();
+	}
+	if(positionPoste==4)
+	{
+		signal=poste_pos_4.get_nom();
+		n_poste=poste_pos_4.get_numero();
+		couleur_a_ajouter=poste_pos_4.get_color();
+	}
+
+	// On cherche 1ere case vide
+	int i=0;
+	do
+	{
+		fin.clear();
+		fin.append(signal);
+		fin.append("#");
+		fin.append(to_string(i));
+		fin.append("_color");
+		msgSim_getColor.data=fin;
+
+		pubSim_getColor.publish(msgSim_getColor);
+		while(!repSim_getColor&&ros::ok())
+		{
+			ros::spinOnce();
+			loop_rate->sleep();
+		}
+		repSim_getColor=false;
+		couleur[i]=valueSim_getColor;
+		couleur_last=couleur[i];
+
+		i++;
+
+	}while(i<4 && couleur_last!=0);
+
+	// mettre couleur sur signal i-1
+	string idStr= signal.substr(6);
+	int idPoste = atoi(idStr.c_str());
+	cout << "idPoste=" << idPoste << endl;
+	msgSim_changeColor.data.clear();
+	msgSim_changeColor.data.push_back(idPoste);
+
+	if(i==4 && couleur_last!=0)
+	{
+		couleur[i-1]=couleur_a_ajouter;
+		retour = i-1;
+	}
+	else
+	{
+		couleur[i-2]=couleur_a_ajouter;
+		retour = i-2;
+	}
+	cout << "couleur_a_ajouter=" << couleur_a_ajouter << endl;
+
+	for(int j=0; j<4; j++)
+		msgSim_changeColor.data.push_back(couleur[j]);
+	pubSim_changeColor.publish(msgSim_changeColor);
+	while(!repSim_changeColor&&ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate->sleep();
+	}
+	repSim_changeColor=false;
+
+	// pour le log
+	ROS_INFO("Task Po:%d, Pr:%d, Du%d",n_poste,couleur[0],duree);
+	msg_tache_finie.num_poste=n_poste;
+	msg_tache_finie.num_produit=couleur[0];
+	msg_tache_finie.duree=duree;
+	pub_tache_finie.publish(msg_tache_finie);
 
 	return retour;
 }
@@ -879,40 +966,26 @@ int Robot::colorerPosteTask(string poste, int couleur_poste, bool fromDo, int du
 void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 {
 	if((msg->num_robot==num_robot)
-	&& (msg->position==1||msg->position==4)) // pas sur une navette
+			&& (msg->position==1||msg->position==4)) // pas sur une navette
 	{
 		ROS_INFO("Debut tache pos=%d", msg->position);
-		if (msg->position==1)
+		//produit_sur_poste=poste_pos_1.do_task(msg->num_tache);
+		pubSim_getTime.publish(msgSim_getTime);
+		while(!repSim_getTime && ros::ok())
 		{
-			//produit_sur_poste=poste_pos_1.do_task(msg->num_tache);
-			pubSim_getTime.publish(msgSim_getTime);
-			while(!repSim_getTime && ros::ok())
-			{
-				ros::spinOnce();
-				loop_rate->sleep();
-			}
-			repSim_getTime=false;
-			float time=valueSim_getTime;
-
-			int retour = colorerPosteTask(poste_pos_1.get_nom(), poste_pos_1.get_color()-1,true,0); // get_color()-1 = couleur poste 50% opacité  // ici duree inutile
-			cout << "retour=" << retour << endl;
-			if(retour!=-1)
-				poste_pos_1.debutTask(time,msg->duree);
+			ros::spinOnce();
+			loop_rate->sleep();
 		}
-		if (msg->position==4)
-		{
-			pubSim_getTime.publish(msgSim_getTime);
-			while(!repSim_getTime && ros::ok())
-			{
-				ros::spinOnce();
-				loop_rate->sleep();
-			}
-			repSim_getTime=false;
-			float time=valueSim_getTime;
+		repSim_getTime=false;
+		float time=valueSim_getTime;
 
-			int retour = colorerPosteTask(poste_pos_4.get_nom(), poste_pos_4.get_color()-1,true,0); // get_color()-1 = couleur poste 50% opacité // ici duree inutile
-			cout << "retour=" << retour << endl;
-			if(retour!=-1)
+		int retour = colorerPosteDebutTask(msg->position);
+		cout << "retour=" << retour << endl;
+		if(retour!=-1)
+		{
+			if(msg->position==1)
+				poste_pos_1.debutTask(time,msg->duree);
+			else if(msg->position==4)
 				poste_pos_4.debutTask(time,msg->duree);
 		}
 	}
@@ -932,10 +1005,10 @@ void Robot::update()
 	cout << endl;
 	if(poste_pos_1.updateTask(time)) // si tache poste pos 1 finie
 	{
-		string signal=poste_pos_1.get_nom();
-		int indice=colorerPosteTask(signal, poste_pos_1.get_color(),false,poste_pos_1.get_duree());
+		int indice=colorerPosteFinTask(1,poste_pos_1.get_duree());
 		if(indice==-1)
 			ROS_ERROR("ColorerPosteTask Probleme !!");
+		string signal=poste_pos_1.get_nom();
 		string fin;
 		fin.append(signal);
 		fin.append("#");
@@ -964,10 +1037,10 @@ void Robot::update()
 
 	if(poste_pos_4.updateTask(time)) // si tache poste pos 4 finie
 	{
-		string signal=poste_pos_4.get_nom();
-		int indice=colorerPosteTask(signal, poste_pos_4.get_color(),false,poste_pos_4.get_duree());
+		int indice=colorerPosteFinTask(4,poste_pos_4.get_duree());
 		if(indice==-1)
 			ROS_ERROR("ColorerPosteTask Probleme !!");
+		string signal=poste_pos_4.get_nom();
 		string fin;
 		fin.append(signal);
 		fin.append("#");
@@ -1064,6 +1137,22 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 	}
 }
 
+void Robot::stopTacheCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	if(msg->data==1) //pos
+	{
+		poste_pos_1.stopTask();	
+		retour.data=8;
+		pub_retourCommande.publish(retour);
+	}
+	else if(msg->data==4)
+	{
+		poste_pos_4.stopTask();
+		retour.data=9;
+		pub_retourCommande.publish(retour);
+	}
+}
+
 /*** Initialisation ***/
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
@@ -1073,50 +1162,50 @@ void Robot::init(ros::NodeHandle noeud)
 	int numero_poste;
 	switch(num_robot){
 
-	case 1:
-		num_str="1";
-		nom="Table#1";
-		numero_poste=2;
-		poste_pos_1.init(nom,numero_poste);
-		nom="Table#0";
-		numero_poste=1;
-		poste_pos_4.init(nom,numero_poste);
-	break;
+		case 1:
+			num_str="1";
+			nom="Table#1";
+			numero_poste=2;
+			poste_pos_1.init(nom,numero_poste);
+			nom="Table#0";
+			numero_poste=1;
+			poste_pos_4.init(nom,numero_poste);
+			break;
 
-	case 2:
-		num_str="2";
-		nom="Table#3";
-		numero_poste=3;
-		poste_pos_1.init(nom,numero_poste);
-		nom="Table#4";
-		numero_poste=4;
-		poste_pos_4.init(nom,numero_poste);
-	break;
+		case 2:
+			num_str="2";
+			nom="Table#3";
+			numero_poste=3;
+			poste_pos_1.init(nom,numero_poste);
+			nom="Table#4";
+			numero_poste=4;
+			poste_pos_4.init(nom,numero_poste);
+			break;
 
-	// A verif num en dessous
- 	case 3:
-		num_str="3";
-		nom="Table#6";
-		numero_poste=5;
-		poste_pos_1.init(nom,numero_poste);
-		nom="Table#7";
-		numero_poste=6;
-		poste_pos_4.init(nom,numero_poste);
-	break;
+			// A verif num en dessous
+		case 3:
+			num_str="3";
+			nom="Table#6";
+			numero_poste=5;
+			poste_pos_1.init(nom,numero_poste);
+			nom="Table#7";
+			numero_poste=6;
+			poste_pos_4.init(nom,numero_poste);
+			break;
 
-  case 4:
-		num_str="4";
-		nom="Table#10";
-		numero_poste=7;
-		poste_pos_1.init(nom,numero_poste);
-		nom="Table#9";
-		numero_poste=8;
-		poste_pos_4.init(nom,numero_poste);
-	break;
+		case 4:
+			num_str="4";
+			nom="Table#10";
+			numero_poste=7;
+			poste_pos_1.init(nom,numero_poste);
+			nom="Table#9";
+			numero_poste=8;
+			poste_pos_4.init(nom,numero_poste);
+			break;
 
-  default:
-		ROS_INFO("CHOIX ROBOT INCORRECT");
-	break;
+		default:
+			ROS_INFO("CHOIX ROBOT INCORRECT");
+			break;
 	}
 
 	// Topic pour V-Rep
@@ -1150,7 +1239,7 @@ void Robot::init(ros::NodeHandle noeud)
 	//Subscribers
 	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
 	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot",10,&Robot::SendJointsCallback,this);
- 	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot",10,&Robot::FermerPinceCallback,this);
+	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot",10,&Robot::FermerPinceCallback,this);
 	planifOuvrirPince = noeud.subscribe("/commande/Simulation/OuvrirPinceRobot",10,&Robot::OuvrirPinceCallback,this);
 	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras",10,&Robot::DescendreBrasCallback,this);
 	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras",10,&Robot::MonterBrasCallback,this);
@@ -1159,7 +1248,7 @@ void Robot::init(ros::NodeHandle noeud)
 	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
 	sub_nouveau_produit= noeud.subscribe("/commande_locale/AddProduct", 10, &Robot::ajouter_produitCallback,this);
 	sub_evacuer=noeud.subscribe("/commande/Simulation/Evacuer",10,&Robot::Evacuer,this);
-
+	subStopTache=noeud.subscribe("/commande/Simulation/Robot"+to_string(num_robot)+"/StopTache",10,&Robot::stopTacheCallback,this);
 
 
 	//Publishers
@@ -1185,19 +1274,19 @@ void Robot::init(ros::NodeHandle noeud)
 		switch(num_robot){
 			case 1:
 				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str();
-			break;
+				break;
 
 			case 2:
 				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str()+"#0";
-			break;
+				break;
 
 			case 3:
 				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str()+"#1";
-			break;
+				break;
 
 			case 4:
 				msgSim_getObjectHandle.data = "LBR_iiwa_14_R820_joint" + sr.str()+"#2";
-			break;
+				break;
 		}
 
 
@@ -1239,28 +1328,28 @@ void Robot::simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg)
 
 void Robot::simSetJointStateCallback(const std_msgs::Byte::ConstPtr& msg)
 {
-        repSim_setJointState=true;
+	repSim_setJointState=true;
 }
 
 void Robot::simGetJointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
 {
 	valueSim_getJointState=msg->position[0];
 
-        repSim_getJointState=true;
+	repSim_getJointState=true;
 }
 
 void Robot::simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 {
 	valueSim_getTime=msg->data;
 
-        repSim_getTime=true;
+	repSim_getTime=true;
 }
 
 void Robot::simGetTimeUpdateCallback(const std_msgs::Float32::ConstPtr& msg)
 {
 	valueSim_getTimeUpdate=msg->data;
 
-        repSim_getTimeUpdate=true;
+	repSim_getTimeUpdate=true;
 }
 
 void Robot::simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg)

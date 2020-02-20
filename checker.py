@@ -25,6 +25,9 @@ from importlib import import_module
 #       --> ex: D1 = 22, le 1er '2' indique le poste où est fait la tache, et le 2nd '2' indique que c'est un cube semi-transparent donc que la tâche est en cours sur V-rep
 # Si on fait moins de 3 tâches, alors le log envera '0'
 
+# A améliorer ?
+#   - dans erreur du durée d'une tâche, dire sur quelle version du produit s'est produit l'erreur
+
 test = 1 # Cette variable indique s'il y a une erreur ou non: 1 - PAS D'ERREUR  /  0 - ERREUR
 
 # --------------- 1 - LIRE LE CONFIG ---------------
@@ -244,7 +247,7 @@ for line in Log :
                 else:
                     k = k+1
             # Vérifie si produit sortie est dans le bon ordre
-            if nb_produit[P-1] != 0:
+            if nb_produit[P-1] != 0 and nb_produit_log[P-1] <= nb_produit[P-1]: # cette condition sert à afficher les erreurs seulement sur les produits désiré. Si des produit sont créer mais non désiré il y a un autre message d'erreur qui se génère (en bas du code), donc pas besoin de faire plusieurs messages d'erreur sur des produits non désiré, juste 2 suffit (pour dire que produit non désiré a été crée, et que produit non désiré a été sortie)
                 if produit_final != production[P-1]:
                     test = 0
                     print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
@@ -269,7 +272,7 @@ for line in Log :
                 if D3_type != 2 and D3_type != 3:
                     test = 0
                     print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D3,nb_produit_log[P-1],P))
-        else: # Donc si P = 0 et qu'aucun produit est sorti
+        elif nb_produit[P-1] == 0: # Donc si P = 0 et qu'aucun produit est sorti
             print ('ERREUR: il y a une évacuation vide au poste 3')
             test = 0
 

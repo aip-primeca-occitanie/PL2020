@@ -29,12 +29,12 @@ NewProduct: 64 :2.5
 
 - Le temps T d'une tache D sur un produit P, synthaxe = TempoT:P :D :durée
 TempoT:14 :1 :11
-TempoT:14 :2 :4
+TempoT:14 :2 :6
 TempoT:14 :3 :20
 TempoT:54 :4 :25
 TempoT:44 :3 :12
 TempoT:24 :4 :5
-TempoT:24 :3 :1
+TempoT:24 :3 :5
 TempoT:34 :2 :23
 TempoT:34 :7 :1
 TempoT:44 :4 :8

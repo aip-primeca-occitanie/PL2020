@@ -59,24 +59,20 @@ class vrepController
 		bool repSim_removeModel;
 		int valueSim_removeModel;
 
-		// GetObjectHandle
-		/*
-		ros::Publisher pubSim_getObjectHandle;
-		std_msgs::String msgSim_getObjectHandle;
-		ros::Subscriber subSim_getObjectHandle;
-		bool repSim_getObjectHandle;
-		int valueSim_getObjectHandle;
-		*/
-
 		// ChangeColor
 		ros::Publisher pubSim_changeColor;
 		std_msgs::Int32MultiArray msgSim_changeColor;
 		ros::Subscriber subSim_changeColor;
 		bool repSim_changeColor;
+	
+		// GetColor
+		ros::Publisher pubSim_getColor;
+		std_msgs::String msgSim_getColor;
+		ros::Subscriber subSim_getColor;
+		bool repSim_getColor;
+		int valueSim_getColor;
 
 		// Gestion de navettes
-		//ros::Publisher pub_Shuttle_Handle;
-
 		ros::Subscriber DeleteShuttle;
 		ros::Publisher createShuttle;
 
@@ -107,8 +103,7 @@ class vrepController
 		void simStartSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simPauseSimulationCallback(const std_msgs::Byte::ConstPtr& msg);
 		void simLoadModelCallback(const std_msgs::Int32::ConstPtr& msg);
-		//void simRemoveModelCallback(const std_msgs::Int32::ConstPtr& msg);
-		//void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);
+		void simGetColorCallback(const std_msgs::String::ConstPtr& msg);
 };
 
 #endif

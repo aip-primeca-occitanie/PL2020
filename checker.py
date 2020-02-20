@@ -103,7 +103,7 @@ for ligne in contenu : # on travail ligne par ligne, donc produit par produit
         del dure_var[taille-2]
         taille = len(dure_var) # regade taille de var, donc nombre de destinations
         for i in range(taille):
-            dure_var[i] = int(dure_var[i]) # on converti chaque destination de str en int
+            dure_var[i] = float(dure_var[i]) # on converti chaque destination de str en int
         if taille == 1:
             dure[produit_num-1] = [dure_var[0], 0, 0]
         elif taille == 2:

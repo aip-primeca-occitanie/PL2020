@@ -15,7 +15,6 @@ Configuration::Configuration(vrepController* VREPC)
 bool Configuration::init(ros::NodeHandle nh, std::string executionPath)
 {
 	pubProductAdd= nh.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
-	NombreNavettes=6;
 }
 
 void Configuration::ProductAddTable(int typeProduct, int poste)
@@ -24,9 +23,4 @@ void Configuration::ProductAddTable(int typeProduct, int poste)
 	msg0.num_poste = poste;
 	msg0.num_produit = typeProduct*10+4;
 	pubProductAdd.publish(msg0);
-}
-
-int Configuration::getNbNavettes()
-{
-	return NombreNavettes;
 }

@@ -24,7 +24,6 @@
 class Configuration
 {
 private:
-	int NombreNavettes;
 	vrepController* vrepCAcces;
 
 	ros::Publisher pubProductAdd;
@@ -35,6 +34,5 @@ public:
 	Configuration(vrepController* VREPC);
 	bool init(ros::NodeHandle nh, std::string executionPath);
 	void ProductAddTable(int typeProduct, int poste);
-	int getNbNavettes();
 };
 #endif

@@ -39,6 +39,8 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "commande_locale");
 	ros::NodeHandle nh;
 
+	ros::Publisher pub_nbNavettes= nh.advertise<std_msgs::Int32>("/commande_locale/nbNavettes",10);
+
 	ros::ServiceServer service = nh.advertiseService("srv_add_product", AddProduct);
 
 	ROS_INFO("Simulation file: %s \n", argv[1]);
@@ -57,11 +59,25 @@ int main(int argc, char **argv)
 
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();
-	// Pause pour laisser à l'utilisateur le soin de lancer la simu avec le boutton Play
 
 	//Creation des navettes
-	int nbNavettes;
-	nbNavettes = config.getNbNavettes();
+	int nbNavettes=2;//Mettre 0 pour demander a l'utilisateur
+	while (nbNavettes<1 || nbNavettes>6)
+	{
+		cout << "Combien voulez vous de navettes ? (entre 1 et 6)"<<endl;
+		cin >> nbNavettes;
+		if(cin.fail())
+		{
+			cout << endl << " [Erreur mauvais choix ..]" << endl;
+			cin.clear();
+			cin.ignore(256,'\n');
+		}
+	}
+
+	std_msgs::Int32 msg_nbNavettes;
+	msg_nbNavettes.data=nbNavettes;
+	pub_nbNavettes.publish(msg_nbNavettes);
+
 	for(int i=0; i<nbNavettes; i++)
 	{
 		VREPController.loadModelInit(i);
@@ -106,10 +122,10 @@ int main(int argc, char **argv)
 						break;
 					}
 					cout << "Quel produit ? [1..6]" << endl;
-					cin >> choixProduit;	
+					cin >> choixProduit;
 					if(cin.fail() || choixProduit<1 || choixProduit>6)
 					{
-						cout << endl << " [Erreur mauvais choix ..]" << endl;	
+						cout << endl << " [Erreur mauvais choix ..]" << endl;
 						cin.clear();
 						cin.ignore(256,'\n');
 						break;

@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <queue>
 #include "FileAttente.h"
+#include <std_msgs/Int32.h>
 #include "capteurs.h"
 
 #include <iostream>
@@ -11,6 +12,8 @@ using namespace std;
 
 int num_capteur;
 vector<FileAttente*> liste_file;
+int NbNavette=0;
+int initPos=0;
 
 bool shuttle_at_poste(shuttles::shuttle_id::Request  &req, shuttles::shuttle_id::Response &res)
 {
@@ -44,10 +47,19 @@ bool shuttle_at_poste(shuttles::shuttle_id::Request  &req, shuttles::shuttle_id:
   	return true;
 }
 
+
+void initPosNavetteCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	NbNavette=msg->data;
+	initPos=1;
+}
+
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "Shuttle_manager");
 	ros::NodeHandle noeud;
+
+	ros::Subscriber subNbNavette = noeud.subscribe("/commande_locale/nbNavettes", 100, &initPosNavetteCallback);
 
 	ros::ServiceServer service = noeud.advertiseService("get_id_shuttle_at_poste", shuttle_at_poste);
 
@@ -60,7 +72,11 @@ int main(int argc, char **argv)
 	queue<int> queue2;
 	queue<int> queue3;
 
-	int NbNavette=4;
+	while (initPos==0)
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
 
 	for (int i=0; i<NbNavette; i++)
 	{

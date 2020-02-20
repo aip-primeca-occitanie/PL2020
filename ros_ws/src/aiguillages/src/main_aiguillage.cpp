@@ -11,7 +11,7 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "main_aiguillage");
 	ros::NodeHandle noeud;
 
-	Aiguillage gerer_aiguillage(noeud);
+	Aiguillage *gerer_aiguillage = new Aiguillage(noeud);
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
@@ -20,6 +20,8 @@ int main(int argc, char **argv)
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées
 		loop_rate.sleep(); //permet de synchroniser la boucle while. Il attend le temps qu'il reste pour faire le 25Hz (ou la fréquence indiquée dans le loop_rate)
 	}
+
+	delete gerer_aiguillage;
 
 	return 0;
 }

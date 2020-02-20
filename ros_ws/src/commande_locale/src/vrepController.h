@@ -77,6 +77,8 @@ class vrepController
 		ros::Publisher createShuttle;
 
 		ros::Publisher pub_erreur_log;
+		ros::Publisher pubStopTacheRobot1;
+		ros::Publisher pubStopTacheRobot2;
 
 		int nShuttleF;
 		std::string SimulationFileName;
@@ -99,6 +101,8 @@ class vrepController
 
 		int computeTableId(int poste);
 		void addProduct(int produit, int poste);
+
+		void computeNumRobotPosteTache(int poste,int tab[2]);
 
 		// Callbacks pour V-Rep
 		void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);

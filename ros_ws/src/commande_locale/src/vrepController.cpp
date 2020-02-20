@@ -122,6 +122,10 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	subSim_getColor = n.subscribe("/sim_ros_interface/services/response/vrep_controller/GetColor",100,&vrepController::simGetColorCallback,this);
 
 
+	pubStopTacheRobot1 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot1/StopTache",100);
+	pubStopTacheRobot2 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot2/StopTache",100);
+
+
 	pub_erreur_log = n.advertise<std_msgs::Int32>("/commande/Simulation/Erreur_log",100);
 
 	sleep(1);
@@ -156,6 +160,31 @@ int vrepController::computeTableId(int poste)
 	return id;
 }
 
+void vrepController::computeNumRobotPosteTache(int poste, int tab[2])
+{
+	// tab[0]=numRobot
+	// tab[1]=posTache
+	switch(poste)
+	{
+		case 1:
+			tab[0]=1;
+			tab[1]=4;
+			break;
+		case 2:
+			tab[0]=1;
+			tab[1]=1;
+			break;
+		case 3:
+			tab[0]=2;
+			tab[1]=1;
+			break;
+		case 4:
+			tab[0]=2;
+			tab[1]=4;
+			break;
+	}
+}
+
 void vrepController::addProduct(int produit, int poste)
 {
 	// On verif si on ecrase rien
@@ -174,7 +203,22 @@ void vrepController::addProduct(int produit, int poste)
 		ROS_ERROR("ERREUR : On ecrase un produit !!");
 		std_msgs::Int32 msgErreur;
 		msgErreur.data=66; // 66=code ecrasement de produit
-		pub_erreur_log.publish(msgErreur);	
+		pub_erreur_log.publish(msgErreur);
+
+		int tab[2]; // [0]=num_robot, [1]=posTache
+		computeNumRobotPosteTache(poste,tab);
+		std_msgs::Int32 msg;
+		msg.data=tab[1];
+		switch(tab[0])
+		{
+			case 1: //robot1
+				pubStopTacheRobot1.publish(msg);
+				break;
+
+			case 2: //robot2
+				pubStopTacheRobot2.publish(msg);
+				break;
+		}
 	}
 
 	// On ajoute le produit

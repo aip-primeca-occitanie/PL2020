@@ -2,7 +2,6 @@
 #include <ros/ros.h>
 using namespace std;
 
-
 FileAttente::FileAttente(int id_aiguillage, int successeur_droite, int successeur_gauche, queue<int> spec_queue)
 {
 	id_aiguillage_=id_aiguillage;
@@ -33,6 +32,8 @@ int FileAttente::maj(int DD, int DG)
 		}
 		else
 		{
+			ROS_INFO("J'ai perdu une navette, a partir de maintenant, les deposes de pièces vont faire n'importe quoi");
+			ROS_INFO("Vous feriez mieux de relancer la simulation. J'ai perdu une navette car un aiguillage n'était pas en butee droite ou gauche au moment ou une navette c'est engage");
 			return 0;
 		}
 	}

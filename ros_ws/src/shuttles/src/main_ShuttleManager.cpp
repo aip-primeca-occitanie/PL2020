@@ -118,9 +118,7 @@ int main(int argc, char **argv)
 
 	vector<int> mem_capteur;
 	vector<int> etat_capteur;
-
-	vector<queue<int>> debug_tralala;
-
+	vector<queue<int>> debug_display;
 
 	int file_attente_suivante;
 	int id_aiguillage;
@@ -130,14 +128,12 @@ int main(int argc, char **argv)
 		etat_capteur.push_back(0);
 	}
 
-
-
 	while (ros::ok())
 	{
 		mem_capteur=etat_capteur;
 		etat_capteur.clear();
 		etat_capteur.push_back(0);
-		debug_tralala.push_back(queue_vide);
+		debug_display.push_back(queue_vide);
 
 		for (int i=1;i<25;i++)
 		{
@@ -161,30 +157,28 @@ int main(int argc, char **argv)
 				}
 				if (file_attente_suivante==-1)
 				{
-					//ROS_INFO("J'ai paumé la navette, elle va moins bien marcher maintenant");
 					liste_file[i]->delete_navette_in_queue();
 				}
 			file_attente_suivante=-2;
 			}
 
-			debug_tralala.push_back(liste_file[i]->get_queue());
-
+			debug_display.push_back(liste_file[i]->get_queue());
 		}
 
 		for (int i=1;i<35;i++)
 		{
 			cout << "La file " << i <<" contient : ";
-			while (!debug_tralala[i].empty())
+			while (!debug_display[i].empty())
 			{
-				cout << ' ' << debug_tralala[i].front();
-				debug_tralala[i].pop();
+				cout << ' ' << debug_display[i].front();
+				debug_display[i].pop();
 			}
 			cout << endl;
 		}
 
 		cout<<endl;
 
-		debug_tralala.clear();
+		debug_display.clear();
 		mem_capteur.clear();
 
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées

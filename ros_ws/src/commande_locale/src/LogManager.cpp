@@ -73,15 +73,25 @@ void NewProductCallback(commande_locale::Msg_AddProduct msg)
 	ROS_INFO("NewProduct: %d",msg.num_produit);
 }
 
-void ErreurPosteVideCallback(const std_msgs::Int32::ConstPtr& msg)
+void ErreurCallback(const std_msgs::Int32::ConstPtr& msg)
 {
-	monFlux<<"OperationPosteVide: ";
-	monFlux<<msg->data;
-	monFlux<<endl;
+	if (msg->data!=66)//si ce n'est pas le code erreur ecrasement
+	{
+		monFlux<<"OperationPosteVide: ";
+		monFlux<<msg->data;
+		monFlux<<endl;
 
-	//a supprimer plus tard
-	ROS_INFO("ERREUR poste Vide ide ide");
-	ROS_INFO("sur le poste: %d",msg->data);
+		//a supprimer plus tard
+		ROS_INFO("ERREUR poste Vide ide ide");
+		ROS_INFO("sur le poste: %d",msg->data);
+	}
+	else
+	{
+		monFlux<<"EcrasementProduit";
+		monFlux<<endl;
+		//a supprimer plus tard
+		ROS_INFO("ERREUR On a ecrase un produit : c'est mal");
+	}
 }
 
 void TachefinieCallback(const robots::TacheFinieMsg::ConstPtr& msg)
@@ -114,12 +124,12 @@ int main(int argc, char **argv)
 	ros::Subscriber subTacheFinie;
 	ros::Subscriber subProduitEvac;
 	ros::Subscriber subNewProduit;
-	ros::Subscriber subPosteVideErreur;
+	ros::Subscriber subErreur;
 
 	subTacheFinie = nh.subscribe("/commande/Simulation/TacheFinie", 1, &TachefinieCallback);
 	subNewProduit = nh.subscribe("/commande_locale/AddProduct", 1, &NewProductCallback);
 	subProduitEvac = nh.subscribe("/commande/Simulation/produitEvac", 1, &ProduitEvacCallback);
-	subPosteVideErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurPosteVideCallback);
+	subErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurCallback);
 
 	// GetTime VREP
 	pubSim_getTime=nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/LogManager/GetTime",100);

@@ -11,7 +11,6 @@
 #ifndef IN_OUT_CONTROLLER
 #define IN_OUT_CONTROLLER
 
-#include "UI.h"
 #include "configuration.h"
 #include "vrepController.h"
 

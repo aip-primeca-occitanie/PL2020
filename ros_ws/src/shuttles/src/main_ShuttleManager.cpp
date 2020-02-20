@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <queue>
 #include "FileAttente.h"
+#include <std_msgs/Int32.h>
 #include "capteurs.h"
 
 #include <iostream>
@@ -11,6 +12,8 @@ using namespace std;
 
 int num_capteur;
 vector<FileAttente*> liste_file;
+int NbNavette=0;
+int initPos=0;
 
 bool shuttle_at_poste(shuttles::shuttle_id::Request  &req, shuttles::shuttle_id::Response &res)
 {
@@ -32,7 +35,7 @@ bool shuttle_at_poste(shuttles::shuttle_id::Request  &req, shuttles::shuttle_id:
 			if (req.position==3){num_capteur=10;}
 			break;
 	}
-	
+
 	if (!liste_file[num_capteur]->get_queue().empty())
 	{
 		res.IdShuttle=liste_file[num_capteur]->get_first_navette();
@@ -44,10 +47,19 @@ bool shuttle_at_poste(shuttles::shuttle_id::Request  &req, shuttles::shuttle_id:
   	return true;
 }
 
+
+void initPosNavetteCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	NbNavette=msg->data;
+	initPos=1;
+}
+
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "Shuttle_manager");
 	ros::NodeHandle noeud;
+
+	ros::Subscriber subNbNavette = noeud.subscribe("/commande_locale/nbNavettes", 100, &initPosNavetteCallback);
 
 	ros::ServiceServer service = noeud.advertiseService("get_id_shuttle_at_poste", shuttle_at_poste);
 
@@ -60,14 +72,27 @@ int main(int argc, char **argv)
 	queue<int> queue2;
 	queue<int> queue3;
 
-	queue1.push(1);
-	queue1.push(2);
-	queue1.push(3);
+	while (initPos==0)
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
 
-	queue2.push(4);
-	queue2.push(5);
-
-	queue3.push(0);
+	for (int i=0; i<NbNavette; i++)
+	{
+		if (i==0)
+		{
+			queue3.push(0);
+		}
+		else if (i<4)
+		{
+			queue1.push(i);
+		}
+		else if (i<6)
+		{
+			queue2.push(i);
+		}
+	}
 
 	//liste_file.push_back(FileAttente FileAttentePS(id_aiguillage,successeur_droite,successeur_gauche,queue));
 	liste_file.push_back(0);
@@ -109,9 +134,7 @@ int main(int argc, char **argv)
 
 	vector<int> mem_capteur;
 	vector<int> etat_capteur;
-
-	vector<queue<int>> debug_tralala;
-
+	vector<queue<int>> debug_display;
 
 	int file_attente_suivante;
 	int id_aiguillage;
@@ -121,14 +144,12 @@ int main(int argc, char **argv)
 		etat_capteur.push_back(0);
 	}
 
-
-
 	while (ros::ok())
 	{
 		mem_capteur=etat_capteur;
 		etat_capteur.clear();
 		etat_capteur.push_back(0);
-		debug_tralala.push_back(queue_vide);
+		debug_display.push_back(queue_vide);
 
 		for (int i=1;i<25;i++)
 		{
@@ -152,30 +173,28 @@ int main(int argc, char **argv)
 				}
 				if (file_attente_suivante==-1)
 				{
-					//ROS_INFO("J'ai paumé la navette, elle va moins bien marcher maintenant");
 					liste_file[i]->delete_navette_in_queue();
 				}
 			file_attente_suivante=-2;
 			}
 
-			debug_tralala.push_back(liste_file[i]->get_queue());
-
+			debug_display.push_back(liste_file[i]->get_queue());
 		}
 
 		for (int i=1;i<35;i++)
 		{
 			cout << "La file " << i <<" contient : ";
-			while (!debug_tralala[i].empty())
+			while (!debug_display[i].empty())
 			{
-				cout << ' ' << debug_tralala[i].front();
-				debug_tralala[i].pop();
+				cout << ' ' << debug_display[i].front();
+				debug_display[i].pop();
 			}
 			cout << endl;
 		}
 
 		cout<<endl;
 
-		debug_tralala.clear();
+		debug_display.clear();
 		mem_capteur.clear();
 
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées

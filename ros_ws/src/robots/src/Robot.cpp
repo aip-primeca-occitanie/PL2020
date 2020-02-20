@@ -21,9 +21,9 @@ Robot::Robot(int num_du_robot)
 		couleur_transportee[i]=0;
 
 	repSim_getObjectHandle=false;
-        repSim_setJointState=false;
-        repSim_getJointState=false;
-        repSim_getTime=false;
+	repSim_setJointState=false;
+	repSim_getJointState=false;
+	repSim_getTime=false;
 	repSim_changeColor=false;
 	repSim_changeShuttleColor=false;
 	repSim_getColor=false;
@@ -418,7 +418,7 @@ void Robot::FermerPince()
 		t0 = valueSim_getTime;
 
 		time = t0;
-		while(time - t0 < 1)
+		while(time - t0 < 0.5)
 		{
 			pubSim_getTime.publish(msgSim_getTime);
 			while(!repSim_getTime&&ros::ok())
@@ -468,7 +468,7 @@ void Robot::OuvrirPince()
 		t0 = valueSim_getTime;
 
 		time = t0;
-		while(time - t0 < 1)
+		while(time - t0 < 0.5)
 		{
 			pubSim_getTime.publish(msgSim_getTime);
 			while(!repSim_getTime&&ros::ok())
@@ -589,7 +589,7 @@ void Robot::ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg)
 			case 1:
 				FermerPince();
 				break;
-			}
+		}
 	}
 }
 
@@ -642,7 +642,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			ROS_INFO("merci poteau, tu m'as dit que c'etait la navette %d", idNavette);
 		}
 
-	// regarde la couleur de ce qu'on veut prendre (call shuttleManager si navette)
+		// regarde la couleur de ce qu'on veut prendre (call shuttleManager si navette)
 		bool erreur=false;
 		bool couleur_vide=true;
 		int couleur[4];
@@ -659,9 +659,14 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 				signal=poste_pos_1.get_nom();
 				if(poste_pos_1.isTaskEnCours())
 				{
-					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:1]", num_robot);
-					//loggggg
+					// Log
+					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [poste=%d]", poste_pos_1.get_numero());
+					commande_locale::Msg_Erreur msgErreur;
+					msgErreur.code=3;
+					msgErreur.n_poste=poste_pos_1.get_numero();
+					pub_erreur_log.publish(msgErreur);
 
+					// Interrompt tache
 					poste_pos_1.stopTask();
 					retour.data=8;
 					pub_retourCommande.publish(retour);
@@ -672,7 +677,14 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 				signal=poste_pos_4.get_nom();
 				if(poste_pos_4.isTaskEnCours())
 				{
-					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [robot:%d position:4]", num_robot);
+					// Log
+					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [poste=%d]", poste_pos_4.get_numero());
+					commande_locale::Msg_Erreur msgErreur;
+					msgErreur.code=3;
+					msgErreur.n_poste=poste_pos_4.get_numero();
+					pub_erreur_log.publish(msgErreur);
+
+					// Interrompt tache
 					poste_pos_4.stopTask();
 					retour.data=9;
 					pub_retourCommande.publish(retour);
@@ -724,7 +736,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 		else if(msg->position==4)
 			poste_pos_4.ajouter_produit(produit_detecte);
 
-	// colore le poste ou navette en pos 1 avec couleur en mémoire
+		// colore le poste ou navette en pos 1 avec couleur en mémoire
 		if(msg->position==2 || msg->position==3) // Si navette
 		{
 			msgSim_changeShuttleColor.data.clear();
@@ -755,7 +767,7 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			repSim_changeColor=false;
 		}
 
-	// on met a jour la couleur en mémoire (qu'on transporte) seulement si prise
+		// on met a jour la couleur en mémoire (qu'on transporte) seulement si prise
 		if(msg->type==0)
 		{
 			for(int i=0; i<4; i++)
@@ -771,17 +783,18 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 			cout << "couleur_trasportee[" << i << "]=" << couleur_transportee[i] << endl;
 
 
-	// Mise jour modele pince (si tiens quelque chose, non vide)
+		// Mise jour modele pince (si tiens quelque chose, non vide)
 		if(msg->type==0 && !couleur_vide)
 			transport(true);
 		else
 			transport(false);
 
-	// Detecte si on a écrasé un produit
+		// Detecte si on a écrasé un produit
 		if(msg->type==1 && !couleur_vide)
 		{
 			ROS_ERROR("ON A ECRASE UN PRODUIT !!!");
-			msg_erreur.data=66; //66=code ecrasement produit
+			msg_erreur.code=66; //66=code ecrasement produit
+			msg_erreur.n_poste=num_robot;
 			pub_erreur_log.publish(msg_erreur);
 		}
 	}
@@ -839,14 +852,18 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 	if(i==1)
 	{
 		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
-		cout << "COULEUR"<< couleur_a_ajouter << endl;
-		//non en vrai on passe de la couleur du poste (num_poste*10+3-1 (fromDo)) au num du poste
-		msg_erreur.data=n_poste;
+		msg_erreur.code=1;
+		msg_erreur.n_poste=n_poste;
 		pub_erreur_log.publish(msg_erreur);
 	}
 
 	else if(i==4 && couleur_last!=0)
-		ROS_ERROR("PRODUIT DEJA COMPLET !!!");
+	{
+		ROS_ERROR("PRODUIT PLEIN !!!");
+		msg_erreur.code=2;
+		msg_erreur.n_poste=n_poste;
+		pub_erreur_log.publish(msg_erreur);
+	}
 	else
 	{
 		// mettre couleur sur signal/case i-1
@@ -969,7 +986,6 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 			&& (msg->position==1||msg->position==4)) // pas sur une navette
 	{
 		ROS_INFO("Debut tache pos=%d", msg->position);
-		//produit_sur_poste=poste_pos_1.do_task(msg->num_tache);
 		pubSim_getTime.publish(msgSim_getTime);
 		while(!repSim_getTime && ros::ok())
 		{
@@ -979,14 +995,29 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 		repSim_getTime=false;
 		float time=valueSim_getTime;
 
-		int retour = colorerPosteDebutTask(msg->position);
-		cout << "retour=" << retour << endl;
-		if(retour!=-1)
+		int retourDebTask = colorerPosteDebutTask(msg->position);
+		cout << "retourDebTask=" << retour << endl;
+		if(msg->position==1)
 		{
-			if(msg->position==1)
+			//  commence la tache seulement si retour ok
+			if(retourDebTask!=-1)
 				poste_pos_1.debutTask(time,msg->duree);
-			else if(msg->position==4)
-				poste_pos_4.debutTask(time,msg->duree);
+			else
+			{
+				retour.data=8;
+				pub_retourCommande.publish(retour);
+			}
+		}
+		else
+		{	
+			//  commence la tache seulement si retour ok
+			if(retourDebTask!=-1)
+				poste_pos_1.debutTask(time,msg->duree);
+			else
+			{
+				retour.data=9;
+				pub_retourCommande.publish(retour);
+			}
 		}
 	}
 }
@@ -1260,7 +1291,7 @@ void Robot::init(ros::NodeHandle noeud)
 
 	pub_produitEvac = noeud.advertise<std_msgs::Int32MultiArray>("/commande/Simulation/produitEvac", 10);
 
-	pub_erreur_log=noeud.advertise<std_msgs::Int32>("/commande/Simulation/Erreur_log",10);
+	pub_erreur_log=noeud.advertise<commande_locale::Msg_Erreur>("/commande/Simulation/Erreur_log",10);
 
 	client = noeud.serviceClient<shuttles::shuttle_id>("get_id_shuttle_at_poste");
 

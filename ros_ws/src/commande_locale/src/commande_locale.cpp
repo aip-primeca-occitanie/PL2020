@@ -81,39 +81,57 @@ int main(int argc, char **argv)
 		cout << "Que voulez faire ?" 	<< endl <<
 			"	1- Ajouter un produit" << endl <<
 			"	2- Pause simu" 	<< endl <<
-			"	3- Play simu" 		<< endl <<
-			"	4- Changer de mode"	<< endl;
+			"	3- Play simu" 	<< endl;
 		cout << "Choix : ";
 		cin >> choix;
-		cout << endl;
-		switch(choix)
+		if(cin.fail())
 		{
-			case 1:
-				cout << "ajout de produit : quel poste ?" << endl;
-				cin >> choixPoste;
-				cout << "Quel produit ? [1..6]" << endl;
-				cin >> choixProduit;
-				config.ProductAddTable(choixProduit,choixPoste);
-				VREPController.addProduct(choixProduit,choixPoste);
-				break;
+			cout << endl << " [Erreur mauvais choix ..]" << endl;
+			cin.clear();
+			cin.ignore(256,'\n');
+		}
+		else
+		{
+			cout << endl;
+			switch(choix)
+			{
+				case 1:
+					cout << "Ajout de produit : quel poste ? [1..4]" << endl;
+					cin >> choixPoste;
+					if(cin.fail() || choixPoste<1 || choixPoste>4)
+					{
+						cout << endl << " [Erreur mauvais choix ..]" << endl;
+						cin.clear();
+						cin.ignore(256,'\n');
+						break;
+					}
+					cout << "Quel produit ? [1..6]" << endl;
+					cin >> choixProduit;	
+					if(cin.fail() || choixProduit<1 || choixProduit>6)
+					{
+						cout << endl << " [Erreur mauvais choix ..]" << endl;	
+						cin.clear();
+						cin.ignore(256,'\n');
+						break;
+					}
+					config.ProductAddTable(choixProduit,choixPoste);
+					VREPController.addProduct(choixProduit,choixPoste);
+					break;
 
-			case 2:
-				cout << "Mise en pause de la simu" << endl;
-				VREPController.pause();
-				break;
+				case 2:
+					cout << "Mise en pause de la simu" << endl;
+					VREPController.pause();
+					break;
 
-			case 3:
-				cout << "Mise en Play de la simu" << endl;
-				VREPController.play();
-				break;
+				case 3:
+					cout << "Mise en Play de la simu" << endl;
+					VREPController.play();
+					break;
 
-			case 4:
-				cout << "On change de mode (fake news)" << endl;
-				break;
-
-			default:
-				cout << "mauvais choix .." << endl;
-				break;
+				default:
+					cout << endl << " [Erreur mauvais choix ..]" << endl;
+					break;
+			}
 		}
 	}
 

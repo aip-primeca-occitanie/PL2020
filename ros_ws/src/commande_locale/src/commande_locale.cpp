@@ -3,17 +3,15 @@ using namespace std;
 #include <iostream>
 #include "vrepController.h"
 #include "inOutController.h"
-#include "configuration.h"
 #include "commande_locale/SrvAddProduct.h"
+#include "commande_locale/Msg_AddProduct.h"
 #include <unistd.h>
 #include <thread>
 
 #include <ros/ros.h>
 
 vrepController VREPController;
-Configuration config(&VREPController);
-
-
+commande_locale::Msg_AddProduct msg0;
 
 void spinner()
 {
@@ -27,8 +25,6 @@ void spinner()
 
 bool AddProduct(commande_locale::SrvAddProduct::Request &req, commande_locale::SrvAddProduct::Response &res)
 {
-	config.ProductAddTable(req.choixProduit,req.choixPoste);
-	//rappel, code produit A:14, B:24, C:34 etc.
 	VREPController.addProduct(req.choixProduit,req.choixPoste);
 	return true;
 }
@@ -39,6 +35,7 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "commande_locale");
 	ros::NodeHandle nh;
 
+	ros::Publisher pubProductAdd= nh.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
 	ros::Publisher pub_nbNavettes= nh.advertise<std_msgs::Int32>("/commande_locale/nbNavettes",10);
 
 	ros::ServiceServer service = nh.advertiseService("srv_add_product", AddProduct);
@@ -48,11 +45,8 @@ int main(int argc, char **argv)
 	// VREP CONTROLLER
 	VREPController.init(nh,argv[0], argv[1]);
 
-	// CONFIGURATION
-	config.init(nh, argv[0]);
-
 	// IN & OUT CONTROLLER
-	inOutController IOController(&VREPController, &config);
+	inOutController IOController(&VREPController);
 	IOController.init(nh);
 
 	sleep(3);
@@ -130,7 +124,9 @@ int main(int argc, char **argv)
 						cin.ignore(256,'\n');
 						break;
 					}
-					config.ProductAddTable(choixProduit,choixPoste);
+					msg0.num_poste = choixPoste;
+					msg0.num_produit = choixProduit*10+4;
+					pubProductAdd.publish(msg0);
 					VREPController.addProduct(choixProduit,choixPoste);
 					break;
 

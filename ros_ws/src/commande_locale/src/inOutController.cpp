@@ -12,10 +12,9 @@
 
 
 // inOutController doit pouvoir actualiser l'UI à chaque actualisation de capteurs
-inOutController::inOutController(vrepController* vrepSA, Configuration* config)
+inOutController::inOutController(vrepController* vrepSA)
 {
 	vrepServiceAcces = vrepSA;
-	configuration = config;
 }
 
 

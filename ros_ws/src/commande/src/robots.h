@@ -13,6 +13,7 @@
 #include "robots/DoTaskMsg.h"
 #include "robots/Msg_numrobot.h"
 #include "commande_locale/SrvAddProduct.h"
+#include "commande_locale/Msg_AddProduct.h"
 
 #define HAUT		1
 #define BAS		-1
@@ -39,11 +40,13 @@ private:
 	ros::Publisher pub_robot_transport3;
 	ros::Publisher pub_robot_transport4;
 	ros::Publisher pub_evacuer_piece;
+	ros::Publisher pubProductAdd;
 
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
 
 	ros::ServiceClient client;
 	commande_locale::SrvAddProduct srv;
+	commande_locale::Msg_AddProduct msg0;
 
 	int robotInit[4];
 	int robotPosition[4];

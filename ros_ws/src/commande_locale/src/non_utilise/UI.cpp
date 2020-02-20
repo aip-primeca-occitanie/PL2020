@@ -1,7 +1,14 @@
 /*
  * ********************************* *
- * Copyright 2016, STEC Projet Long. *
- * All rights reserved.  	     *
+
+	Ces fichiers UI.cpp et UI.h été utilisé avant 2020
+	pour générer une belle fenêtre pour le TER avec les
+	images du dossier img (voir les anciens rapport).
+	Ces fichiers n'étaient pas immédiatement compatible
+	avec le passage sous ros kinetic. Nous avons fait le
+	choix de les remplacer par une HMI console directement
+	dans commande_locale.cpp.
+
  * ********************************* *
 */
 

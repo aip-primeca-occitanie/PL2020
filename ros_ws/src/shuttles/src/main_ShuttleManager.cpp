@@ -32,7 +32,7 @@ bool shuttle_at_poste(shuttles::shuttle_id::Request  &req, shuttles::shuttle_id:
 			if (req.position==3){num_capteur=10;}
 			break;
 	}
-	
+
 	if (!liste_file[num_capteur]->get_queue().empty())
 	{
 		res.IdShuttle=liste_file[num_capteur]->get_first_navette();
@@ -60,14 +60,23 @@ int main(int argc, char **argv)
 	queue<int> queue2;
 	queue<int> queue3;
 
-	queue1.push(1);
-	queue1.push(2);
-	queue1.push(3);
+	int NbNavette=4;
 
-	queue2.push(4);
-	queue2.push(5);
-
-	queue3.push(0);
+	for (int i=0; i<NbNavette; i++)
+	{
+		if (i==0)
+		{
+			queue3.push(0);
+		}
+		else if (i<4)
+		{
+			queue1.push(i);
+		}
+		else if (i<6)
+		{
+			queue2.push(i);
+		}
+	}
 
 	//liste_file.push_back(FileAttente FileAttentePS(id_aiguillage,successeur_droite,successeur_gauche,queue));
 	liste_file.push_back(0);

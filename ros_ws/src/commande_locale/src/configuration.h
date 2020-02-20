@@ -17,7 +17,6 @@
 #include <iostream>
 #include <cstring>
 
-#include "product.h"
 #include "vrepController.h"
 
 // La classe Configuration permet la génération manuel de produit en accord avec la configuration établit dans le fichier.config
@@ -26,29 +25,16 @@ class Configuration
 {
 private:
 	int NombreNavettes;
-	int nbLoop;
-	int deltaLoop;
 	vrepController* vrepCAcces;
 
-	std::string configFile;
-
-	std::map<std::string,Product*>::iterator iteratorPMap;
-	std::map<std::string,Product*> ProductsMap;
-	
 	ros::Publisher pubProductAdd;
-
 	std_msgs::Int32 retourTraitement;
 
 public:
-	int numberOfProduct;
-	bool activeProduct[7];
 
 	Configuration(vrepController* VREPC);
-
 	bool init(ros::NodeHandle nh, std::string executionPath);
 	void ProductAddTable(int typeProduct, int poste);
 	int getNbNavettes();
 };
-
-
 #endif

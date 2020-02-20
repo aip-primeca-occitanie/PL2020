@@ -25,19 +25,19 @@ add_service_files(FILES SrvAddProduct.srv)
 
 add_message_files(
 	FILES
-  Msg_AddProduct.msg
+    Msg_AddProduct.msg
 	Msg_SensorState.msg
 	Msg_StopControl.msg
 	Msg_Color.msg
 	Msg_SwitchControl.msg
 	Msg_PinControl.msg
-  Msg_AddProduct.msg
+    Msg_AddProduct.msg
 )
 generate_messages( DEPENDENCIES std_msgs)
 catkin_package( CATKIN_DEPENDS message_runtime)
 
 
-add_executable(simulation src/commande_locale.cpp src/UI.cpp src/inOutController.cpp src/vrepController.cpp src/configuration.cpp src/product.cpp)
+add_executable(simulation src/commande_locale.cpp src/inOutController.cpp src/vrepController.cpp src/configuration.cpp)
 target_link_libraries(simulation ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 add_dependencies(simulation commande_locale_generate_messages_cpp)
 

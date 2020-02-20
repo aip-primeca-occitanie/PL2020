@@ -143,11 +143,11 @@ int main(int argc, char **argv)
 			M[3]--;
 			robot.DeplacerPiece(1,1,2);
 			cmd.Ouvrir_PS(21);
-			cmd.Stop_PS(2);
+			cmd.Stop_PS(3);
 			M[4]++;
 		}
 
-		if (M[4]!=0 && capteur.get_PS(2)==1) //orientation des aiguillages pour la boucle principale
+		if (M[4]!=0 && capteur.get_PS(3)==1) //orientation des aiguillages pour la boucle principale
 		{
 			M[4]--;
 			modif=1;
@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 			//aiguillage.Gauche(2);
 			//aiguillage.Gauche(3);
 			//aiguillage.Gauche(10);
-			robot.DeplacerPiece(2,2,1);
+			robot.DeplacerPiece(2,3,1);
 			robot.DoTask(2,1,1);
 			M[5]++;
 		}
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
 			M[5]--;
 			modif=1;
 			robot.Evacuer();
-			cmd.Ouvrir_PS(2);
+			cmd.Ouvrir_PS(3);
 		}
 
 ///////////////////////////////////////////////////////////////////////////

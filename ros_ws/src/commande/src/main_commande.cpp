@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 		{
 			modif=1;
 			M[100]--;
-			robot.AjouterProduit(3,2); // ajout produit n°2 (donc B) sur poste 3
+			robot.AjouterProduit(POSTE_3,2); // ajout produit n°2 (donc B) sur poste 3
 			M[101]++;
 		}
 		
@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 		{
 			modif=1;
 			M[102]--;
-			robot.DeplacerPiece(2,1,2);
+			robot.DeplacerPiece(ROBOT_2,1,2);
 			M[103]++;
 		}
 
@@ -212,23 +212,23 @@ int main(int argc, char **argv)
 		{
 			modif=1;
 			M[109]--;
-			robot.DeplacerPiece(1,3,4);
+			robot.DeplacerPiece(ROBOT_1,3,4);
 			M[110]++;
 		}
 
-		if (M[110]==1 /* && robot.FinDeplacement(1) */) // robot 1 fais tache 1 pendant 4s
+		if (M[110]==1 /* && robot.FinDeplacement(1) */) // On fait la tache du poste 1 pendant 4s
 		{
 			modif=1;
 			M[110]--;
-			robot.DoTask(1,4,4); // robot fait la tache 1 sur le produit B pendant 4s
+			robot.DoTask(POSTE_1,4);
 			M[111]++;
 		}
 
-		if (M[111]==1 && robot.TaskPos4Etat(1)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
+		if (M[111]==1 && robot.IsTaskOver(POSTE_1)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
 		{
 			modif=1;
 			M[111]--;
-			robot.DeplacerPiece(1,4,3);
+			robot.DeplacerPiece(ROBOT_1,4,3);
 			M[112]++;
 		}
 
@@ -252,23 +252,23 @@ int main(int argc, char **argv)
 		{
 			modif=1;
 			M[116]--;
-			robot.DeplacerPiece(2,3,4);
+			robot.DeplacerPiece(ROBOT_2,3,4);
 			M[117]++;
 		}
 
-		if (M[117]==1 /* && robot.FinDeplacement(2) */) // le robot 2 fais tache 4 pendant 5s
+		if (M[117]==1 /* && robot.FinDeplacement(2) */) // On fait la tache du poste 4 pendant 5s
 		{
 			modif=1;
 			M[117]--;
-			robot.DoTask(2,4,5); // robot 2 fait la tache 4 sur le produit B pendant 5s
+			robot.DoTask(POSTE_4,5); 
 			M[118]++;
 		}
 
-		if (M[118]==1 && robot.TaskPos4Etat(2)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
+		if (M[118]==1 && robot.IsTaskOver(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
 		{
 			modif=1;
 			M[118]--;
-			robot.DeplacerPiece(2,4,1);
+			robot.DeplacerPiece(ROBOT_2,4,1);
 			M[122]++;
 		}
 
@@ -283,65 +283,65 @@ int main(int argc, char **argv)
 
 
 		/*if (M[15]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
-		{
-			modif=1;
-			M[15]--;
-			cmd.Stop_PS(21);
-			robot.DoTask(1,4,1);
-			robot.DoTask(2,4,1);
-			robot.AjouterProduit(3,6);
-			M[1]++;
-		}
+		  {
+		  modif=1;
+		  M[15]--;
+		  cmd.Stop_PS(21);
+		  robot.DoTask(1,4,1);
+		  robot.DoTask(2,4,1);
+		  robot.AjouterProduit(3,6);
+		  M[1]++;
+		  }
 
-		if (M[1]!=0 && robot.TaskPos4Etat(1)==1)
-		{
-			modif=1;
-			M[1]--;
-			robot.DeplacerPiece(1,4,1);
-			M[2]++;
-		}
+		  if (M[1]!=0 && robot.TaskPos4Etat(1)==1)
+		  {
+		  modif=1;
+		  M[1]--;
+		  robot.DeplacerPiece(1,4,1);
+		  M[2]++;
+		  }
 
-		if (M[2]!=0 && capteur.get_PS(21)==1)
-		{
-			modif=1;
-			M[2]--;
-			robot.DoTask(1,1,2);
-			M[3]++;
-		}
-		if (M[3]!=0 && robot.TaskPos1Etat(1)==1)
-		{
-			modif=1;
-			M[3]--;
-			robot.DeplacerPiece(1,1,2);
-			cmd.Ouvrir_PS(21);
-			cmd.Stop_PS(3);
-			M[4]++;
-		}
+		  if (M[2]!=0 && capteur.get_PS(21)==1)
+		  {
+		  modif=1;
+		  M[2]--;
+		  robot.DoTask(1,1,2);
+		  M[3]++;
+		  }
+		  if (M[3]!=0 && robot.TaskPos1Etat(1)==1)
+		  {
+		  modif=1;
+		  M[3]--;
+		  robot.DeplacerPiece(1,1,2);
+		  cmd.Ouvrir_PS(21);
+		  cmd.Stop_PS(3);
+		  M[4]++;
+		  }
 
-		if (M[4]!=0 && capteur.get_PS(3)==1) //orientation des aiguillages pour la boucle principale
-		{
-			M[4]--;
-			modif=1;
-			//aiguillage.Gauche(1);
-			//aiguillage.Gauche(2);
-			//aiguillage.Gauche(3);
-			//aiguillage.Gauche(10);
-			robot.DeplacerPiece(2,3,1);
-			robot.DoTask(2,1,1);
-			M[5]++;
+		  if (M[4]!=0 && capteur.get_PS(3)==1) //orientation des aiguillages pour la boucle principale
+		  {
+		  M[4]--;
+		  modif=1;
+		//aiguillage.Gauche(1);
+		//aiguillage.Gauche(2);
+		//aiguillage.Gauche(3);
+		//aiguillage.Gauche(10);
+		robot.DeplacerPiece(2,3,1);
+		robot.DoTask(2,1,1);
+		M[5]++;
 		}
 
 		if (M[5]!=0 && robot.TaskPos1Etat(2)==1)
 		{
-			M[5]--;
-			modif=1;
-			robot.Evacuer();
-			cmd.Ouvrir_PS(3);
+		M[5]--;
+		modif=1;
+		robot.Evacuer();
+		cmd.Ouvrir_PS(3);
 		}*/
 
-///////////////////////////////////////////////////////////////////////////
-////////////////////AFFICHAGE//////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
+		////////////////////AFFICHAGE//////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////
 
 		if(modif)
 		{

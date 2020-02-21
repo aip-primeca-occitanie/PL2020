@@ -167,7 +167,7 @@ for i in range(6):
     temps_log.append([0, 0, 0, 0, 0, 0, 0, 0]) # Initialisation de la matrice temps_log 6x8 ( car 6 produits et 8 postes (ou taches) )
 
 
-Log_file = open("ModelLog.txt","r") # voir si on peut créer une variable strg qui contient le contenu de Log comme ca on peut tout de suite fermer le Log
+Log_file = open("log.txt","r") # voir si on peut créer une variable strg qui contient le contenu de Log comme ca on peut tout de suite fermer le Log
 Log=Log_file.readlines()
 Log_file.close()
 
@@ -359,8 +359,9 @@ for i in range(6):
 
 if test == 1:
     for i in range(6):
-        print("Le produit {} a été assemblé {} fois avec l'empilement de tâche {}".format(i+1, nb_produit_log[i], production[i][1:4]))
-        print("Le temps moyen d'assemblage de ce produit est de {}s".format(produit_duree[i]))
+        if nb_produit[P-1] != 0:
+            print("Le produit {} a été assemblé {} fois avec l'empilement de tâche {}".format(i+1, nb_produit_log[i], production[i][1:4]))
+            print("Le temps moyen d'assemblage de ce produit est de {}s".format(produit_duree[i]))
 print(' ')
 
 

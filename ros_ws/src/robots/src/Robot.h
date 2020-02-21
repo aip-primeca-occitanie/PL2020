@@ -7,7 +7,6 @@
 #include <robots/RobotJoints.h>
 #include <robots/MoveRobot.h>
 #include <robots/DoTaskMsg.h>
-#include <robots/ColorMsg.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float32MultiArray.h>
@@ -19,6 +18,7 @@
 #include <robots/Msg_numrobot.h>
 #include <robots/TacheFinieMsg.h>
 #include <commande_locale/Msg_Erreur.h>
+#include "commande/DeplacerPieceMsg.h"
 
 #include <vector>
 #include <sstream>
@@ -100,9 +100,9 @@ private:
 	ros::Subscriber planifControlerRobot;
 	ros::Subscriber sub_colorer;
 	ros::Subscriber sub_doTask;
-	ros::Subscriber sub_nouveau_produit;
 	ros::Subscriber sub_evacuer;
 	ros::Subscriber subStopTache;
+	ros::Subscriber subDeplacerPiece;
 
 	/** Publishers pour retours **/
 	ros::Publisher pub_pince;
@@ -136,7 +136,7 @@ private:
 	std_msgs::Int32 robotPosition;
 	std_msgs::Int32 robotBras;
 	std_msgs::Int32 robotPince;
-	std_msgs::Int32 retour;
+	robots::Msg_numrobot retour;
 	commande_locale::Msg_Erreur msg_erreur;
 
 
@@ -192,7 +192,7 @@ public:
 
 	//Pour contrôler l'ensemble des mouvements du robot
 	void ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg);
-	void ColorerCallback(const robots::ColorMsg::ConstPtr& msg);
+	void Colorer(int position, int type);
 	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
@@ -201,6 +201,7 @@ public:
 	void Evacuer(const std_msgs::Byte::ConstPtr& msg);
 
 	void stopTacheCallback(const std_msgs::Int32::ConstPtr& msg);
+	void DeplacerPieceCallback(const commande::DeplacerPieceMsg::ConstPtr& msg);
 
 	// Callbacks pour V-Rep
 	void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);

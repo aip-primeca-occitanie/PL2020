@@ -20,7 +20,6 @@ add_message_files(
    FILES
    RobotJoints.msg
    MoveRobot.msg
-   ColorMsg.msg
    DoTaskMsg.msg
    Msg_numrobot.msg
    TacheFinieMsg.msg

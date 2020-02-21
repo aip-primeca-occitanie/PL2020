@@ -14,12 +14,26 @@
 #include "robots/Msg_numrobot.h"
 #include "commande_locale/SrvAddProduct.h"
 #include "commande_locale/Msg_AddProduct.h"
+#include "commande/DeplacerPieceMsg.h"
 
+// Etats robot
 #define HAUT		1
 #define BAS		-1
 #define FERMEE		1
 #define OUVERTE		-1
 #define EN_POSITION	1
+
+// Robots
+#define ROBOT_1 1
+#define ROBOT_2 2
+#define ROBOT_3 3
+#define ROBOT_4 4
+
+// Postes
+#define POSTE_1 1
+#define POSTE_2 2
+#define POSTE_3 3
+#define POSTE_4 4
 
 class Robots
 {
@@ -41,12 +55,14 @@ private:
 	ros::Publisher pub_robot_transport4;
 	ros::Publisher pub_evacuer_piece;
 	ros::Publisher pubProductAdd;
+	ros::Publisher pub_deplacer_piece;
 
-	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
+	ros::Subscriber sub_retourRobot;
 
 	ros::ServiceClient client;
 	commande_locale::SrvAddProduct srv;
 	commande_locale::Msg_AddProduct msg0;
+	commande::DeplacerPieceMsg deplacer_msg;
 
 	int robotInit[4];
 	int robotPosition[4];
@@ -55,6 +71,7 @@ private:
 	int robotPince[4];
 	int pince[4];
 	int robotTask[4][2];
+	int robotMacroDeplacement[4];
 
 	robots::ColorMsg msgColor;
 	robots::DoTaskMsg tache_msg;
@@ -75,10 +92,7 @@ public:
 	void DeplacerPiece(int num_robot, int positionA, int positionB);
 
 	//Retour depuis les nodes des robots
-	void RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg);
-	void RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg);
+	void RetourRobotCallback(const robots::Msg_numrobot::ConstPtr& msg);
 
 	int RobotInitialise(int numRobot); //retourne 1 si le robot numRobot est initialisé
 	int RobotEnPosition(int numRobot); //retourne 1 si le robot numRobot est en position
@@ -87,9 +101,10 @@ public:
 
 	void Colorer(int num_robot, int position, int type);
 	void RobotTransport(int num_robot, bool valeur);
-	void DoTask(int num_robot, int position, int duree);
-	int TaskPos1Etat(int num_robot);
-	int TaskPos4Etat(int num_robot);
+	void DoTask(int num_poste, int duree);
+	int IsTaskOver(int num_poste);
+	void computeFromNumPoste(int num_poste,int tab[2]);
+	int FinDeplacerPiece(int num_robot);
 	void Evacuer();
 	void AjouterProduit(int poste, int produit);
 };

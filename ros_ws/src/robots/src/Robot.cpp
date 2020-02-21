@@ -1012,7 +1012,7 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 		{	
 			//  commence la tache seulement si retour ok
 			if(retourDebTask!=-1)
-				poste_pos_1.debutTask(time,msg->duree);
+				poste_pos_4.debutTask(time,msg->duree);
 			else
 			{
 				retour.data=9;

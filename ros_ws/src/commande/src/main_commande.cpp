@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 			M[103]++;
 		}
 
-		if (M[103]==1 /* && robot.FinDeplacement(2) */ ) // la navette repars du poste 3 avec le produit B
+		if (M[103]==1 /* && robot.FinDeplacement(2) */ ) // la navette repars du poste 3 avec le produit B, on fait tourner l'aiguillage 10
 		{
 			modif=1;
 			M[103]--;
@@ -159,7 +159,7 @@ int main(int argc, char **argv)
 			M[104]++;
 		}
 
-		if (M[104]==1 && capteur.get_PS(6)) // On dirige la navette vers le poste 1, on met à droite l'aiguillage n°2
+		if (M[104]==1 && capteur.get_PS(6)) // On dirige la navette vers le poste 1
 		{
 			modif=1;
 			M[104]--;
@@ -168,7 +168,7 @@ int main(int argc, char **argv)
 			M[105]++;
 		}
 
-		if (M[105]==1 && capteur.get_DG(3) && capteur.get_DG(10)) // On dirige la navette vers le poste 1, on met à gauche l'aiguillage n°3 et gauche aiguillage 10
+		if (M[105]==1 && capteur.get_DG(3) && capteur.get_DG(10)) // quand les aiguillages ont fini de tourner on fait partir la navette
 		{
 			modif=1;
 			M[105]--;
@@ -177,22 +177,30 @@ int main(int argc, char **argv)
 			M[108]++;
 		}
 
-		if (M[106]==1 && capteur.get_PS(20))
+		if (M[106]==1 && capteur.get_PS(20)) // Attend front descendant de PS20
 		{
 			modif=1;
 			M[106]--;
+			M[120]++;
+		}
+
+		if(M[120]==1 && !capteur.get_PS(20)) // Front descendant : la navette 1 est passée, on bouge les aiguillages pour la navette 0
+		{
+			modif=1;
+			M[120]--;
 			aiguillage.Droite(10);
+			aiguillage.Droite(3);
 			M[107]++;
 		}
 
-		if (M[107]==1 && capteur.get_DD(10))
+		if (M[107]==1 && capteur.get_DD(10)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
 		{
 			modif=1;
 			M[107]--;
 			cmd.Ouvrir_PS(19);
 		}
 
-		if (M[108]==1 && capteur.get_CP(9)) // quand la navette arrive à proximité du poste 1, on le fait arrêter au niveau du poste
+		if (M[108]==1 && capteur.get_CP(9)) // quand la navette arrive à proximité du poste 1, on la fait arrêter au niveau du poste
 		{
 			modif=1;
 			M[108]--;
@@ -216,7 +224,7 @@ int main(int argc, char **argv)
 			M[111]++;
 		}
 
-		if (M[111]==1 && robot.TaskPos4Etat(1)) // le robot 1 prend le reproduit B sur le poste et le met sur la navette quand tache fini
+		if (M[111]==1 && robot.TaskPos4Etat(1)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
 		{
 			modif=1;
 			M[111]--;
@@ -232,7 +240,7 @@ int main(int argc, char **argv)
 			M[115]++;
 		}
 
-		if (M[115]==1 && capteur.get_CP(1)) // quand la navette arrive à proximité du poste 3, on le fait arrêter au niveau du poste
+		if (M[115]==1 && capteur.get_CP(1)) // quand la navette arrive à proximité du poste 4, on le fait arrêter au niveau du poste
 		{
 			modif=1;
 			M[115]--;
@@ -240,7 +248,7 @@ int main(int argc, char **argv)
 			M[116]++;
 		}
 
-		if (M[116]==1 && capteur.get_PS(3)) // le robot 2 prend le produit B sur la navette et le met sur le poste 3
+		if (M[116]==1 && capteur.get_PS(3)) // le robot 2 prend le produit B sur la navette et le met sur le poste 4
 		{
 			modif=1;
 			M[116]--;
@@ -248,15 +256,15 @@ int main(int argc, char **argv)
 			M[117]++;
 		}
 
-		if (M[117]==1 /* && robot.FinDeplacement(2) */) // le robot 2 fais tache 3 pendant 5s
+		if (M[117]==1 /* && robot.FinDeplacement(2) */) // le robot 2 fais tache 4 pendant 5s
 		{
 			modif=1;
 			M[117]--;
-			robot.DoTask(2,4,5); // robot 2 fait la tache 3 sur le produit B pendant 5s
+			robot.DoTask(2,4,5); // robot 2 fait la tache 4 sur le produit B pendant 5s
 			M[118]++;
 		}
 
-		if (M[118]==1 && robot.TaskPos4Etat(2)) // le robot 2 prend le reproduit B sur le poste et le met sur la navette quand tache fini
+		if (M[118]==1 && robot.TaskPos4Etat(2)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
 		{
 			modif=1;
 			M[118]--;
@@ -268,7 +276,7 @@ int main(int argc, char **argv)
 		{
 			modif=1;
 			M[122]--;
-			robot.Evacuer(); // Evacue le produit (?? on ne devrait pas mettre en paramètre le n° poste ??)
+			robot.Evacuer(); // Evacue le produit 
 			cmd.Ouvrir_PS(3); // la navette repart
 			M[123]++;
 		}

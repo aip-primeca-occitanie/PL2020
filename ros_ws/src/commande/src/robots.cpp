@@ -483,30 +483,26 @@ int Robots::PinceEnPosition(int numRobot)
 	return Robot;
 }
 
-int Robots::TaskPos1Etat(int numRobot)
+int Robots::IsTaskOver(int num_poste)
 {
-	int Robot;
 	ros::spinOnce();
-
-	if(numRobot<1 || numRobot>4)
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+	int etat;
+	if(num_poste<1 || num_poste>4)
+		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et 4." << RESET << endl;
 	else
-		Robot=robotTask[numRobot-1][0];
+	{
+		int tab[2];
+		computeFromNumPoste(num_poste,tab);
+		int num_robot=tab[0];
+		int position=tab[1];
 
-	return Robot;
-}
+		if(position==1)
+			etat=robotTask[num_robot-1][0];
+		if(position==4)
+			etat=robotTask[num_robot-1][1];
+	}
 
-int Robots::TaskPos4Etat(int numRobot)
-{
-	int Robot;
-	ros::spinOnce();
-
-	if(numRobot<1 || numRobot>4)
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-	else
-		Robot=robotTask[numRobot-1][1];
-
-	return Robot;
+	return etat;
 }
 
 int Robots::FinDeplacerPiece(int numRobot)
@@ -544,8 +540,36 @@ void Robots::Colorer(int num_robot,int position, int type) // type : 0=prise 1=p
 	sleep(1);
 }
 
-void Robots::DoTask(int num_robot, int position, int duree)
+void Robots::computeFromNumPoste(int num_poste, int tab[2])
 {
+	// tab[0]=num_robot  tab[1]=position
+	switch(num_poste)
+	{
+		case 1:
+			tab[0]=1;
+			tab[1]=4;
+			break;
+		case 2:
+			tab[0]=1;
+			tab[1]=1;
+			break;
+		case 3:
+			tab[0]=2;
+			tab[1]=1;
+			break;
+		case 4:
+			tab[0]=2;
+			tab[1]=4;
+			break;
+	}
+}
+
+void Robots::DoTask(int num_poste, int duree)
+{
+	int tab[2];
+	computeFromNumPoste(num_poste,tab);
+	int num_robot=tab[0];
+	int position=tab[1];
 	if(position==1)
 		robotTask[num_robot-1][0]=0;
 	if(position==4)
@@ -571,8 +595,4 @@ void Robots::AjouterProduit(int poste, int produit)
 	srv.request.choixPoste = poste;
 	srv.request.choixProduit = produit;
 	client.call(srv);
-	msg0.num_poste = poste;
-	//rappel, code produit A:14, B:24, C:34 etc.
-	msg0.num_produit = produit*10+4;
-	pubProductAdd.publish(msg0);
 }

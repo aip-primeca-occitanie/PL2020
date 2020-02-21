@@ -100,7 +100,6 @@ private:
 	ros::Subscriber planifControlerRobot;
 	ros::Subscriber sub_colorer;
 	ros::Subscriber sub_doTask;
-	ros::Subscriber sub_nouveau_produit;
 	ros::Subscriber sub_evacuer;
 	ros::Subscriber subStopTache;
 	ros::Subscriber subDeplacerPiece;

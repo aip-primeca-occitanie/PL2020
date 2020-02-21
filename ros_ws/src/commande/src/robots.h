@@ -16,11 +16,24 @@
 #include "commande_locale/Msg_AddProduct.h"
 #include "commande/DeplacerPieceMsg.h"
 
+// Etats robot
 #define HAUT		1
 #define BAS		-1
 #define FERMEE		1
 #define OUVERTE		-1
 #define EN_POSITION	1
+
+// Robots
+#define ROBOT_1 1
+#define ROBOT_2 2
+#define ROBOT_3 3
+#define ROBOT_4 4
+
+// Postes
+#define POSTE_1 1
+#define POSTE_2 2
+#define POSTE_3 3
+#define POSTE_4 4
 
 class Robots
 {
@@ -88,9 +101,9 @@ public:
 
 	void Colorer(int num_robot, int position, int type);
 	void RobotTransport(int num_robot, bool valeur);
-	void DoTask(int num_robot, int position, int duree);
-	int TaskPos1Etat(int num_robot);
-	int TaskPos4Etat(int num_robot);
+	void DoTask(int num_poste, int duree);
+	int IsTaskOver(int num_poste);
+	void computeFromNumPoste(int num_poste,int tab[2]);
 	int FinDeplacerPiece(int num_robot);
 	void Evacuer();
 	void AjouterProduit(int poste, int produit);

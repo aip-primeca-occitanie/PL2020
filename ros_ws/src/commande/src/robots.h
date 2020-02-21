@@ -53,6 +53,7 @@ private:
 	ros::Publisher pub_robot_transport3;
 	ros::Publisher pub_robot_transport4;
 	ros::Publisher pub_evacuer_piece;
+	ros::Publisher pubProductAdd;
 
 	ros::Subscriber sub_retourRobot1, sub_retourRobot2, sub_retourRobot3, sub_retourRobot4;
 

@@ -613,15 +613,15 @@ int Robot::computeTableId(int position)
 			break;
 		case 3:
 			if(position==1)
-				id=6;
-			else if(position==4)
 				id=7;
+			else if(position==4)
+				id=6;
 			break;
 		case 4:
 			if(position==1)
-				id=10;
-			else if(position==4)
 				id=9;
+			else if(position==4)
+				id=10;
 			break;
 	}
 
@@ -1170,13 +1170,11 @@ void Robot::stopTacheCallback(const std_msgs::Int32::ConstPtr& msg)
 //Initialisation des services, des publishers et des subscribers + Récupération des handles des robots
 void Robot::init(ros::NodeHandle noeud)
 {
-	string num_str;
 	string nom;
 	int numero_poste;
 	switch(num_robot){
 
 		case 1:
-			num_str="1";
 			nom="Table#1";
 			numero_poste=2;
 			poste_pos_1.init(nom,numero_poste);
@@ -1186,7 +1184,6 @@ void Robot::init(ros::NodeHandle noeud)
 			break;
 
 		case 2:
-			num_str="2";
 			nom="Table#3";
 			numero_poste=3;
 			poste_pos_1.init(nom,numero_poste);
@@ -1195,9 +1192,7 @@ void Robot::init(ros::NodeHandle noeud)
 			poste_pos_4.init(nom,numero_poste);
 			break;
 
-			// A verif num en dessous
 		case 3:
-			num_str="3";
 			nom="Table#6";
 			numero_poste=5;
 			poste_pos_1.init(nom,numero_poste);
@@ -1207,11 +1202,10 @@ void Robot::init(ros::NodeHandle noeud)
 			break;
 
 		case 4:
-			num_str="4";
-			nom="Table#10";
+			nom="Table#9";
 			numero_poste=7;
 			poste_pos_1.init(nom,numero_poste);
-			nom="Table#9";
+			nom="Table#10";
 			numero_poste=8;
 			poste_pos_4.init(nom,numero_poste);
 			break;
@@ -1264,11 +1258,11 @@ void Robot::init(ros::NodeHandle noeud)
 
 
 	//Publishers
-	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+num_str, 10);
+	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+to_string(num_robot), 10);
 	//pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+num_str,10);
 	//pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+num_str,10);
 	//pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
-	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande"+num_str, 10);
+	pub_retourCommande = noeud.advertise<std_msgs::Int32>("/commande/Simulation/retourCommande"+to_string(num_robot), 10);
 
 	pub_produitEvac = noeud.advertise<std_msgs::Int32MultiArray>("/commande/Simulation/produitEvac", 10);
 
@@ -1334,7 +1328,6 @@ void Robot::init(ros::NodeHandle noeud)
 void Robot::simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_getObjectHandle=msg->data;
-
 	repSim_getObjectHandle=true;
 }
 
@@ -1346,21 +1339,18 @@ void Robot::simSetJointStateCallback(const std_msgs::Byte::ConstPtr& msg)
 void Robot::simGetJointStateCallback(const sensor_msgs::JointState::ConstPtr& msg)
 {
 	valueSim_getJointState=msg->position[0];
-
 	repSim_getJointState=true;
 }
 
 void Robot::simGetTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 {
 	valueSim_getTime=msg->data;
-
 	repSim_getTime=true;
 }
 
 void Robot::simGetTimeUpdateCallback(const std_msgs::Float32::ConstPtr& msg)
 {
 	valueSim_getTimeUpdate=msg->data;
-
 	repSim_getTimeUpdate=true;
 }
 

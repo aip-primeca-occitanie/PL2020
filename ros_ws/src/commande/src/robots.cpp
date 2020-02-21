@@ -45,6 +45,7 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
 	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
 	pub_evacuer_piece=noeud.advertise<std_msgs::Byte>("/commande/Simulation/Evacuer",10);
+	pubProductAdd= noeud.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
 
 
 	//Retour des robots vers la commande
@@ -751,6 +752,22 @@ void Robots::computeFromNumPoste(int num_poste, int tab[2])
 			tab[0]=2;
 			tab[1]=4;
 			break;
+		case 5:
+			tab[0]=3;
+			tab[1]=4;
+			break;
+		case 6:
+			tab[0]=3;
+			tab[1]=1;
+			break;
+		case 7:
+			tab[0]=4;
+			tab[1]=1;
+			break;
+		case 8:
+			tab[0]=4;
+			tab[1]=4;
+			break;
 	}
 }
 
@@ -785,4 +802,9 @@ void Robots::AjouterProduit(int poste, int produit)
 	srv.request.choixPoste = poste;
 	srv.request.choixProduit = produit;
 	client.call(srv);
+
+	msg0.num_poste = poste;
+	//rappel, code produit A:14, B:24, C:34 etc.
+	msg0.num_produit = produit*10+4;
+	pubProductAdd.publish(msg0);
 }

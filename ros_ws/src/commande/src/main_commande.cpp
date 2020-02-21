@@ -33,7 +33,7 @@ int main(int argc, char **argv)
   	int code_arrivee;//dépend du produit et du poste sur lequel il apparait
 	int M[Nb_Place];
 	int Nb_Place_T1,Nb_Place_T2,Nb_Place_T3,Nb_Place_T4;
-	Nb_Place_T1=100;
+	Nb_Place_T1=150;
 
 	for(int i=0;i<Nb_Place;i++) M[i]=0;
 
@@ -112,9 +112,9 @@ int main(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////DEBUT PETRI///////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-		
+
 		// On veut simuler ça -> B : 1 3 : 13 15 : 1
-		// comme défini dans le fichier .config	
+		// comme défini dans le fichier .config
 		// Signifie:
 		//	- on fait apparaitre un produit B sur n'importe quel poste (pas n'importance)
 		//	- Sur ce produit on veut effectuer succesivement les tâches 1 et 3 (donc aux postes 1 et 3) pendant 13s et 15s
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 		//	- on crée 1 seul produit B avec cette enchainement de tâches
 		//
 		// -->	Pour que ce Petri fonctionne, on doit pouvoir savoir si le déplacement d'un robot est fini
-		//	donc j'ai ajouté dans les if l'état "robot.FinDeplacement(num_Robot)" comme modèle 
+		//	donc j'ai ajouté dans les if l'état "robot.FinDeplacement(num_Robot)" comme modèle
 
 		if (M[100]==1) // apparaitre produit B sur poste 3
 		{
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 			robot.AjouterProduit(3,2); // ajout produit n°2 (donc B) sur poste 3
 			M[101]++;
 		}
-		
+
 		if (M[101]==1 && capteur.get_CP(1)) // quand navette à proximité du poste 3, on le fait arrêter au niveau du poste
 		{
 			modif=1;
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 			M[103]++;
 		}
 
-		if (M[103]==1 /* && robot.FinDeplacement(2) */ ) // la navette repars du poste 3 avec le produit B
+		if (M[103]==1  && robot.FinDeplacerPiece(2) ) // la navette repars du poste 3 avec le produit B
 		{
 			modif=1;
 			M[103]--;
@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 			M[110]++;
 		}
 
-		if (M[110]==1 /* && robot.FinDeplacement(1) */) // robot 1 fais tache 1 pendant 4s
+		if (M[110]==1 && robot.FinDeplacerPiece(1)) // robot 1 fais tache 1 pendant 4s
 		{
 			modif=1;
 			M[110]--;
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 			M[112]++;
 		}
 
-		if (M[112]==1 /* && robot.FinDeplacement(1) */) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
+		if (M[112]==1 && robot.FinDeplacerPiece(1) ) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
 		{
 			modif=1;
 			M[112]--;

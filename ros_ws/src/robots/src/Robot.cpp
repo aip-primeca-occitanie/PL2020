@@ -730,12 +730,6 @@ void Robot::ColorerCallback(const robots::ColorMsg::ConstPtr& msg)//attention c'
 		for(int i=0; i<4; i++)
 			cout << "couleur[" << i << "]=" << couleur[i] << endl;
 
-		int produit_detecte=1;
-		if(msg->position==1)
-			poste_pos_1.ajouter_produit(produit_detecte);
-		else if(msg->position==4)
-			poste_pos_4.ajouter_produit(produit_detecte);
-
 		// colore le poste ou navette en pos 1 avec couleur en mémoire
 		if(msg->position==2 || msg->position==3) // Si navette
 		{
@@ -1098,18 +1092,6 @@ void Robot::update()
 	}
 }
 
-void Robot::ajouter_produitCallback(commande_locale::Msg_AddProduct msg)
-{
-	if (poste_pos_1.get_numero()==msg.num_poste)
-	{
-		poste_pos_1.ajouter_produit(msg.num_produit); //
-	}
-	if (poste_pos_4.get_numero()==msg.num_poste)
-	{
-		poste_pos_4.ajouter_produit(msg.num_produit); //
-	}
-}
-
 void Robot::transport(bool valeur)
 {
 	std_msgs::Bool msg;
@@ -1268,7 +1250,7 @@ void Robot::init(ros::NodeHandle noeud)
 	pub_tache_finie=noeud.advertise<robots::TacheFinieMsg>("/commande/Simulation/TacheFinie",10);
 
 	//Subscribers
-	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this); // Ici ont récupère ce qui a été publié dans le topic par d'autre programme (ici c'est le programme robots
+	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this);
 	planifSendJoints = noeud.subscribe("/commande/Simulation/SendJointsRobot",10,&Robot::SendJointsCallback,this);
 	planifFermerPince = noeud.subscribe("/commande/Simulation/FermerPinceRobot",10,&Robot::FermerPinceCallback,this);
 	planifOuvrirPince = noeud.subscribe("/commande/Simulation/OuvrirPinceRobot",10,&Robot::OuvrirPinceCallback,this);
@@ -1277,7 +1259,6 @@ void Robot::init(ros::NodeHandle noeud)
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras",10,&Robot::ControlerRobotCallback,this);
 	sub_colorer = noeud.subscribe("/commande/Simulation/Colorer",10,&Robot::ColorerCallback,this);
 	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
-	sub_nouveau_produit= noeud.subscribe("/commande_locale/AddProduct", 10, &Robot::ajouter_produitCallback,this);
 	sub_evacuer=noeud.subscribe("/commande/Simulation/Evacuer",10,&Robot::Evacuer,this);
 	subStopTache=noeud.subscribe("/commande/Simulation/Robot"+to_string(num_robot)+"/StopTache",10,&Robot::stopTacheCallback,this);
 

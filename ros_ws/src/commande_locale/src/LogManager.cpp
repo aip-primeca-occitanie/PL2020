@@ -5,6 +5,7 @@
 #include <std_msgs/Byte.h>
 #include <std_msgs/Float32.h>
 #include "commande_locale/Msg_AddProduct.h"
+#include "commande_locale/Msg_Erreur.h"
 #include "robots/TacheFinieMsg.h"
 #include <iostream>
 #include <fstream>
@@ -62,18 +63,53 @@ void NewProductCallback(commande_locale::Msg_AddProduct msg)
 	monFlux<<endl;
 }
 
-void ErreurCallback(const std_msgs::Int32::ConstPtr& msg)
+void ErreurCallback(const commande_locale::Msg_Erreur::ConstPtr& msg)
 {
-	if (msg->data!=66)//si ce n'est pas le code erreur ecrasement
+	switch(msg->code)
 	{
-		monFlux<<"OperationPosteVide: ";
-		monFlux<<msg->data;
-		monFlux<<endl;
-	}
-	else
-	{
-		monFlux<<"EcrasementProduit";
-		monFlux<<endl;
+		// Operation sur un poste vide
+		case 1:	
+			monFlux<<"OperationPosteVide: ";
+			monFlux<<msg->n_poste;
+			monFlux<<endl;
+
+			//a supprimer plus tard
+			ROS_INFO("ERREUR poste Vide ide ide");
+			ROS_INFO("	sur le poste: %d",msg->n_poste);
+			break;
+
+		// Operation sur un produit plein
+		case 2:	
+			monFlux<<"OperationProduitPlein: ";
+			monFlux<<msg->n_poste;
+			monFlux<<endl;
+
+			//a supprimer plus tard
+			ROS_INFO("ERREUR Operation sur un produit plein");
+			ROS_INFO("	sur le poste: %d",msg->n_poste);
+			break;
+
+		// Manipulation d'un produit en cours de traitement
+		case 3:
+			monFlux<<"ManipulationEnTraitement: ";
+			monFlux<<msg->n_poste;
+			monFlux<<endl;
+
+			//a supprimer plus tard
+			ROS_INFO("ERREUR Manipulation produit en traitement");
+			ROS_INFO("	sur le poste: %d",msg->n_poste);
+			break;
+
+		// Ecrasement d'un produit (ajout produit ou deplacement)
+		case 66:
+			monFlux<<"EcrasementProduit:";
+			monFlux<<msg->n_poste; // num du robot
+			monFlux<<endl;
+
+			//a supprimer plus tard
+			ROS_INFO("ERREUR On a ecrase un produit : c'est mal");
+			ROS_INFO("	au robot %d", msg->n_poste);
+			break;
 	}
 }
 
@@ -113,6 +149,8 @@ int main(int argc, char **argv)
 	sleep(2);
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
+
+	ROS_INFO("LogManager initialise\n");
 
 	while (ros::ok())
 	{

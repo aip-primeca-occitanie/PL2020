@@ -18,6 +18,7 @@
 #include <sensor_msgs/JointState.h>
 #include <robots/Msg_numrobot.h>
 #include <robots/TacheFinieMsg.h>
+#include <commande_locale/Msg_Erreur.h>
 
 #include <vector>
 #include <sstream>
@@ -136,7 +137,7 @@ private:
 	std_msgs::Int32 robotBras;
 	std_msgs::Int32 robotPince;
 	std_msgs::Int32 retour;
-	std_msgs::Int32 msg_erreur;
+	commande_locale::Msg_Erreur msg_erreur;
 
 
 	std_msgs::Int32MultiArray msg_log_couleur;

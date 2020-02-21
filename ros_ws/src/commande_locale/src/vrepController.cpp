@@ -117,7 +117,8 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 	pubStopTacheRobot1 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot1/StopTache",100);
 	pubStopTacheRobot2 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot2/StopTache",100);
 
-	pub_erreur_log = n.advertise<std_msgs::Int32>("/commande/Simulation/Erreur_log",100);
+
+	pub_erreur_log = n.advertise<commande_locale::Msg_Erreur>("/commande/Simulation/Erreur_log",100);
 
 	sleep(1);
 }
@@ -189,8 +190,9 @@ void vrepController::addProduct(int produit, int poste)
 	if(couleurLue!=0)
 	{
 		ROS_ERROR("ERREUR : On ecrase un produit !!");
-		std_msgs::Int32 msgErreur;
-		msgErreur.data=66; // 66=code ecrasement de produit
+		commande_locale::Msg_Erreur msgErreur;
+		msgErreur.code=66; // 66=code ecrasement de produit
+		msgErreur.n_poste=poste;
 		pub_erreur_log.publish(msgErreur);
 
 		int tab[2]; // [0]=num_robot, [1]=posTache

@@ -22,6 +22,7 @@
 #include <std_msgs/Byte.h>
 #include <std_msgs/Int32MultiArray.h>
 #include <shuttles/msgShuttleChange.h>
+#include <commande_locale/Msg_Erreur.h>
 
 #include "commande_locale/Msg_Color.h"
 

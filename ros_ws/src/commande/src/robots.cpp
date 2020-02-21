@@ -26,9 +26,9 @@ Robots::Robots(ros::NodeHandle noeud)
 		robotPosition[i]=0;
 		robotPince[i]=0;
 
-
 		robotTask[i][0]=0;
 		robotTask[i][1]=0;
+		robotMacroDeplacement[i]=1;
 
 		bras[i]=-10;
 		pince[i]=-10;
@@ -46,13 +46,12 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
 	pub_evacuer_piece=noeud.advertise<std_msgs::Byte>("/commande/Simulation/Evacuer",10);
 	pubProductAdd= noeud.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
+	pub_deplacer_piece= noeud.advertise<commande::DeplacerPieceMsg>("/commande/Simulation/DeplacerPiece",10);
+
 
 
 	//Retour des robots vers la commande
-	sub_retourRobot1 = noeud.subscribe("/commande/Simulation/retourCommande1", 100, &Robots::RetourRobot1Callback,this);
-	sub_retourRobot2 = noeud.subscribe("/commande/Simulation/retourCommande2", 100, &Robots::RetourRobot2Callback,this);
-	sub_retourRobot3 = noeud.subscribe("/commande/Simulation/retourCommande3", 100, &Robots::RetourRobot3Callback,this);
-	sub_retourRobot4 = noeud.subscribe("/commande/Simulation/retourCommande4", 100, &Robots::RetourRobot4Callback,this);
+	sub_retourRobot = noeud.subscribe("/commande/Simulation/retourCommande", 100, &Robots::RetourRobotCallback,this);
 
 	client = noeud.serviceClient<commande_locale::SrvAddProduct>("srv_add_product");
 
@@ -339,249 +338,66 @@ void Robots::MonterBras(int numRobot)
 
 /*** Retour des robots ***/
 //Callback pour le retour des informations relatives au robot 1
-void Robots::RetourRobot1Callback(const std_msgs::Int32::ConstPtr& msg)
+void Robots::RetourRobotCallback(const robots::Msg_numrobot::ConstPtr& msg)
 {
-	int retour;
-	retour=msg->data;
-
-	switch(retour)
+	switch(msg->data)
 	{
 		case 0:
-			cout <<  BOLDCYAN << "Robot 1 initialise" << RESET << endl;
-			robotInit[0]=1;
+			cout <<  BOLDCYAN << "Robot" << msg->num_robot << "initialise"<< RESET << endl;
+			robotInit[msg->num_robot-1]=1;
 			break;
 
 		case 1:
-			cout <<  BOLDCYAN << "Mouvement non effectue pour le robot 1" << RESET << endl;
-			robotPosition[0]=0;
+			cout <<  BOLDCYAN << "Mouvement non effectue pour le robot " << msg->num_robot << RESET << endl;
+			robotPosition[msg->num_robot-1]=0;
 			break;
 
 		case 2:
-			cout <<  BOLDCYAN << "Robot 1 en position" << RESET << endl;
-			robotPosition[0]=EN_POSITION;
+			cout <<  BOLDCYAN << "Robot" << msg->num_robot << "en position" << RESET << endl;
+			robotPosition[msg->num_robot-1]=EN_POSITION;
 			break;
 
 		case 3:
-			cout <<  BOLDCYAN << "Bras bloque pour le robot 1" << RESET << endl;
-			robotBras[0] = 0;
+			cout <<  BOLDCYAN << "Bras bloque pour le robot " << msg->num_robot << RESET << endl;
+			robotBras[msg->num_robot-1] = 0;
 			break;
 
 		case 4:
-			cout << BOLDCYAN << "Bras descendu pour le robot 1" << RESET << endl;
-			robotBras[0] = BAS;
+			cout << BOLDCYAN << "Bras descendu pour le robot " << msg->num_robot << RESET << endl;
+			robotBras[msg->num_robot-1] = BAS;
 			break;
 
 		case 5:
-			cout << BOLDCYAN << "Bras monte pour le robot 1" << RESET << endl;
-			robotBras[0] = HAUT;
+			cout << BOLDCYAN << "Bras monte pour le robot " << msg->num_robot << RESET << endl;
+			robotBras[msg->num_robot-1] = HAUT;
 			break;
 
 		case 6:
-			cout << BOLDCYAN << "Pince fermee pour le robot 1" << RESET << endl;
-			robotPince[0] = FERMEE;
+			cout << BOLDCYAN << "Pince fermee pour le robot " << msg->num_robot << RESET << endl;
+			robotPince[msg->num_robot-1] = FERMEE;
 			break;
 
 		case 7:
-			cout << BOLDCYAN << "Pince ouverte pour le robot 1" << RESET << endl;
-			robotPince[0] = OUVERTE;
+			cout << BOLDCYAN << "Pince ouverte pour le robot " << msg->num_robot << RESET << endl;
+			robotPince[msg->num_robot-1] = OUVERTE;
 			break;
 
 		case 8:
-			cout << BOLDCYAN << "Robot 1 : Tache du poste en position 1 terminée" << RESET << endl;
-			robotTask[0][0]=1;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Tache du poste en position 1 terminée" << RESET << endl;
+			robotTask[msg->num_robot-1][0]=1;
 			break;
 
 		case 9:
-			cout << BOLDCYAN << "Robot 1 : Tache du poste en position 4 terminée" << RESET << endl;
-			robotTask[0][1]=1;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Tache du poste en position 4 terminée" << RESET << endl;
+			robotTask[msg->num_robot-1][1]=1;
 			break;
 
-	}
-}
-
-//Callback pour le retour des informations relatives au robot 2
-void Robots::RetourRobot2Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	switch(retour)
-	{
-		case 0:
-			cout <<  BOLDCYAN << "Robot 2 initialise" << RESET << endl;
-			robotInit[1]=1;
-			break;
-
-		case 1:
-			cout <<  BOLDCYAN << "Mouvement non effectue pour le robot 2" << RESET << endl;
-			robotPosition[1]=0;
-			break;
-
-		case 2:
-			cout <<  BOLDCYAN << "Robot 2 en position" << RESET << endl;
-			robotPosition[1]=EN_POSITION;
-			break;
-
-		case 3:
-			cout <<  BOLDCYAN << "Bras bloque pour le robot 2" << RESET << endl;
-			robotBras[1] = 0;
-			break;
-
-		case 4:
-			cout << BOLDCYAN << "Bras descendu pour le robot 2" << RESET << endl;
-			robotBras[1] = BAS;
-			break;
-
-		case 5:
-			cout << BOLDCYAN << "Bras monte pour le robot 2" << RESET << endl;
-			robotBras[1] = HAUT;
-			break;
-
-		case 6:
-			cout << BOLDCYAN << "Pince fermee pour le robot 2" << RESET << endl;
-			robotPince[1] = FERMEE;
-			break;
-
-		case 7:
-			cout << BOLDCYAN << "Pince ouverte pour le robot 2" << RESET << endl;
-			robotPince[1] = OUVERTE;
-			break;
-
-		case 8:
-			cout << BOLDCYAN << "Robot 2 : Tache du poste en position 1 terminée" << RESET << endl;
-			robotTask[1][0]=1;
-			break;
-
-		case 9:
-			cout << BOLDCYAN << "Robot 2 : Tache du poste en position 4 terminée" << RESET << endl;
-			robotTask[1][1]=1;
+		case 10:
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : FIN MACRO DEPLACER PIECE" << RESET << endl;
+			robotMacroDeplacement[msg->num_robot-1]=1;
 			break;
 	}
 }
-
-
-//Callback pour le retour des informations relatives au robot 3
-void Robots::RetourRobot3Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	switch(retour)
-	{
-		case 0:
-			cout <<  BOLDCYAN << "Robot 3 initialise" << RESET << endl;
-			robotInit[2]=1;
-			break;
-
-		case 1:
-			cout <<  BOLDCYAN << "Mouvement non effectue pour le robot 3" << RESET << endl;
-			robotPosition[2]=0;
-			break;
-
-		case 2:
-			cout <<  BOLDCYAN << "Robot 3 en position" << RESET << endl;
-			robotPosition[2]=EN_POSITION;
-			break;
-
-		case 3:
-			cout <<  BOLDCYAN << "Bras bloque pour le robot 3" << RESET << endl;
-			robotBras[2] = 0;
-			break;
-
-		case 4:
-			cout << BOLDCYAN << "Bras descendu pour le robot 3" << RESET << endl;
-			robotBras[2] = BAS;
-			break;
-
-		case 5:
-			cout << BOLDCYAN << "Bras monte pour le robot 3" << RESET << endl;
-			robotBras[2] = HAUT;
-			break;
-
-		case 6:
-			cout << BOLDCYAN << "Pince fermee pour le robot 3" << RESET << endl;
-			robotPince[2] = FERMEE;
-			break;
-
-		case 7:
-			cout << BOLDCYAN << "Pince ouverte pour le robot 3" << RESET << endl;
-			robotPince[2] = OUVERTE;
-			break;
-
-		case 8:
-			cout << BOLDCYAN << "Robot 3 : Tache du poste en position 1 terminée" << RESET << endl;
-			robotTask[2][0]=1;
-			break;
-
-		case 9:
-			cout << BOLDCYAN << "Robot 3 : Tache du poste en position 4 terminée" << RESET << endl;
-			robotTask[2][1]=1;
-			break;
-	}
-}
-
-
-//Callback pour le retour des informations relatives au robot 4
-void Robots::RetourRobot4Callback(const std_msgs::Int32::ConstPtr& msg)
-{
-	int retour;
-	retour=msg->data;
-
-	switch(retour)
-	{
-		case 0:
-			cout <<  BOLDCYAN << "Robot 4 initialise" << RESET << endl;
-			robotInit[3]=1;
-			break;
-
-		case 1:
-			cout <<  BOLDCYAN << "Mouvement non effectue pour le robot 4" << RESET << endl;
-			robotPosition[3]=0;
-			break;
-
-		case 2:
-			cout <<  BOLDCYAN << "Robot 4 en position" << RESET << endl;
-			robotPosition[3]=EN_POSITION;
-			break;
-
-		case 3:
-			cout <<  BOLDCYAN << "Bras bloque pour le robot 4" << RESET << endl;
-			robotBras[3] = 0;
-			break;
-
-		case 4:
-			cout << BOLDCYAN << "Bras descendu pour le robot 4" << RESET << endl;
-			robotBras[3] = BAS;
-			break;
-
-		case 5:
-			cout << BOLDCYAN << "Bras monte pour le robot 4" << RESET << endl;
-			robotBras[3] = HAUT;
-			break;
-
-		case 6:
-			cout << BOLDCYAN << "Pince fermee pour le robot 4" << RESET << endl;
-			robotPince[3] = FERMEE;
-			break;
-
-		case 7:
-			cout << BOLDCYAN << "Pince ouverte pour le robot 4" << RESET << endl;
-			robotPince[3] = OUVERTE;
-			break;
-
-		case 8:
-			cout << BOLDCYAN << "Robot 4 : Tache du poste en position 1 terminée" << RESET << endl;
-			robotTask[3][0]=1;
-			break;
-
-		case 9:
-			cout << BOLDCYAN << "Robot 4 : Tache du poste en position 4 terminée" << RESET << endl;
-			robotTask[3][1]=1;
-			break;
-	}
-}
-
-
 
 //Fonction permettant de savoir si le robot choisi est initalisé
 int Robots::RobotInitialise(int numRobot)
@@ -689,35 +505,28 @@ int Robots::IsTaskOver(int num_poste)
 	return etat;
 }
 
+int Robots::FinDeplacerPiece(int numRobot)
+{
+	int Etat=-1;
+	if(numRobot<1 || numRobot>4)
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+	else
+		Etat=robotMacroDeplacement[numRobot-1];
+
+	return Etat;
+}
+
+
 //Macro-fonction. Utilise les blocs élémentaires définis plus haut
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
 	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0))
 	{
-		EnvoyerPosition(num_robot,positionA);
-		while(RobotEnPosition(num_robot)!=EN_POSITION){usleep(100000);};
-		DescendreBras(num_robot);
-		while(BrasEnPosition(num_robot)!=BAS){usleep(100000);};
-
-		// Prise de pièce
-		Colorer(num_robot,positionA,0);//le robot a rien en mémoire, il décolore
-		FermerPince(num_robot);
-		while(PinceEnPosition(num_robot)!=FERMEE){usleep(100000);};
-
-		MonterBras(num_robot);
-		while(BrasEnPosition(num_robot)!=HAUT){usleep(100000);};
-		EnvoyerPosition(num_robot,positionB);
-		while(RobotEnPosition(num_robot)!=EN_POSITION){usleep(100000);};
-		DescendreBras(num_robot);
-		while(BrasEnPosition(num_robot)!=BAS){usleep(100000);};
-
-		// Pose de pièce
-		Colorer(num_robot,positionB,1);//le robot a la couleur du produit en memoire, il colore
-		OuvrirPince(num_robot);
-		while(PinceEnPosition(num_robot)!=OUVERTE){usleep(100000);};
-
-		MonterBras(num_robot);
-		while(BrasEnPosition(num_robot)!=HAUT){usleep(100000);};
+		robotMacroDeplacement[num_robot-1]=0;
+		deplacer_msg.num_robot = num_robot;
+		deplacer_msg.positionA = positionA;
+		deplacer_msg.positionB = positionB;
+		pub_deplacer_piece.publish(deplacer_msg);
 	}
 }
 
@@ -739,7 +548,7 @@ void Robots::computeFromNumPoste(int num_poste, int tab[2])
 		case 1:
 			tab[0]=1;
 			tab[1]=4;
-			break;	
+			break;
 		case 2:
 			tab[0]=1;
 			tab[1]=1;

@@ -19,7 +19,6 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "commande");
 	ros::NodeHandle noeud;
 
-
 	Commande cmd(noeud,argv[0]);
 	Robots robot(noeud);
 	AigsInterface aiguillage(noeud);
@@ -33,7 +32,7 @@ int main(int argc, char **argv)
   	int code_arrivee;//dépend du produit et du poste sur lequel il apparait
 	int M[Nb_Place];
 	int Nb_Place_T1,Nb_Place_T2,Nb_Place_T3,Nb_Place_T4;
-	Nb_Place_T1=100;
+	Nb_Place_T1=150;
 
 	for(int i=0;i<Nb_Place;i++) M[i]=0;
 
@@ -43,6 +42,7 @@ int main(int argc, char **argv)
 
 	bool modif=1;
 
+	usleep(3000000);
 
 	while (ros::ok())
 	{
@@ -112,9 +112,9 @@ int main(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////DEBUT PETRI///////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
-		
+
 		// On veut simuler ça -> B : 1 3 : 13 15 : 1
-		// comme défini dans le fichier .config	
+		// comme défini dans le fichier .config
 		// Signifie:
 		//	- on fait apparaitre un produit B sur n'importe quel poste (pas n'importance)
 		//	- Sur ce produit on veut effectuer succesivement les tâches 1 et 3 (donc aux postes 1 et 3) pendant 13s et 15s
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 		//	- on crée 1 seul produit B avec cette enchainement de tâches
 		//
 		// -->	Pour que ce Petri fonctionne, on doit pouvoir savoir si le déplacement d'un robot est fini
-		//	donc j'ai ajouté dans les if l'état "robot.FinDeplacement(num_Robot)" comme modèle 
+		//	donc j'ai ajouté dans les if l'état "robot.FinDeplacement(num_Robot)" comme modèle
 
 		if (M[100]==1) // apparaitre produit B sur poste 3
 		{
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
 			robot.AjouterProduit(POSTE_3,2); // ajout produit n°2 (donc B) sur poste 3
 			M[101]++;
 		}
-		
+
 		if (M[101]==1 && capteur.get_CP(1)) // quand navette à proximité du poste 3, on le fait arrêter au niveau du poste
 		{
 			modif=1;
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 			M[103]++;
 		}
 
-		if (M[103]==1 /* && robot.FinDeplacement(2) */ ) // la navette repars du poste 3 avec le produit B, on fait tourner l'aiguillage 10
+		if (M[103]==1  && robot.FinDeplacerPiece(2) ) // la navette repars du poste 3 avec le produit B
 		{
 			modif=1;
 			M[103]--;
@@ -164,6 +164,7 @@ int main(int argc, char **argv)
 			modif=1;
 			M[104]--;
 			aiguillage.Gauche(3);
+			robot.AjouterProduit(POSTE_2,6);
 			aiguillage.Gauche(10); // on le met ici car pas de capteur de position entre aiguillage 3 et 10
 			M[105]++;
 		}
@@ -216,7 +217,8 @@ int main(int argc, char **argv)
 			M[110]++;
 		}
 
-		if (M[110]==1 /* && robot.FinDeplacement(1) */) // On fait la tache du poste 1 pendant 4s
+		if (M[110]==1 && robot.FinDeplacerPiece(1)) // robot 1 fais tache 1 pendant 4s
+
 		{
 			modif=1;
 			M[110]--;
@@ -232,7 +234,7 @@ int main(int argc, char **argv)
 			M[112]++;
 		}
 
-		if (M[112]==1 /* && robot.FinDeplacement(1) */) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
+		if (M[112]==1 && robot.FinDeplacerPiece(ROBOT_1) ) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
 		{
 			modif=1;
 			M[112]--;
@@ -256,11 +258,11 @@ int main(int argc, char **argv)
 			M[117]++;
 		}
 
-		if (M[117]==1 /* && robot.FinDeplacement(2) */) // On fait la tache du poste 4 pendant 5s
+		if (M[117]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On fait la tache du poste 4 pendant 5s
 		{
 			modif=1;
 			M[117]--;
-			robot.DoTask(POSTE_4,5); 
+			robot.DoTask(POSTE_4,5);
 			M[118]++;
 		}
 
@@ -272,11 +274,11 @@ int main(int argc, char **argv)
 			M[122]++;
 		}
 
-		if (M[122]==1 /* && robot.FinDeplacement(2) */) // On évacue le produit final et redémarre la navette
+		if (M[122]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On évacue le produit final et redémarre la navette
 		{
 			modif=1;
 			M[122]--;
-			robot.Evacuer(); // Evacue le produit 
+			robot.Evacuer(); // Evacue le produit
 			cmd.Ouvrir_PS(3); // la navette repart
 			M[123]++;
 		}

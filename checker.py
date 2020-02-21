@@ -359,7 +359,7 @@ for i in range(6):
 
 if test == 1:
     for i in range(6):
-        if nb_produit[P-1] != 0:
+        if nb_produit[i] != 0:
             print("Le produit {} a été assemblé {} fois avec l'empilement de tâche {}".format(i+1, nb_produit_log[i], production[i][1:4]))
             print("Le temps moyen d'assemblage de ce produit est de {}s".format(produit_duree[i]))
 print(' ')

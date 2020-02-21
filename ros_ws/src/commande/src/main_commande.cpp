@@ -19,7 +19,6 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "commande");
 	ros::NodeHandle noeud;
 
-
 	Commande cmd(noeud,argv[0]);
 	Robots robot(noeud);
 	AigsInterface aiguillage(noeud);
@@ -43,6 +42,7 @@ int main(int argc, char **argv)
 
 	bool modif=1;
 
+	usleep(3000000);
 
 	while (ros::ok())
 	{
@@ -164,6 +164,7 @@ int main(int argc, char **argv)
 			modif=1;
 			M[104]--;
 			aiguillage.Gauche(3);
+			robot.AjouterProduit(POSTE_2,6);
 			aiguillage.Gauche(10); // on le met ici car pas de capteur de position entre aiguillage 3 et 10
 			M[105]++;
 		}
@@ -233,7 +234,7 @@ int main(int argc, char **argv)
 			M[112]++;
 		}
 
-		if (M[112]==1 && robot.FinDeplacerPiece(1) ) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
+		if (M[112]==1 && robot.FinDeplacerPiece(ROBOT_1) ) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
 		{
 			modif=1;
 			M[112]--;
@@ -257,7 +258,7 @@ int main(int argc, char **argv)
 			M[117]++;
 		}
 
-		if (M[117]==1 /* && robot.FinDeplacement(2) */) // On fait la tache du poste 4 pendant 5s
+		if (M[117]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On fait la tache du poste 4 pendant 5s
 		{
 			modif=1;
 			M[117]--;
@@ -273,7 +274,7 @@ int main(int argc, char **argv)
 			M[122]++;
 		}
 
-		if (M[122]==1 /* && robot.FinDeplacement(2) */) // On évacue le produit final et redémarre la navette
+		if (M[122]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On évacue le produit final et redémarre la navette
 		{
 			modif=1;
 			M[122]--;

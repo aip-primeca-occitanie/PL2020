@@ -730,12 +730,6 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 	for(int i=0; i<4; i++)
 		cout << "couleur[" << i << "]=" << couleur[i] << endl;
 
-	int produit_detecte=1;
-	if(position==1)
-		poste_pos_1.ajouter_produit(produit_detecte);
-	else if(position==4)
-		poste_pos_4.ajouter_produit(produit_detecte);
-
 	// colore le poste ou navette en pos 1 avec couleur en mémoire
 	if(position==2 || position==3) // Si navette
 	{

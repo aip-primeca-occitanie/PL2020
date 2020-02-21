@@ -11,7 +11,6 @@
 #ifndef IN_OUT_CONTROLLER
 #define IN_OUT_CONTROLLER
 
-#include "configuration.h"
 #include "vrepController.h"
 
 #include <ros/ros.h>
@@ -27,7 +26,6 @@ class inOutController
 {
 private:
 	vrepController* vrepServiceAcces;
-	Configuration* configuration;
 
 	ros::Publisher VREPSwitchControllerRight;
 	ros::Publisher VREPSwitchControllerLeft;
@@ -42,14 +40,13 @@ private:
 	ros::Subscriber planifSubSwitchState;
 	ros::Subscriber planifSubStopState;
 	ros::Subscriber planifSubPinState;
-	ros::Subscriber subScheduler;
 
 	commande_locale::Msg_StopControl StopControl;
 	commande_locale::Msg_PinControl PinControl;
 	commande_locale::Msg_SwitchControl SwitchControl;
 	commande_locale::Msg_SensorState SensorState;
 public:
-	inOutController(vrepController* vrepSA, Configuration* config);
+	inOutController(vrepController* vrepSA);
 	void init(ros::NodeHandle nh);
 	// Sensors
 	void SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg);

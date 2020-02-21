@@ -65,7 +65,7 @@ class vrepController
 		std_msgs::Int32MultiArray msgSim_changeColor;
 		ros::Subscriber subSim_changeColor;
 		bool repSim_changeColor;
-	
+
 		// GetColor
 		ros::Publisher pubSim_getColor;
 		std_msgs::String msgSim_getColor;
@@ -81,7 +81,6 @@ class vrepController
 		ros::Publisher pubStopTacheRobot1;
 		ros::Publisher pubStopTacheRobot2;
 
-		int nShuttleF;
 		std::string SimulationFileName;
 
 		ros::Rate* loop_rate;

@@ -8,7 +8,7 @@
 	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -e"/>
 
 
-    <node name="shuttleManager" pkg="shuttles" type="main_ShuttleManager" output="screen" launch-prefix="xterm -e"/>
-    <node name="log_manager" pkg="commande_locale" type="log_manager" output="screen" launch-prefix="xterm -e"/>
+	<node name="shuttleManager" pkg="shuttles" type="main_ShuttleManager" output="screen" launch-prefix="xterm -e"/>
+	<node name="log_manager" pkg="commande_locale" type="log_manager" output="screen" launch-prefix="xterm -e"/>
 
 </launch>

@@ -43,15 +43,8 @@ void ProduitEvacCallback(std_msgs::Int32MultiArray msg)
 	}
 	monFlux<<fixed<<setprecision(2)<<" :"<<temps;
 	monFlux<<endl;
-
-	//a supprimer plus tard
-	ROS_INFO("Evacuation sion sion");
-	for (int i=0;i<4;i++)
-	{
-		couleur[i]=msg.data[i];
-		ROS_INFO("Etage %d : %d",i,couleur[i]);
-	}
 }
+
 void NewProductCallback(commande_locale::Msg_AddProduct msg)
 {
 	ros::Rate loop_rate(25);
@@ -68,10 +61,6 @@ void NewProductCallback(commande_locale::Msg_AddProduct msg)
 	monFlux<<msg.num_produit;
 	monFlux<<fixed<<setprecision(2)<<" :"<<temps;
 	monFlux<<endl;
-
-	//a supprimer plus tard
-	ROS_INFO("Add Product tuct tuct");
-	ROS_INFO("NewProduct: %d",msg.num_produit);
 }
 
 void ErreurCallback(const commande_locale::Msg_Erreur::ConstPtr& msg)
@@ -131,10 +120,6 @@ void TachefinieCallback(const robots::TacheFinieMsg::ConstPtr& msg)
 	monFlux<<": "<<msg->num_poste;
 	monFlux<<": "<<msg->duree;
 	monFlux<<endl;
-
-	//a supprimer plus tard
-	ROS_INFO("Tache finie nie nie");
-	ROS_INFO("sur le poste: %d, le produit: %d, pendant la duree : %d",msg->num_poste, msg->num_produit, msg->duree);
 }
 
 void getTimeCallback(const std_msgs::Float32::ConstPtr& msg)
@@ -151,15 +136,10 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "log_manager");
 	ros::NodeHandle nh;
 
-	ros::Subscriber subTacheFinie;
-	ros::Subscriber subProduitEvac;
-	ros::Subscriber subNewProduit;
-	ros::Subscriber subErreur;
-
-	subTacheFinie = nh.subscribe("/commande/Simulation/TacheFinie", 1, &TachefinieCallback);
-	subNewProduit = nh.subscribe("/commande_locale/AddProduct", 1, &NewProductCallback);
-	subProduitEvac = nh.subscribe("/commande/Simulation/produitEvac", 1, &ProduitEvacCallback);
-	subErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurCallback);
+	ros::Subscriber subTacheFinie = nh.subscribe("/commande/Simulation/TacheFinie", 1, &TachefinieCallback);
+	ros::Subscriber subProduitEvac = nh.subscribe("/commande/Simulation/produitEvac", 1, &ProduitEvacCallback);
+	ros::Subscriber subNewProduit = nh.subscribe("/commande_locale/AddProduct", 1, &NewProductCallback);
+	ros::Subscriber subErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurCallback);
 
 	// GetTime VREP
 	pubSim_getTime=nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/LogManager/GetTime",100);
@@ -167,6 +147,7 @@ int main(int argc, char **argv)
 	repSim_getTime=false;
 
 	sleep(2);
+
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	ROS_INFO("LogManager initialise\n");

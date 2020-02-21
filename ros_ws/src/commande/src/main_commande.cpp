@@ -39,8 +39,10 @@ int main(int argc, char **argv)
 
 	M[50]=1;//Robot 1 libre
 	M[250]=1;//Robot 2 libre
+	M[100]=1; // initialisation
 
 	bool modif=1;
+
 
 	while (ros::ok())
 	{
@@ -110,8 +112,169 @@ int main(int argc, char **argv)
 ////////////////////////////////////////////////////////////////////////////////
 //////////////////////////DEBUT PETRI///////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
+		
+		// On veut simuler ça -> B : 1 3 : 13 15 : 1
+		// comme défini dans le fichier .config	
+		// Signifie:
+		//	- on fait apparaitre un produit B sur n'importe quel poste (pas n'importance)
+		//	- Sur ce produit on veut effectuer succesivement les tâches 1 et 3 (donc aux postes 1 et 3) pendant 13s et 15s
+		//	- une des navettes va nous servir à faire passer le produit d'un poste à l'autre
+		//	- on crée 1 seul produit B avec cette enchainement de tâches
+		//
+		// -->	Pour que ce Petri fonctionne, on doit pouvoir savoir si le déplacement d'un robot est fini
+		//	donc j'ai ajouté dans les if l'état "robot.FinDeplacement(num_Robot)" comme modèle 
 
-		if (M[15]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
+		if (M[100]==1) // apparaitre produit B sur poste 3
+		{
+			modif=1;
+			M[100]--;
+			robot.AjouterProduit(3,2); // ajout produit n°2 (donc B) sur poste 3
+			M[101]++;
+		}
+		
+		if (M[101]==1 && capteur.get_CP(1)) // quand navette à proximité du poste 3, on le fait arrêter au niveau du poste
+		{
+			modif=1;
+			M[101]--;
+			cmd.Stop_PS(2);
+			M[102]++;
+		}
+
+		if (M[102]==1 && capteur.get_PS(2)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
+		{
+			modif=1;
+			M[102]--;
+			robot.DeplacerPiece(2,1,2);
+			M[103]++;
+		}
+
+		if (M[103]==1 /* && robot.FinDeplacement(2) */ ) // la navette repars du poste 3 avec le produit B
+		{
+			modif=1;
+			M[103]--;
+			cmd.Ouvrir_PS(2);
+			aiguillage.Droite(2);
+			cmd.Stop_PS(6);
+			cmd.Stop_PS(19);
+			M[104]++;
+		}
+
+		if (M[104]==1 && capteur.get_PS(6)) // On dirige la navette vers le poste 1, on met à droite l'aiguillage n°2
+		{
+			modif=1;
+			M[104]--;
+			aiguillage.Gauche(3);
+			aiguillage.Gauche(10); // on le met ici car pas de capteur de position entre aiguillage 3 et 10
+			M[105]++;
+		}
+
+		if (M[105]==1 && capteur.get_DG(3) && capteur.get_DG(10)) // On dirige la navette vers le poste 1, on met à gauche l'aiguillage n°3 et gauche aiguillage 10
+		{
+			modif=1;
+			M[105]--;
+			cmd.Ouvrir_PS(6);
+			M[106]++;
+			M[108]++;
+		}
+
+		if (M[106]==1 && capteur.get_PS(20))
+		{
+			modif=1;
+			M[106]--;
+			aiguillage.Droite(10);
+			M[107]++;
+		}
+
+		if (M[107]==1 && capteur.get_DD(10))
+		{
+			modif=1;
+			M[107]--;
+			cmd.Ouvrir_PS(19);
+		}
+
+		if (M[108]==1 && capteur.get_CP(9)) // quand la navette arrive à proximité du poste 1, on le fait arrêter au niveau du poste
+		{
+			modif=1;
+			M[108]--;
+			cmd.Stop_PS(22);
+			M[109]++;
+		}
+
+		if (M[109]==1 && capteur.get_PS(22)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
+		{
+			modif=1;
+			M[109]--;
+			robot.DeplacerPiece(1,3,4);
+			M[110]++;
+		}
+
+		if (M[110]==1 /* && robot.FinDeplacement(1) */) // robot 1 fais tache 1 pendant 4s
+		{
+			modif=1;
+			M[110]--;
+			robot.DoTask(1,4,4); // robot fait la tache 1 sur le produit B pendant 4s
+			M[111]++;
+		}
+
+		if (M[111]==1 && robot.TaskPos4Etat(1)) // le robot 1 prend le reproduit B sur le poste et le met sur la navette quand tache fini
+		{
+			modif=1;
+			M[111]--;
+			robot.DeplacerPiece(1,4,3);
+			M[112]++;
+		}
+
+		if (M[112]==1 /* && robot.FinDeplacement(1) */) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
+		{
+			modif=1;
+			M[112]--;
+			cmd.Ouvrir_PS(22);
+			M[115]++;
+		}
+
+		if (M[115]==1 && capteur.get_CP(1)) // quand la navette arrive à proximité du poste 3, on le fait arrêter au niveau du poste
+		{
+			modif=1;
+			M[115]--;
+			cmd.Stop_PS(3);
+			M[116]++;
+		}
+
+		if (M[116]==1 && capteur.get_PS(3)) // le robot 2 prend le produit B sur la navette et le met sur le poste 3
+		{
+			modif=1;
+			M[116]--;
+			robot.DeplacerPiece(2,3,4);
+			M[117]++;
+		}
+
+		if (M[117]==1 /* && robot.FinDeplacement(2) */) // le robot 2 fais tache 3 pendant 5s
+		{
+			modif=1;
+			M[117]--;
+			robot.DoTask(2,4,5); // robot 2 fait la tache 3 sur le produit B pendant 5s
+			M[118]++;
+		}
+
+		if (M[118]==1 && robot.TaskPos4Etat(2)) // le robot 2 prend le reproduit B sur le poste et le met sur la navette quand tache fini
+		{
+			modif=1;
+			M[118]--;
+			robot.DeplacerPiece(2,4,1);
+			M[122]++;
+		}
+
+		if (M[122]==1 /* && robot.FinDeplacement(2) */) // On évacue le produit final et redémarre la navette
+		{
+			modif=1;
+			M[122]--;
+			robot.Evacuer(); // Evacue le produit (?? on ne devrait pas mettre en paramètre le n° poste ??)
+			cmd.Ouvrir_PS(3); // la navette repart
+			M[123]++;
+		}
+
+
+		/*if (M[15]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
 		{
 			modif=1;
 			M[15]--;
@@ -166,7 +329,7 @@ int main(int argc, char **argv)
 			modif=1;
 			robot.Evacuer();
 			cmd.Ouvrir_PS(3);
-		}
+		}*/
 
 ///////////////////////////////////////////////////////////////////////////
 ////////////////////AFFICHAGE//////////////////////////////////////////////

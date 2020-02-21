@@ -25,6 +25,9 @@ from importlib import import_module
 #       --> ex: D1 = 22, le 1er '2' indique le poste où est fait la tache, et le 2nd '2' indique que c'est un cube semi-transparent donc que la tâche est en cours sur V-rep
 # Si on fait moins de 3 tâches, alors le log envera '0'
 
+# A améliorer ?
+#   - dans erreur du durée d'une tâche, dire sur quelle version du produit s'est produit l'erreur
+
 test = 1 # Cette variable indique s'il y a une erreur ou non: 1 - PAS D'ERREUR  /  0 - ERREUR
 
 # --------------- 1 - LIRE LE CONFIG ---------------
@@ -38,14 +41,13 @@ while(1):
         break
 
 contenu_ligne=mon_config.readline() # Enregistre la ligne dans contenu_ligne
-nbre_shuttle = contenu_ligne.split(":") # Split la ligne en tableau, séparation des ":"
-nbre_shuttle = int(nbre_shuttle[1]) # le tableau précédement est de type str, on le met de type int
+#nbre_shuttle = contenu_ligne.split(":") # Split la ligne en tableau, séparation des ":"
+#nbre_shuttle = int(nbre_shuttle[1]) # le tableau précédement est de type str, on le met de type int
 
 contenu=mon_config.readlines()
 # contenu est de type "list" et contient toutes les lignes decrivant les produit du fichier .config
 mon_config.close()
 
-produit = [] # contient le nom de chaque produit
 tache = [] # contient les destinations que chaque produit
 dure = [] # contient les durées de chaque tache
 nb_produit = [] # contient le nombre de fois qu'un même produit doit être créer
@@ -57,56 +59,72 @@ production = [] # Catalogue l'enchainement de tâches des 6 produits désirée
 
 
 for i in range(6):
-        temps.append([0, 0, 0, 0, 0, 0, 0, 0]) # Initialisation de la matrice temps 6x8 ( car 6 produits et 8 postes (ou taches) )
+    tache.append([0, 0, 0])
+    dure.append([0.0, 0.0, 0.0])
+    nb_produit.append(0)
+    temps.append([0, 0, 0, 0, 0, 0, 0, 0]) # Initialisation de la matrice temps 6x8 ( car 6 produits et 8 postes (ou taches) )
+    production.append([0, 0, 0, 0])
 
 
 for ligne in contenu : # on travail ligne par ligne, donc produit par produit
 
     conf=ligne.split(":") # on split la ligne en séparant les strings (ou str) des ":"
 
-    # NOM PRODUIT
+
     nom = conf[0].replace(" ","") # on enlève les espace a conf[0] (nom du produit) si l'etudiant a mis des espaces
-    produit.append(nom) # on ajoute le nom du produit dans la list produit. On aura donc juste le nom du produit et pas d'espace
-    if nom == "A" : produit_num=1
-    if nom == "B" : produit_num=2
-    if nom == "C" : produit_num=3
-    if nom == "D" : produit_num=4
-    if nom == "E" : produit_num=5
-    if nom == "F" : produit_num=6
+    if nom != "\n":
 
-    # DESTINATIONS (ou taches) ET production
-    tache_var = conf[1].replace(" ","") # enlève les espaces
-    tache_var = list(tache_var) # sépare chaque destination, mais en str
-    taille = len(tache_var) # regade taille de var, donc nombre de destinations
-    for i in range(taille):
-        tache_var[i] = int(tache_var[i]) # on converti chaque destination de str en int
-    tache.append(tache_var)
-    if taille == 1:
-        production.append([produit_num, tache_var[0], 0, 0])
-    elif taille == 2:
-        production.append([produit_num, tache_var[0], tache_var[1], 0])
-    elif taille == 3:
-        production.append([produit_num, tache_var[0], tache_var[1], tache_var[2]])
+        # NOM PRODUIT
+        if nom == "A" : produit_num=1
+        if nom == "B" : produit_num=2
+        if nom == "C" : produit_num=3
+        if nom == "D" : produit_num=4
+        if nom == "E" : produit_num=5
+        if nom == "F" : produit_num=6
 
-    # DUREE
-    dure_var = conf[2].split(" ")
-    taille = len(dure_var)
-    del dure_var[0]
-    del dure_var[taille-2]
-    taille = len(dure_var) # regade taille de var, donc nombre de destinations
-    for i in range(taille):
-        dure_var[i] = int(dure_var[i]) # on converti chaque destination de str en int
-    dure.append(dure_var)
+        # DESTINATIONS (ou taches) ET production
+        tache_var = conf[1].replace(" ","") # enlève les espaces
+        tache_var = list(tache_var) # sépare chaque destination, mais en str
+        taille = len(tache_var) # regade taille de var, donc nombre de destinations
+        for i in range(taille):
+            tache_var[i] = int(tache_var[i]) # on converti chaque destination de str en int
+        tache[produit_num-1] = tache_var
+        if taille == 1:
+            production[produit_num-1] = [produit_num, tache_var[0], 0, 0]
+            tache[produit_num-1] = [tache_var[0], 0, 0]
+        elif taille == 2:
+            production[produit_num-1] = [produit_num, tache_var[0], tache_var[1], 0]
+            tache[produit_num-1] = [tache_var[0], tache_var[1], 0]
+        elif taille == 3:
+            production[produit_num-1] = [produit_num, tache_var[0], tache_var[1], tache_var[2]]
+            tache[produit_num-1] = [tache_var[0], tache_var[1], tache_var[2]]
 
-    # NOMBRE PRODUIT
-    var = int(conf[3])
-    nb_produit.append(var)
+        # DUREE
+        dure_var = conf[2].split(" ")
+        taille = len(dure_var)
+        del dure_var[0]
+        del dure_var[taille-2]
+        taille = len(dure_var) # regade taille de var, donc nombre de destinations
+        for i in range(taille):
+            dure_var[i] = float(dure_var[i]) # on converti chaque destination de str en int
+        if taille == 1:
+            dure[produit_num-1] = [dure_var[0], 0, 0]
+        elif taille == 2:
+            dure[produit_num-1] = [dure_var[0], dure_var[1], 0]
+        elif taille == 3:
+            dure[produit_num-1] = [dure_var[0], dure_var[1], dure_var[2]]
+
+        # NOMBRE PRODUIT
+        var = int(conf[3])
+        nb_produit[produit_num-1] = var
 
 
-    # REMPLIR TABLEAU verif_config
-    taille = len(tache_var)
-    for i in range(taille):
-        verif_config.append([produit_num, tache_var[i], dure_var[i]])
+        # REMPLIR TABLEAU verif_config
+        taille = len(tache_var)
+        for i in range(taille):
+            verif_config.append([produit_num, tache_var[i], dure_var[i]])
+
+        del tache_var
 
     # FIN de lire ligne par ligne
 
@@ -163,6 +181,11 @@ for line in Log :
     if ID == "OperationPosteVide":
         poste = int(info[1].strip('\n'))
         print ('ERREUR: operation sur poste vide numero {} '.format(poste))
+        test = 0
+
+    if ID == "OperationProduitPlein":
+        poste = int(info[1].strip('\n'))
+        print ("ERREUR: operation sur un produit qui a déjà les 3 tâches maximale sur le poste {} ".format(poste))
         test = 0
 
     if ID == "EcrasementProduit":
@@ -224,35 +247,34 @@ for line in Log :
                 else:
                     k = k+1
             # Vérifie si produit sortie est dans le bon ordre
-            if nb_produit[P-1] != 0:
-                if P != 0:
-                    if produit_final != production[P-1]:
-                        test = 0
-                        print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
-                    if P_type != 4:
-                        test = 0
-                        print("ERREUR à t={}s: la base de la version {} du produit {} n'est pas défini comme un produit".format(time,nb_produit_log[P-1],P))
-                    if D1_type == 2:
-                        test = 0
-                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D1,nb_produit_log[P-1],P))
-                    if D2_type == 2:
-                        test = 0
-                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D2,nb_produit_log[P-1],P))
-                    if D3_type == 2:
-                        test = 0
-                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D3,nb_produit_log[P-1],P))
-                    if D1_type != 2 and D1_type != 3:
-                        test = 0
-                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D1,nb_produit_log[P-1],P))
-                    if D2_type != 2 and D2_type != 3:
-                        test = 0
-                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D2,nb_produit_log[P-1],P))
-                    if D3_type != 2 and D3_type != 3:
-                        test = 0
-                        print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D3,nb_produit_log[P-1],P))
-                else: # Donc si P = 0 et qu'aucun produit est sorti
-                    print ('ERREUR: il y a une évacuation vide au poste 4')
+            if nb_produit[P-1] != 0 and nb_produit_log[P-1] <= nb_produit[P-1]: # cette condition sert à afficher les erreurs seulement sur les produits désiré. Si des produit sont créer mais non désiré il y a un autre message d'erreur qui se génère (en bas du code), donc pas besoin de faire plusieurs messages d'erreur sur des produits non désiré, juste 2 suffit (pour dire que produit non désiré a été crée, et que produit non désiré a été sortie)
+                if produit_final != production[P-1]:
                     test = 0
+                    print('ERREUR à t={}s: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(time,nb_produit_log[P-1],P,production[P-1][1:4],produit_final[1:4]))
+                if P_type != 4:
+                    test = 0
+                    print("ERREUR à t={}s: la base de la version {} du produit {} n'est pas défini comme un produit".format(time,nb_produit_log[P-1],P))
+                if D1_type == 2:
+                    test = 0
+                    print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D1,nb_produit_log[P-1],P))
+                if D2_type == 2:
+                    test = 0
+                    print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D2,nb_produit_log[P-1],P))
+                if D3_type == 2:
+                    test = 0
+                    print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(time,D3,nb_produit_log[P-1],P))
+                if D1_type != 2 and D1_type != 3:
+                    test = 0
+                    print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D1,nb_produit_log[P-1],P))
+                if D2_type != 2 and D2_type != 3:
+                    test = 0
+                    print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D2,nb_produit_log[P-1],P))
+                if D3_type != 2 and D3_type != 3:
+                    test = 0
+                    print("ERREUR à t={}s: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(time,D3,nb_produit_log[P-1],P))
+        elif nb_produit[P-1] == 0: # Donc si P = 0 et qu'aucun produit est sorti
+            print ('ERREUR: il y a une évacuation vide au poste 3')
+            test = 0
 
 
 
@@ -311,7 +333,7 @@ for i in range(6):
     for j in range(8):
         if verif_temps[i][j] == 2 and nb_produit[i] != 0:
             test = 0
-            print('ERREUR: durée tâche {} du produit {} doit être égale à {}s, ici durée tâche est {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
+            print('ERREUR: durée tâche {} du produit {} doit être égale à {}s, or ici durée est {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
 
 # Compare nb_produit et nb_produit_log pour voir si le bon nombre de produit est bien sorti
 # Si bon nombre de produit sorti attendu, on compare nb_produit_log et nb_produit_new pour voir s'il y a eu autant de produit apparu que de produit sorti

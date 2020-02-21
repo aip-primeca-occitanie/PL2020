@@ -191,10 +191,9 @@ int main(int argc, char **argv)
 			}
 			cout << endl;
 		}
-
 		cout<<endl;
-
 		debug_display.clear();
+
 		mem_capteur.clear();
 
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées

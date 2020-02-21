@@ -48,14 +48,14 @@ int main(int argc, char **argv)
 	subImage = it.subscribe("sim_ros_interface/VisionSensorData", 1, &getSimuStream);
 	pub = nh.advertise<std_msgs::Byte>("/actuator",100);
 
-	sleep(2);
+	usleep(3000000);
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	while (ros::ok())
 	{
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées
-	        update();
+        update();
 		loop_rate.sleep(); //permet de synchroniser la boucle while. Il attend le temps qu'il reste pour faire le 25Hz (ou la fréquence indiquée dans le loop_rate)
 	}
 
@@ -74,7 +74,7 @@ void check(int key)
 			index++;
 		else
 			index=0;
-	
+
 		if(index>=10)
 		{
 			cout << "bravo!" << endl;
@@ -83,4 +83,3 @@ void check(int key)
 		}
 	}
 }
-

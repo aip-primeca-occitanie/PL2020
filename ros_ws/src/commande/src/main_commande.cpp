@@ -19,14 +19,21 @@ int main(int argc, char **argv)
 	ros::init(argc, argv, "commande");
 	ros::NodeHandle noeud;
 
+	ros::Publisher pub_spawnShuttles = noeud.advertise<std_msgs::Int32>("/commande_locale/nbNavettes",10);
+
 	Commande cmd(noeud,argv[0]);
 	Robots robot(noeud);
 	AigsInterface aiguillage(noeud);
 	Capteurs capteur(noeud);
 
-	sleep(2);
-
 	ros::Rate loop_rate(25); //fréquence de la boucle
+
+	for(int i=0; i<25*2; i++) // Wait 2s
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+
 
 	cmd.Initialisation();
   	int code_arrivee;//dépend du produit et du poste sur lequel il apparait
@@ -42,7 +49,23 @@ int main(int argc, char **argv)
 
 	bool modif=1;
 
-	usleep(3000000);
+	// Creation des Navettes
+	int nbNavettes=2;//Mettre 0 pour demander a l'utilisateur
+	while(nbNavettes<1||nbNavettes>6)
+	{
+		cout << "Combien voulez vous de navettes ? [1..6]" << endl;
+		cin >> nbNavettes;
+		if(cin.fail())
+		{
+			cout << endl << " [Erreur mauvais choix ..]" << endl;
+			cin.clear();
+			cin.ignore(256,'\n');
+		}
+	}
+
+	std_msgs::Int32 msg_nbNavettes;
+	msg_nbNavettes.data=nbNavettes;
+	pub_spawnShuttles.publish(msg_nbNavettes);
 
 	while (ros::ok())
 	{
@@ -107,11 +130,11 @@ int main(int argc, char **argv)
 					M[68]++;break;
 			}
 			cmd.renitialiser_arrivee_nouveau_produit();
-	  	}
+		}
 
-////////////////////////////////////////////////////////////////////////////////
-//////////////////////////DEBUT PETRI///////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////DEBUT PETRI///////////////////////////////////////////
+		////////////////////////////////////////////////////////////////////////////////
 
 		// On veut simuler ça -> B : 1 3 : 13 15 : 1
 		// comme défini dans le fichier .config
@@ -129,6 +152,7 @@ int main(int argc, char **argv)
 			modif=1;
 			M[100]--;
 			robot.AjouterProduit(POSTE_3,2); // ajout produit n°2 (donc B) sur poste 3
+			//robot.AjouterProduit(POSTE_7,6);
 			M[101]++;
 		}
 
@@ -137,14 +161,16 @@ int main(int argc, char **argv)
 			modif=1;
 			M[101]--;
 			cmd.Stop_PS(2);
+			//robot.DoTask(POSTE_7,5);
 			M[102]++;
 		}
 
-		if (M[102]==1 && capteur.get_PS(2)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
+		if (M[102]==1 && capteur.get_PS(2))// && robot.IsTaskOver(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
 		{
 			modif=1;
 			M[102]--;
 			robot.DeplacerPiece(ROBOT_2,1,2);
+			//robot.DeplacerPiece(ROBOT_4,1,4);
 			M[103]++;
 		}
 

@@ -6,6 +6,8 @@
 
 	<node name="Robot1" pkg="robots" type="robot1" output="screen" launch-prefix="xterm -e"/>
 	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -e"/>
+	<node name="Robot3" pkg="robots" type="robot3" output="screen" launch-prefix="xterm -e"/>
+	<node name="Robot4" pkg="robots" type="robot4" output="screen" launch-prefix="xterm -e"/>
 
 
 	<node name="shuttleManager" pkg="shuttles" type="main_ShuttleManager" output="screen" launch-prefix="xterm -e"/>

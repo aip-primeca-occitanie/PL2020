@@ -28,6 +28,14 @@ bool AddProduct(commande_locale::SrvAddProduct::Request &req, commande_locale::S
 	return true;
 }
 
+void SpawnShuttlesCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	for(int i=0; i<msg->data; i++) // i<nbShuttles
+	{
+		VREPController.loadModelInit(i);
+	}
+}
+
 int main(int argc, char **argv)
 {
 	//Initialisation du noeud ROS
@@ -35,7 +43,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 
 	ros::Publisher pubProductAdd= nh.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
-	ros::Publisher pub_nbNavettes= nh.advertise<std_msgs::Int32>("/commande_locale/nbNavettes",10);
+	ros::Subscriber sub_spawnShuttles = nh.subscribe("/commande_locale/nbNavettes",10,SpawnShuttlesCallback);
 
 	ros::ServiceServer service = nh.advertiseService("srv_add_product", AddProduct);
 
@@ -53,29 +61,9 @@ int main(int argc, char **argv)
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();
 
-	//Creation des navettes
-	int nbNavettes=2;//Mettre 0 pour demander a l'utilisateur
-	while (nbNavettes<1 || nbNavettes>6)
-	{
-		cout << "Combien voulez vous de navettes ? (entre 1 et 6)"<<endl;
-		cin >> nbNavettes;
-		if(cin.fail())
-		{
-			cout << endl << " [Erreur mauvais choix ..]" << endl;
-			cin.clear();
-			cin.ignore(256,'\n');
-		}
-	}
 
-	std_msgs::Int32 msg_nbNavettes;
-	msg_nbNavettes.data=nbNavettes;
-	pub_nbNavettes.publish(msg_nbNavettes);
 
-	for(int i=0; i<nbNavettes; i++)
-	{
-		VREPController.loadModelInit(i);
-		std::cout << "Creation navette " << i << endl;
-	}
+
 
 	thread spinnerThread(spinner);
 

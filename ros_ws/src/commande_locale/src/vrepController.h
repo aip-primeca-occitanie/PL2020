@@ -80,6 +80,8 @@ class vrepController
 		ros::Publisher pub_erreur_log;
 		ros::Publisher pubStopTacheRobot1;
 		ros::Publisher pubStopTacheRobot2;
+		ros::Publisher pubStopTacheRobot3;
+		ros::Publisher pubStopTacheRobot4;
 
 		std::string SimulationFileName;
 

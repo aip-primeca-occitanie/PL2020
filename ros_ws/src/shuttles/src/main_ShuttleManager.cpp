@@ -56,6 +56,7 @@ void initPosNavetteCallback(const std_msgs::Int32::ConstPtr& msg)
 
 int main(int argc, char **argv)
 {
+	cout << "debut Shuttle manager" << endl;
 	ros::init(argc, argv, "Shuttle_manager");
 	ros::NodeHandle noeud;
 
@@ -77,6 +78,7 @@ int main(int argc, char **argv)
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
+	cout << "affiche ça" << endl;
 
 	for (int i=0; i<NbNavette; i++)
 	{

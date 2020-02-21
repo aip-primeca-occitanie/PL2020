@@ -34,6 +34,11 @@
 #define POSTE_2 2
 #define POSTE_3 3
 #define POSTE_4 4
+#define POSTE_5 5
+#define POSTE_6 6
+#define POSTE_7 7
+#define POSTE_8 8
+
 
 class Robots
 {

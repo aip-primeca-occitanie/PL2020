@@ -487,8 +487,8 @@ int Robots::IsTaskOver(int num_poste)
 {
 	ros::spinOnce();
 	int etat;
-	if(num_poste<1 || num_poste>4)
-		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et 4." << RESET << endl;
+	if(num_poste<1 || num_poste>8)
+		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et 8." << RESET << endl;
 	else
 	{
 		int tab[2];

@@ -1329,7 +1329,6 @@ void Robot::init(ros::NodeHandle noeud)
 				break;
 		}
 
-
 		pubSim_getObjectHandle.publish(msgSim_getObjectHandle);
 		while(!repSim_getObjectHandle&&ros::ok())
 		{

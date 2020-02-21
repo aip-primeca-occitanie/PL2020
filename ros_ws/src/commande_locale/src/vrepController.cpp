@@ -25,35 +25,30 @@ vrepController::vrepController(){
 void vrepController::pause()
 {
 	pubSim_pauseSimulation.publish(msgSim_pauseSimulation);
-	cout << "debut pause" << endl;
 	while(!repSim_pauseSimulation&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
 	}
 	repSim_pauseSimulation = false;
-	cout << "fin pause" << endl;
 }
 
 // PLAY
 void vrepController::play()
 {
 	pubSim_startSimulation.publish(msgSim_startSimulation);
-	cout << "debut start" << endl;
 	while(!repSim_startSimulation&&ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate->sleep();
 	}
 	repSim_startSimulation = false;
-	cout << "fin play" << endl;
 }
 
 // Chargement des modèles dans la simulation lors de son lancement
 void vrepController::loadModelInit(int shuttleNumber)
 {
 	char shuttleChar;
-	cout << "shuttleNumber:" << shuttleNumber << endl;
 	if(shuttleNumber<0 || shuttleNumber>6) printf(" ATTENTION, LE NUMERO DU SHUTTLE DOIT ETRE COMPRIS ENTRE 0 ET 6 \n");
 	else {
 		if(shuttleNumber == 0) shuttleChar = (char)(90); // SI 0 -> ShuttleZ
@@ -62,14 +57,12 @@ void vrepController::loadModelInit(int shuttleNumber)
 
 		msgSim_loadModel.data = shuttleName;
 		pubSim_loadModel.publish(msgSim_loadModel);
-		cout << "debut load init" << endl;
 		while(!repSim_loadModel&&ros::ok())
 		{
 			ros::spinOnce();
 			loop_rate->sleep();
 		}
 		repSim_loadModel = false;
-		cout << "fin load init" << endl;
 	}
 }
 
@@ -116,6 +109,8 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 
 	pubStopTacheRobot1 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot1/StopTache",100);
 	pubStopTacheRobot2 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot2/StopTache",100);
+	pubStopTacheRobot3 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot3/StopTache",100);
+	pubStopTacheRobot4 = n.advertise<std_msgs::Int32>("/commande/Simulation/Robot4/StopTache",100);
 
 
 	pub_erreur_log = n.advertise<commande_locale::Msg_Erreur>("/commande/Simulation/Erreur_log",100);
@@ -145,6 +140,18 @@ int vrepController::computeTableId(int poste)
 		case 4:
 			id=4;
 			break;
+		case 5:
+			id=6;
+			break;
+		case 6:
+			id=7;
+			break;
+		case 7:
+			id=9;
+			break;
+		case 8:
+			id=10;
+			break;
 	}
 	return id;
 }
@@ -169,6 +176,22 @@ void vrepController::computeNumRobotPosteTache(int poste, int tab[2])
 			break;
 		case 4:
 			tab[0]=2;
+			tab[1]=4;
+			break;
+		case 5:
+			tab[0]=3;
+			tab[1]=4;
+			break;
+		case 6:
+			tab[0]=3;
+			tab[1]=1;
+			break;
+		case 7:
+			tab[0]=4;
+			tab[1]=1;
+			break;
+		case 8:
+			tab[0]=4;
 			tab[1]=4;
 			break;
 	}
@@ -207,6 +230,14 @@ void vrepController::addProduct(int produit, int poste)
 
 			case 2: //robot2
 				pubStopTacheRobot2.publish(msg);
+				break;
+
+			case 3: //robot3
+				pubStopTacheRobot3.publish(msg);
+				break;
+
+			case 4: //robot4
+				pubStopTacheRobot4.publish(msg);
 				break;
 		}
 	}

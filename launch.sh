@@ -54,8 +54,8 @@ echo "--------------------------------------------------------------${normal}"
 	#roslaunch launch_alpha.launch path:=$1 &
 	shift
 
-    # Wait... (2 seconds)
-    	sleep 2
+    # Wait... (10 seconds)
+    	sleep 10
 
     # Launch of the other nodes
 	echo "Launching the other nodes " 

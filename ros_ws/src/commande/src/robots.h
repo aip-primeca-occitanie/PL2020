@@ -9,7 +9,6 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Byte.h>
-#include <robots/ColorMsg.h>
 #include "robots/DoTaskMsg.h"
 #include "robots/Msg_numrobot.h"
 #include "commande_locale/SrvAddProduct.h"
@@ -52,7 +51,6 @@ private:
 	ros::Publisher pub_descendre;
 	ros::Publisher pub_monter;
 	ros::Publisher pub_controler_robot;
-	ros::Publisher pub_colorer;
 	ros::Publisher pub_doTask;
 	ros::Publisher pub_robot_transport1;
 	ros::Publisher pub_robot_transport2;
@@ -78,7 +76,6 @@ private:
 	int robotTask[4][2];
 	int robotMacroDeplacement[4];
 
-	robots::ColorMsg msgColor;
 	robots::DoTaskMsg tache_msg;
 
 public:
@@ -104,7 +101,6 @@ public:
 	int BrasEnPosition(int numRobot);  //retourne 1 si le bras du robot numRobot est monté, -1 si le bras du robot numRobot est descendu
 	int PinceEnPosition(int numRobot); //retourne 1 si la pince du robot numRobot est fermée, -1 si elle est ouverte
 
-	void Colorer(int num_robot, int position, int type);
 	void RobotTransport(int num_robot, bool valeur);
 	void DoTask(int num_poste, int duree);
 	int IsTaskOver(int num_poste);

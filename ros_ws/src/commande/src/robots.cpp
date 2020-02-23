@@ -42,7 +42,6 @@ Robots::Robots(ros::NodeHandle noeud)
 	pub_descendre=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/DescendreBras",10);
 	pub_monter=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/MonterBras",10);
 	pub_controler_robot=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras",10);
-	pub_colorer=noeud.advertise<robots::ColorMsg>("/commande/Simulation/Colorer",10);
 	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
 	pub_evacuer_piece=noeud.advertise<std_msgs::Byte>("/commande/Simulation/Evacuer",10);
 	pubProductAdd= noeud.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
@@ -528,16 +527,6 @@ void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 		deplacer_msg.positionB = positionB;
 		pub_deplacer_piece.publish(deplacer_msg);
 	}
-}
-
-void Robots::Colorer(int num_robot,int position, int type) // type : 0=prise 1=pose
-{
-	msgColor.num_robot=num_robot;
-	msgColor.position=position;
-	msgColor.type=type;
-	pub_colorer.publish(msgColor);
-
-	sleep(1);
 }
 
 void Robots::computeFromNumPoste(int num_poste, int tab[2])

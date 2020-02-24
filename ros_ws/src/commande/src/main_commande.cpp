@@ -182,6 +182,7 @@ int main(int argc, char **argv)
 			display();
 			M[102]--;
 			robot.DeplacerPiece(ROBOT_2,1,2);
+			cmd.SortirErgot(1);
 			//robot.DeplacerPiece(ROBOT_4,1,4);
 			M[103]++;
 		}
@@ -255,6 +256,7 @@ int main(int argc, char **argv)
 			display();
 			M[109]--;
 			robot.DeplacerPiece(ROBOT_1,3,4);
+			cmd.SortirErgot(8);
 			M[110]++;
 		}
 

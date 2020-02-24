@@ -24,8 +24,8 @@ class Commande
 	ros::Subscriber SubAiguillagesDroits;
 
 	// Ergots
-	ros::Subscriber subPinOn;
-	ros::Subscriber subPinOff;
+	//ros::Subscriber subPinOn;
+	//ros::Subscriber subPinOff;
 
 	ros::Subscriber sub_nouveau_produit;
 
@@ -64,9 +64,8 @@ public:
 	void AiguillagesgauchesCallback(const std_msgs::Int32::ConstPtr& msg);
 	void AiguillagesdroitsCallback(const std_msgs::Int32::ConstPtr& msg);
 
-	void SortirErgotCallback(const std_msgs::Int32::ConstPtr& msg);
-	void RentrerErgotCallback(const std_msgs::Int32::ConstPtr& msg);
-
+	void SortirErgot(int num_ergot);
+	void RentrerErgot(int num_ergot);
 	int get_code_arrivee();
 	int get_arrivee_nouveau_produit();
 	void renitialiser_arrivee_nouveau_produit();

@@ -30,8 +30,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	sub_nouveau_produit = noeud.subscribe("/commande_locale/AddProduct", 1000, &Commande::NouveauProduitCallback, this);
 
 	// Actionner ergots
-	subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
-	subPinOff = noeud.subscribe("/Poste_Cmde/RentrerErgots", 10, &Commande::RentrerErgotCallback, this);
+	//subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
+	//subPinOff = noeud.subscribe("/Poste_Cmde/RentrerErgots", 10, &Commande::RentrerErgotCallback, this);
 
 	//Commande aiguillages
 	SubDeverouilleAiguillages = noeud.subscribe("/commande/DeverouilleAiguillage", 1000, &Commande::DeverouilleAiguillagesCallback, this);
@@ -143,18 +143,18 @@ void Commande::AiguillagesdroitsCallback(const std_msgs::Int32::ConstPtr& msg)
 	RxD[msg->data]=0;
 }
 
-void Commande::SortirErgotCallback(const std_msgs::Int32::ConstPtr& msg)
+void Commande::SortirErgot(int num_ergot)
 {
-	PIx[msg->data]=1;
-  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
-  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
+	PIx[num_ergot]=1;
+  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
+  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
 	pub_actionneurs_simu_pins.publish(actionneurs_simulation_Pin);
 }
 
-void Commande::RentrerErgotCallback(const std_msgs::Int32::ConstPtr& msg)
+void Commande::RentrerErgot(int num_ergot)
 {
-	PIx[msg->data]=0;
-  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
-  for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
+	PIx[num_ergot]=0;
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
 	pub_actionneurs_simu_pins.publish(actionneurs_simulation_Pin);
 }

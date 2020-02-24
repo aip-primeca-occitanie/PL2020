@@ -44,6 +44,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 100);
   	pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 100);
 
+	ros::Duration(1).sleep();
+
 	// Initialisation des Actionneurs
 	for(int i=1;i<=24;i++) actionneurs_simulation_Stop.STOP[i] = 0;
 	for(int i=1;i<=24;i++) actionneurs_simulation_Stop.GO[i] = 1;

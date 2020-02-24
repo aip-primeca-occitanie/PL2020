@@ -16,8 +16,8 @@ void inOutController::SensorCallbackRail(const std_msgs::Int32::ConstPtr& msg)
 // Fonction Callback pour les capteurs des stops
 void inOutController::SensorCallbackStop(const std_msgs::Int32::ConstPtr& msg)
 {
-    for(int i=1;i<=24;i++) SensorState.PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
-    planifRailSensorState.publish(SensorState);
+	for(int i=1;i<=24;i++) SensorState.PS[i] = (msg->data & (int32_t)pow(2,i-1)) > 0;
+	planifRailSensorState.publish(SensorState);
 }
 
 // Fonction Callback pour les capteurs sur les aiguillages
@@ -61,7 +61,7 @@ void inOutController::StateSwitchCallBack(const commande_locale::Msg_SwitchContr
 void inOutController::StateStopCallBack(const commande_locale::Msg_StopControl::ConstPtr&  msg)
 {
 	int StopControlInt(0), GoControlInt(0);
-    std_msgs::Int32 Stop, Go;
+	std_msgs::Int32 Stop, Go;
 
 	StopControl.STOP = msg->STOP;
 	StopControl.GO = msg->GO;
@@ -82,32 +82,32 @@ void inOutController::StateStopCallBack(const commande_locale::Msg_StopControl::
 // Fonction Callback pour les actionneurs sur les ergots + capteurs des ergots
 void inOutController::StatePinCallBack(const commande_locale::Msg_PinControl::ConstPtr&  msg)
 {
-  int PinOnControlInt(0), PinOffControlInt(0);
-    std_msgs::Int32 PinOn, PinOff;
+	int PinOnControlInt(0), PinOffControlInt(0);
+	std_msgs::Int32 PinOn, PinOff;
 
-    PinControl.PINON = msg->PINON;
-    PinControl.PINOFF = msg->PINOFF;
+	PinControl.PINON = msg->PINON;
+	PinControl.PINOFF = msg->PINOFF;
 
-    for (int i=1;i<=8;i++){
-        if (msg->PINON[i]==true)
-            PinOnControlInt+=pow(2,i-1);
-        if (msg->PINOFF[i]==true)
-            PinOffControlInt+=pow(2,i-1);
-    }
-    PinOn.data=PinOnControlInt;
+	for (int i=1;i<=8;i++){
+		if (msg->PINON[i]==true)
+			PinOnControlInt+=pow(2,i-1);
+		if (msg->PINOFF[i]==true)
+			PinOffControlInt+=pow(2,i-1);
+	}
+	PinOn.data=PinOnControlInt;
 
-    PinOff.data=PinOffControlInt;
+	PinOff.data=PinOffControlInt;
 
-    for(int i=1;i<=8;i++) SensorState.CPI[i] = (PinOn.data & (int32_t)pow(2,i-1)) > 0;
+	for(int i=1;i<=8;i++) SensorState.CPI[i] = (PinOn.data & (int32_t)pow(2,i-1)) > 0;
 
-    planifRailSensorState.publish(SensorState);
+	planifRailSensorState.publish(SensorState);
 }
 
 // On s'abonne aux topic de VREP et du noeud Commande + On se prepare à publier sur les topic de la commande_locale
 void inOutController::init(ros::NodeHandle nh)
 {
 	// Subscribe
-   	VREPsubRailSensor = nh.subscribe("sim_ros_interface/RailSensor", 100, &inOutController::SensorCallbackRail, this);
+	VREPsubRailSensor = nh.subscribe("sim_ros_interface/RailSensor", 100, &inOutController::SensorCallbackRail, this);
 	VREPsubStopSensor = nh.subscribe("sim_ros_interface/StopSensor", 100, &inOutController::SensorCallbackStop, this);
 	VREPsubSwitchSensor = nh.subscribe("sim_ros_interface/SwitchSensor", 100, &inOutController::SensorCallbackSwitch, this);
 	planifSubSwitchState = nh.subscribe("/commande/Simulation/Actionneurs_aiguillages", 100, &inOutController::StateSwitchCallBack, this);
@@ -125,5 +125,5 @@ void inOutController::init(ros::NodeHandle nh)
 	// Initialisation des capteurs des Ergots
 	for(int i=1;i<9;i++) SensorState.CPI[i]=0;
 
-	sleep(1);
+	ros::Duration(1).sleep();
 }

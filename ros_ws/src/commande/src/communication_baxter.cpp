@@ -20,6 +20,8 @@ Communication_Baxter::Communication_Baxter(ros::NodeHandle noeud)
 	sub_attente_prise_bras_droit = noeud.subscribe("/pont_BaxterLigneTransitique/right_arm/attente_prise", 1, &Communication_Baxter::Callback_attente_prise_bras_droit,this);
 	sub_attente_prise_bras_gauche = noeud.subscribe("/pont_BaxterLigneTransitique/left_arm/attente_prise", 1, &Communication_Baxter::Callback_attente_prise_bras_gauche,this);
 
+	ros::Duration(1).sleep();
+
 	msg_prise_demandee_bras_droit.data = false ;
 	msg_prise_effectuee_bras_droit.data = false ;
 

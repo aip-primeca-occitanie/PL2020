@@ -54,7 +54,7 @@ Robots::Robots(ros::NodeHandle noeud)
 
 	client = noeud.serviceClient<commande_locale::SrvAddProduct>("srv_add_product");
 
-	sleep(1);
+	ros::Duration(1).sleep();
 }
 
 Robots::~Robots()

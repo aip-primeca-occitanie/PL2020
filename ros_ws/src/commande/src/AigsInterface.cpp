@@ -17,6 +17,8 @@ AigsInterface::AigsInterface(ros::NodeHandle noeud)
 	msg.data=1;
 	pub_aig_Droite=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageDroite",100);
 	pub_aig_Gauche=noeud.advertise<std_msgs::Int32>("/commande/Simulation/AiguillageGauche",100);
+
+	ros::Duration(1).sleep();
 }
 
 AigsInterface::~AigsInterface()

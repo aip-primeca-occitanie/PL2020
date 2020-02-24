@@ -12,7 +12,9 @@ Actionneurs::Actionneurs(ros::NodeHandle noeud)
 	pub_actionneurs_ligne = noeud.advertise<commande::Actionneurs>("/commande/Ligne_transitique/Actionneurs", 100);
 	pub_actionneurs_simu_aguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 100);
 	pub_actionneurs_simu_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 100);
-    pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 100);
+	pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 100);
+
+	ros::Duration(1).sleep();
 
 	Actionneurs_ligne=0;
 
@@ -45,8 +47,8 @@ void Actionneurs::Envoyer(bool STx[],bool RxD[],bool RxG[],bool Vx[],bool Dx[],b
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aguillages.LOCK[i] = !Vx[i] && Dx[i];
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aguillages.RD[i] = RxD[i];
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aguillages.RG[i] = RxG[i];
-    for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
-    for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
 
 	Actionneurs::publish_actionneurs_ligne();
 	Actionneurs::publish_actionneurs_simulation();

@@ -33,7 +33,7 @@ int FileAttente::maj(int DD, int DG)
 		{
 			ROS_INFO("J'ai perdu une navette, a partir de maintenant, les deposes de pièces vont faire n'importe quoi");
 			ROS_INFO("Vous feriez mieux de relancer la simulation. J'ai perdu une navette car un aiguillage n'était pas en butee droite ou gauche au moment ou une navette c'est engage");
-			usleep(10000000);
+			ros::Duration(10).sleep();
 			return 0;
 		}
 	}
@@ -57,8 +57,9 @@ void FileAttente::delete_navette_in_queue()
 {
 	if (queue_.empty())
 	{
+		// Si on est la ça veut dire que le shuttlemanager s'est perdu
 		ROS_INFO("Attention, ça va segfault dans 10 secondes, désolé");
-		usleep(10000000);
+		ros::Duration(10).sleep();
 	}
 	queue_.pop();
 }

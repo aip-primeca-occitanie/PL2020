@@ -115,7 +115,7 @@ void vrepController::init(ros::NodeHandle n,std::string executionPath, std::stri
 
 	pub_erreur_log = n.advertise<commande_locale::Msg_Erreur>("/commande/Simulation/Erreur_log",100);
 
-	sleep(1);
+	ros::Duration(1).sleep();
 }
 
 void vrepController::setSimulationFile(std::string fileName)

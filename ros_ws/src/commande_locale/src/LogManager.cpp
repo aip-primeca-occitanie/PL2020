@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 	subSim_getTime=nh.subscribe("/sim_ros_interface/services/response/LogManager/GetTime",100,getTimeCallback);
 	repSim_getTime=false;
 
-	sleep(2);
+	ros::Duration(1).sleep();
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
 

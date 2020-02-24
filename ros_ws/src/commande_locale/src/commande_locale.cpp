@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 	inOutController IOController(&VREPController);
 	IOController.init(nh);
 
-	sleep(3);
+	ros::Duration(3).sleep();
 
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();

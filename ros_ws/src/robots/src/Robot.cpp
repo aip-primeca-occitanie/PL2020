@@ -159,7 +159,7 @@ void Robot::EnvoyerRobot(int numposition)
 	retour.data = 2;
 	pub_retourCommande.publish(retour);
 
-	//pub_robotPosition.publish(robotPosition);
+	pub_robotPosition.publish(robotPosition);
 }
 
 /** Pour atteindre une position définie manuellement **/
@@ -312,7 +312,7 @@ void Robot::DescendreBras()
 
 	//Retour de l'état actuel du bras
 	robotBras.data = 0;
-	//pub_robotBras.publish(robotBras);
+	pub_robotBras.publish(robotBras);
 }
 
 //Fonction permettant de mettre le bras en position haute
@@ -390,7 +390,7 @@ void Robot::MonterBras()
 
 	//Retour de l'état actuel du bras
 	robotBras.data = 1;
-	//pub_robotBras.publish(robotBras);
+	pub_robotBras.publish(robotBras);
 }
 
 /** Pour fermer ou ouvrir la pince **/
@@ -441,7 +441,7 @@ void Robot::FermerPince()
 
 	//Retour de l'état de la pince
 	robotPince.data=1;
-	//pub_robotPince.publish(robotPince);
+	pub_robotPince.publish(robotPince);
 }
 
 //Fonction permettant d'ouvrir la pince du robot en envoyant une commande sur le topic correspondant
@@ -491,7 +491,7 @@ void Robot::OuvrirPince()
 
 	//Retour de l'état de la pince
 	robotPince.data=0;
-	//pub_robotPince.publish(robotPince);
+	pub_robotPince.publish(robotPince);
 }
 
 /*** Fonctions permettant de controler le robot avec des ordres du noeud commande ***/
@@ -795,6 +795,8 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 
 int Robot::colorerPosteDebutTask(int positionPoste)
 {
+	cout << "debut colorerPosteDebutTask" << endl;
+
 	string signal;
 	string fin;
 	int couleur[4];
@@ -841,6 +843,8 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 		i++;
 
 	}while(i<4 && couleur_last!=0);
+
+	cout << "fin=" << fin << endl;
 
 	if(i==1)
 	{
@@ -1170,31 +1174,23 @@ void Robot::DeplacerPieceCallback(const commande::DeplacerPieceMsg::ConstPtr& ms
 	if (num_robot==msg->num_robot)
 	{
 		EnvoyerRobot(msg->positionA);
-		while(retour.data != 2){usleep(100000);};
 		DescendreBras();
-		while (robotBras.data != 0){usleep(100000);};
 
 		// Prise de pièce
 		//le robot a rien en mémoire, il décolore
 		Colorer(msg->positionA,0);
 		FermerPince();
-		while(robotPince.data!=1){usleep(100000);};
 
 		MonterBras();
-		while(robotBras.data != 1){usleep(100000);};
 		EnvoyerRobot(msg->positionB);
-		while(retour.data != 2){usleep(100000);};
 		DescendreBras();
-		while (robotBras.data != 0){usleep(100000);};
 
 		// Pose de pièce
 		//le robot a la couleur du produit en memoire, il colore
 		Colorer(msg->positionB,1);
 		OuvrirPince();
-		while(robotPince.data!=0){usleep(100000);};
 
 		MonterBras();
-		while(robotBras.data != 1){usleep(100000);};
 		retour.data = 10;
 		pub_retourCommande.publish(retour);
 	}
@@ -1293,9 +1289,9 @@ void Robot::init(ros::NodeHandle noeud)
 
 	//Publishers
 	pub_pince = noeud.advertise<std_msgs::Int32>("/robot/cmdPinceRobot"+to_string(num_robot), 10);
-	//pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+num_str,10);
-	//pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+num_str,10);
-	//pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+num_str,10);
+	pub_robotPosition = noeud.advertise<std_msgs::Int32>("/robot/PositionRobot"+to_string(num_robot),10);
+	pub_robotBras = noeud.advertise<std_msgs::Int32>("/robot/BrasRobot"+to_string(num_robot),10);
+	pub_robotPince = noeud.advertise<std_msgs::Int32>("/robot/PinceRobot"+to_string(num_robot),10);
 	pub_retourCommande = noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/retourCommande", 10);
 
 	pub_produitEvac = noeud.advertise<std_msgs::Int32MultiArray>("/commande/Simulation/produitEvac", 10);
@@ -1304,7 +1300,7 @@ void Robot::init(ros::NodeHandle noeud)
 
 	client = noeud.serviceClient<shuttles::shuttle_id>("get_id_shuttle_at_poste");
 
-	sleep(1);
+	ros::Duration(1).sleep();
 
 	//Utilisation du service simRosGetObjectHandle pour obtenir les handles du robot
 	for (int i=1;i<8;i++)

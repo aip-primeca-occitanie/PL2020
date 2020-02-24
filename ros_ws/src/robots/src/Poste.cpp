@@ -55,8 +55,11 @@ void Poste::debutTask(float VREPtime, int duree)
 bool Poste::updateTask(float time)
 {
 	bool fin_tache=false;
+	float restant=(temps_debut_task_+duree_task_)-time;
+	if(restant<0)
+		restant=0;
 
-	cout << "Poste N=" << numero_poste_ << " task_en_cours=" << task_en_cours_ << fixed << setprecision(1) << " time=" << time << " fin=" << temps_debut_task_+duree_task_ << " temps_debut=" << temps_debut_task_ << " duree=" << duree_task_ << endl;
+	cout << "Poste N=" << numero_poste_ << " task_en_cours=" << task_en_cours_ << fixed << setprecision(1) << " Temps restant=" << restant << " duree=" << duree_task_ << endl;
 
 	if(task_en_cours_ && time>temps_debut_task_+duree_task_)
 	{
@@ -64,7 +67,7 @@ bool Poste::updateTask(float time)
 		fin_tache=true;
 	}
 
-	return fin_tache;		
+	return fin_tache;
 }
 
 bool Poste::isTaskEnCours()

@@ -630,7 +630,7 @@ int Robot::computeTableId(int position)
 }
 
 void Robot::Colorer(int position, int type)//attention c'est forcement quand on transporte !!
-// type==0 <=> prise /  =1 <=> pose
+	// type==0 <=> prise /  =1 <=> pose
 {
 	int idNavette=-1;
 	if(position==2 || position==3) // Si navette
@@ -642,65 +642,72 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 		ROS_INFO("Merci, le shuttle Manager me dit que c'est la navette %d", idNavette);
 	}
 
-	// regarde la couleur de ce qu'on veut prendre (call shuttleManager si navette)
-	bool erreur=false;
-	bool couleur_vide=true;
-	int couleur[4];
-	char c=(char)(idNavette+64);
-	string signal;
-	if(position==2 || position==3) // Si navette
+	if(idNavette==66) // 66=Erreur
 	{
-		signal="Shuttle"+string(&c);
-	}
-	else if(position==1 || position==4) // Si poste
-	{
-		if(position==1)
-		{
-			signal=poste_pos_1.get_nom();
-			if(poste_pos_1.isTaskEnCours())
-			{
-				// Log
-				ROS_ERROR("Manipulation d'une piece en cours de traitement ! [poste=%d]", poste_pos_1.get_numero());
-				commande_locale::Msg_Erreur msgErreur;
-				msgErreur.code=3;
-				msgErreur.n_poste=poste_pos_1.get_numero();
-				pub_erreur_log.publish(msgErreur);
-
-				// Interrompt tache
-				poste_pos_1.stopTask();
-				retour.data=8;
-				pub_retourCommande.publish(retour);
-			}
-		}
-		else
-		{
-			signal=poste_pos_4.get_nom();
-			if(poste_pos_4.isTaskEnCours())
-			{
-				// Log
-				ROS_ERROR("Manipulation d'une piece en cours de traitement ! [poste=%d]", poste_pos_4.get_numero());
-				commande_locale::Msg_Erreur msgErreur;
-				msgErreur.code=3;
-				msgErreur.n_poste=poste_pos_4.get_numero();
-				pub_erreur_log.publish(msgErreur);
-
-				// Interrompt tache
-				poste_pos_4.stopTask();
-				retour.data=9;
-				pub_retourCommande.publish(retour);
-			}
-		}
+		ROS_ERROR("ERREUR : ShuttleManager n'a pas trouvé la navette");	
+		for(int i=0; i<4; i++)
+			couleur_transportee[i]=0;
+		transport(false);
 	}
 	else
 	{
-		erreur=true;
-		ROS_ERROR("Colorer: position incorrecte !!!");
-	}
+		// regarde la couleur de ce qu'on veut prendre
+		bool couleur_vide=true;
+		int couleur[4];
+		char c[2];
+		if(idNavette==0)
+			c[0]=(char)(idNavette+90);
+		else
+			c[0]=(char)(idNavette+64);
+		c[1]='\0';
+		string signal;
+		if(position==2 || position==3) // Si navette
+		{
+			signal="Shuttle"+string(c);
+			cout << "signal=" << signal << endl;
+		}
+		else if(position==1 || position==4) // Si poste
+		{
+			if(position==1)
+			{
+				signal=poste_pos_1.get_nom();
+				if(poste_pos_1.isTaskEnCours())
+				{
+					// Log
+					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [poste=%d]", poste_pos_1.get_numero());
+					commande_locale::Msg_Erreur msgErreur;
+					msgErreur.code=3;
+					msgErreur.n_poste=poste_pos_1.get_numero();
+					pub_erreur_log.publish(msgErreur);
 
-	string fin;
+					// Interrompt tache
+					poste_pos_1.stopTask();
+					retour.data=8;
+					pub_retourCommande.publish(retour);
+				}
+			}
+			else
+			{
+				signal=poste_pos_4.get_nom();
+				if(poste_pos_4.isTaskEnCours())
+				{
+					// Log
+					ROS_ERROR("Manipulation d'une piece en cours de traitement ! [poste=%d]", poste_pos_4.get_numero());
+					commande_locale::Msg_Erreur msgErreur;
+					msgErreur.code=3;
+					msgErreur.n_poste=poste_pos_4.get_numero();
+					pub_erreur_log.publish(msgErreur);
 
-	if(!erreur)
-	{
+					// Interrompt tache
+					poste_pos_4.stopTask();
+					retour.data=9;
+					pub_retourCommande.publish(retour);
+				}
+			}
+		}
+
+		string fin;
+
 		for(int i=0; i<4; i++)
 		{
 			fin.clear();
@@ -719,77 +726,75 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 			repSim_getColor=false;
 			couleur[i]=valueSim_getColor;
 		}
-	}
-	for(int i=0; i<4; i++)
-	{
-		if(couleur[i]!=0)
-			couleur_vide=false;
-	}
-
-	cout << "get color" << endl;
-	for(int i=0; i<4; i++)
-		cout << "couleur[" << i << "]=" << couleur[i] << endl;
-
-	// colore le poste ou navette en pos 1 avec couleur en mémoire
-	if(position==2 || position==3) // Si navette
-	{
-		msgSim_changeShuttleColor.data.clear();
-		msgSim_changeShuttleColor.data.push_back(idNavette);
 		for(int i=0; i<4; i++)
-			msgSim_changeShuttleColor.data.push_back(couleur_transportee[i]);
-		pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
-		while(!repSim_changeShuttleColor&&ros::ok())
 		{
-			ros::spinOnce();
-			loop_rate->sleep();
+			if(couleur[i]!=0)
+				couleur_vide=false;
 		}
-		repSim_changeShuttleColor=false;
-	}
-	else if(position==1 || position==4)
-	{
-		cout << "debut change color" << endl;
-		msgSim_changeColor.data.clear();
-		msgSim_changeColor.data.push_back(computeTableId(position));
+
+		cout << "get color" << endl;
 		for(int i=0; i<4; i++)
-			msgSim_changeColor.data.push_back(couleur_transportee[i]);
-		pubSim_changeColor.publish(msgSim_changeColor);
-		while(!repSim_changeColor&&ros::ok())
+			cout << "couleur[" << i << "]=" << couleur[i] << endl;
+
+		// colore le poste ou navette en pos 1 avec couleur en mémoire
+		if(position==2 || position==3) // Si navette
 		{
-			ros::spinOnce();
-			loop_rate->sleep();
+			msgSim_changeShuttleColor.data.clear();
+			msgSim_changeShuttleColor.data.push_back(idNavette);
+			for(int i=0; i<4; i++)
+				msgSim_changeShuttleColor.data.push_back(couleur_transportee[i]);
+			pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
+			while(!repSim_changeShuttleColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_changeShuttleColor=false;
 		}
-		repSim_changeColor=false;
-	}
+		else if(position==1 || position==4)
+		{
+			msgSim_changeColor.data.clear();
+			msgSim_changeColor.data.push_back(computeTableId(position));
+			for(int i=0; i<4; i++)
+				msgSim_changeColor.data.push_back(couleur_transportee[i]);
+			pubSim_changeColor.publish(msgSim_changeColor);
+			while(!repSim_changeColor&&ros::ok())
+			{
+				ros::spinOnce();
+				loop_rate->sleep();
+			}
+			repSim_changeColor=false;
+		}
 
-	// on met a jour la couleur en mémoire (qu'on transporte) seulement si prise
-	if(type==0)
-	{
+		// on met a jour la couleur en mémoire (qu'on transporte) seulement si prise
+		if(type==0)
+		{
+			for(int i=0; i<4; i++)
+				couleur_transportee[i]=couleur[i];
+		}
+		else
+		{
+			for(int i=0; i<4; i++)
+				couleur_transportee[i]=0;
+		}
 		for(int i=0; i<4; i++)
-			couleur_transportee[i]=couleur[i];
-	}
-	else
-	{
-		for(int i=0; i<4; i++)
-			couleur_transportee[i]=0;
-
-	}
-	for(int i=0; i<4; i++)
-		cout << "couleur_trasportee[" << i << "]=" << couleur_transportee[i] << endl;
+			cout << "couleur_trasportee[" << i << "]=" << couleur_transportee[i] << endl;
 
 
-	// Mise jour modele pince (si tiens quelque chose, non vide)
-	if(type==0 && !couleur_vide)
-		transport(true);
-	else
-		transport(false);
+		// Mise jour modele pince (si tiens quelque chose, non vide)
+		if(type==0 && !couleur_vide)
+			transport(true);
+		else
+			transport(false);
 
-	// Detecte si on a écrasé un produit
-	if(type==1 && !couleur_vide)
-	{
-		ROS_ERROR("ON A ECRASE UN PRODUIT !!!");
-		msg_erreur.code=66; //66=code ecrasement produit
-		msg_erreur.n_poste=num_robot;
-		pub_erreur_log.publish(msg_erreur);
+		// Detecte si on a écrasé un produit
+		if(type==1 && !couleur_vide)
+		{
+			ROS_ERROR("ON A ECRASE UN PRODUIT !!!");
+			msg_erreur.code=66; //66=code ecrasement produit
+			msg_erreur.n_poste=num_robot;
+			pub_erreur_log.publish(msg_erreur);
+		}
 	}
 }
 
@@ -1021,77 +1026,92 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 
 void Robot::update()
 {
-	pubSim_getTimeUpdate.publish(msgSim_getTimeUpdate);
-	while(!repSim_getTimeUpdate && ros::ok())
+	// Si une tache est en cours
+	if(poste_pos_1.isTaskEnCours() || poste_pos_4.isTaskEnCours())
 	{
-		ros::spinOnce();
-		loop_rate->sleep();
-	}
-	repSim_getTimeUpdate=false;
-	float time=valueSim_getTimeUpdate;
-
-	cout << endl;
-	if(poste_pos_1.updateTask(time)) // si tache poste pos 1 finie
-	{
-		int indice=colorerPosteFinTask(1,poste_pos_1.get_duree());
-		if(indice==-1)
-			ROS_ERROR("ColorerPosteTask Probleme !!");
-		string signal=poste_pos_1.get_nom();
-		string fin;
-		fin.append(signal);
-		fin.append("#");
-		fin.append(to_string(indice));
-		fin.append("_color");
-		msgSim_getColor.data=fin;
-		int couleur;
-
-		do
+		// On demande le temps à VREP
+		pubSim_getTimeUpdate.publish(msgSim_getTimeUpdate);
+		while(!repSim_getTimeUpdate && ros::ok())
 		{
-			pubSim_getColor.publish(msgSim_getColor);
-			while(!repSim_getColor&&ros::ok())
-			{
-				ros::spinOnce();
-				loop_rate->sleep();
-			}
-			repSim_getColor=false;
-			couleur=valueSim_getColor;
-
+			ros::spinOnce();
 			loop_rate->sleep();
-		}while(couleur!=poste_pos_1.get_color());
+		}
+		repSim_getTimeUpdate=false;
+		float time=valueSim_getTimeUpdate;
+		cout << endl;
 
-		retour.data=8;
-		pub_retourCommande.publish(retour);
-	}
-
-	if(poste_pos_4.updateTask(time)) // si tache poste pos 4 finie
-	{
-		int indice=colorerPosteFinTask(4,poste_pos_4.get_duree());
-		if(indice==-1)
-			ROS_ERROR("ColorerPosteTask Probleme !!");
-		string signal=poste_pos_4.get_nom();
-		string fin;
-		fin.append(signal);
-		fin.append("#");
-		fin.append(to_string(indice));
-		fin.append("_color");
-		msgSim_getColor.data=fin;
-		int couleur;
-
-		do
+		// Si la tache poste pos 1 en cours, on update
+		if(poste_pos_1.isTaskEnCours())
 		{
-			pubSim_getColor.publish(msgSim_getColor);
-			while(!repSim_getColor&&ros::ok())
+			// On update et verifie si la tache poste pos 1 est finie
+			if(poste_pos_1.updateTask(time)) // si tache finie
 			{
-				ros::spinOnce();
-				loop_rate->sleep();
-			}
-			repSim_getColor=false;
-			couleur=valueSim_getColor;
+				int indice=colorerPosteFinTask(1,poste_pos_1.get_duree());
+				if(indice==-1)
+					ROS_ERROR("ColorerPosteTask Probleme !!");
+				string signal=poste_pos_1.get_nom();
+				string fin;
+				fin.append(signal);
+				fin.append("#");
+				fin.append(to_string(indice));
+				fin.append("_color");
+				msgSim_getColor.data=fin;
+				int couleur;
 
-			loop_rate->sleep();
-		}while(couleur!=poste_pos_4.get_color());
-		retour.data=9;
-		pub_retourCommande.publish(retour);
+				do
+				{
+					pubSim_getColor.publish(msgSim_getColor);
+					while(!repSim_getColor&&ros::ok())
+					{
+						ros::spinOnce();
+						loop_rate->sleep();
+					}
+					repSim_getColor=false;
+					couleur=valueSim_getColor;
+
+					loop_rate->sleep();
+				}while(couleur!=poste_pos_1.get_color());
+
+				retour.data=8;
+				pub_retourCommande.publish(retour);
+			}
+		}
+
+		// Si la tache poste pos 4 est en cours, on update
+		if(poste_pos_4.isTaskEnCours())
+		{
+			// On update et verifie si la tache poste pos 4 est finie
+			if(poste_pos_4.updateTask(time)) // si tache finie
+			{
+				int indice=colorerPosteFinTask(4,poste_pos_4.get_duree());
+				if(indice==-1)
+					ROS_ERROR("ColorerPosteTask Probleme !!");
+				string signal=poste_pos_4.get_nom();
+				string fin;
+				fin.append(signal);
+				fin.append("#");
+				fin.append(to_string(indice));
+				fin.append("_color");
+				msgSim_getColor.data=fin;
+				int couleur;
+
+				do
+				{
+					pubSim_getColor.publish(msgSim_getColor);
+					while(!repSim_getColor&&ros::ok())
+					{
+						ros::spinOnce();
+						loop_rate->sleep();
+					}
+					repSim_getColor=false;
+					couleur=valueSim_getColor;
+
+					loop_rate->sleep();
+				}while(couleur!=poste_pos_4.get_color());
+				retour.data=9;
+				pub_retourCommande.publish(retour);
+			}
+		}
 	}
 }
 
@@ -1112,6 +1132,7 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 
 		int couleur[4];
 		string signal=poste_pos_1.get_nom();
+		msg_log_couleur.data.clear();
 		string fin;
 		for(int i=0; i<4; i++)
 		{

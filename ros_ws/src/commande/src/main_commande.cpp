@@ -8,11 +8,30 @@
 
 using namespace std;
 
-#define NOMBRE_PLACE 100
 #define RESET   "\033[0m"
 #define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
 #define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
 #define Nb_Place 1000
+#define place_debut_display 1
+#define Nb_Place_Display 200		
+
+int M[Nb_Place];
+
+// Pour l'affichage
+void display() 
+{
+	for (int i=place_debut_display;i<=place_debut_display+Nb_Place_Display;i++)
+	{
+		if(M[i]!=0)
+		{
+			cout<<BOLDRED<<"M["<<i<<"] = "<<M[i]<<RESET<<", ";
+		}else
+		{
+			cout<<"M["<<i<<"] = "<<M[i]<<", ";
+		}
+	}
+	cout<<endl<<endl;
+}
 
 int main(int argc, char **argv)
 {
@@ -34,20 +53,12 @@ int main(int argc, char **argv)
 		loop_rate.sleep();
 	}
 
-
 	cmd.Initialisation();
-  	int code_arrivee;//dépend du produit et du poste sur lequel il apparait
-	int M[Nb_Place];
-	int Nb_Place_T1,Nb_Place_T2,Nb_Place_T3,Nb_Place_T4;
-	Nb_Place_T1=150;
+	int code_arrivee;//dépend du produit et du poste sur lequel il apparait
 
 	for(int i=0;i<Nb_Place;i++) M[i]=0;
 
-	M[50]=1;//Robot 1 libre
-	M[250]=1;//Robot 2 libre
 	M[100]=1; // initialisation
-
-	bool modif=1;
 
 	// Creation des Navettes
 	int nbNavettes=2;//Mettre 0 pour demander a l'utilisateur
@@ -71,7 +82,7 @@ int main(int argc, char **argv)
 	{
 		if(cmd.get_arrivee_nouveau_produit())
 		{
-			modif=1;
+			display();
 			code_arrivee=cmd.get_code_arrivee();
 			switch(code_arrivee)
 			{
@@ -132,9 +143,9 @@ int main(int argc, char **argv)
 			cmd.renitialiser_arrivee_nouveau_produit();
 		}
 
-		////////////////////////////////////////////////////////////////////////////////
-		//////////////////////////DEBUT PETRI///////////////////////////////////////////
-		////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////DEBUT PETRI///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 		// On veut simuler ça -> B : 1 3 : 13 15 : 1
 		// comme défini dans le fichier .config
@@ -149,16 +160,17 @@ int main(int argc, char **argv)
 
 		if (M[100]==1) // apparaitre produit B sur poste 3
 		{
-			modif=1;
+			display();
 			M[100]--;
 			robot.AjouterProduit(POSTE_3,2); // ajout produit n°2 (donc B) sur poste 3
 			//robot.AjouterProduit(POSTE_7,6);
+			cmd.Stop_PS(10);
 			M[101]++;
 		}
 
-		if (M[101]==1 && capteur.get_CP(1)) // quand navette à proximité du poste 3, on le fait arrêter au niveau du poste
+		if (M[101]==1 && capteur.get_PS(1)) // quand navette à proximité du poste 3, on le fait arrêter au niveau du poste
 		{
-			modif=1;
+			display();
 			M[101]--;
 			cmd.Stop_PS(2);
 			//robot.DoTask(POSTE_7,5);
@@ -167,17 +179,18 @@ int main(int argc, char **argv)
 
 		if (M[102]==1 && capteur.get_PS(2))// && robot.IsTaskOver(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
 		{
-			modif=1;
+			display();
 			M[102]--;
 			robot.DeplacerPiece(ROBOT_2,1,2);
 			//robot.DeplacerPiece(ROBOT_4,1,4);
 			M[103]++;
 		}
 
-		if (M[103]==1  && robot.FinDeplacerPiece(2) ) // la navette repars du poste 3 avec le produit B
+		if (M[103]==1  && robot.FinDeplacerPiece(ROBOT_2))// && robot.FinDeplacerPiece(ROBOT_4)) // la navette repars du poste 3 avec le produit B
 		{
-			modif=1;
+			display();
 			M[103]--;
+			//robot.DoTask(POSTE_8,3);
 			cmd.Ouvrir_PS(2);
 			aiguillage.Droite(2);
 			cmd.Stop_PS(6);
@@ -185,36 +198,38 @@ int main(int argc, char **argv)
 			M[104]++;
 		}
 
-		if (M[104]==1 && capteur.get_PS(6)) // On dirige la navette vers le poste 1
+		if (M[104]==1 && capteur.get_PS(6))// && robot.IsTaskOver(POSTE_8)) // On dirige la navette vers le poste 1
 		{
-			modif=1;
+			display();
 			M[104]--;
 			aiguillage.Gauche(3);
+			//robot.DeplacerPiece(ROBOT_4,4,3);
 			robot.AjouterProduit(POSTE_2,6);
 			aiguillage.Gauche(10); // on le met ici car pas de capteur de position entre aiguillage 3 et 10
 			M[105]++;
 		}
 
-		if (M[105]==1 && capteur.get_DG(3) && capteur.get_DG(10)) // quand les aiguillages ont fini de tourner on fait partir la navette
+		if (M[105]==1 && capteur.get_DG(3) && capteur.get_DG(10))// && robot.FinDeplacerPiece(ROBOT_4)) // quand les aiguillages ont fini de tourner on fait partir la navette
 		{
-			modif=1;
+			display();
 			M[105]--;
 			cmd.Ouvrir_PS(6);
+			cmd.Ouvrir_PS(10);
 			M[106]++;
 			M[108]++;
 		}
 
 		if (M[106]==1 && capteur.get_PS(20)) // Attend front descendant de PS20
 		{
-			modif=1;
+			display();
 			M[106]--;
-			M[120]++;
+			M[320]++;
 		}
 
-		if(M[120]==1 && !capteur.get_PS(20)) // Front descendant : la navette 1 est passée, on bouge les aiguillages pour la navette 0
+		if(M[320]==1 && !capteur.get_PS(20)) // Front descendant : la navette 1 est passée, on bouge les aiguillages pour la navette 0
 		{
-			modif=1;
-			M[120]--;
+			display();
+			M[320]--;
 			aiguillage.Droite(10);
 			aiguillage.Droite(3);
 			M[107]++;
@@ -222,14 +237,14 @@ int main(int argc, char **argv)
 
 		if (M[107]==1 && capteur.get_DD(10)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
 		{
-			modif=1;
+			display();
 			M[107]--;
 			cmd.Ouvrir_PS(19);
 		}
 
 		if (M[108]==1 && capteur.get_CP(9)) // quand la navette arrive à proximité du poste 1, on la fait arrêter au niveau du poste
 		{
-			modif=1;
+			display();
 			M[108]--;
 			cmd.Stop_PS(22);
 			M[109]++;
@@ -237,7 +252,7 @@ int main(int argc, char **argv)
 
 		if (M[109]==1 && capteur.get_PS(22)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
 		{
-			modif=1;
+			display();
 			M[109]--;
 			robot.DeplacerPiece(ROBOT_1,3,4);
 			M[110]++;
@@ -246,7 +261,7 @@ int main(int argc, char **argv)
 		if (M[110]==1 && robot.FinDeplacerPiece(1)) // robot 1 fais tache 1 pendant 4s
 
 		{
-			modif=1;
+			display();
 			M[110]--;
 			robot.DoTask(POSTE_1,4);
 			M[111]++;
@@ -254,7 +269,7 @@ int main(int argc, char **argv)
 
 		if (M[111]==1 && robot.IsTaskOver(POSTE_1)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
 		{
-			modif=1;
+			display();
 			M[111]--;
 			robot.DeplacerPiece(ROBOT_1,4,3);
 			M[112]++;
@@ -262,7 +277,7 @@ int main(int argc, char **argv)
 
 		if (M[112]==1 && robot.FinDeplacerPiece(ROBOT_1) ) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
 		{
-			modif=1;
+			display();
 			M[112]--;
 			cmd.Ouvrir_PS(22);
 			M[115]++;
@@ -270,15 +285,30 @@ int main(int argc, char **argv)
 
 		if (M[115]==1 && capteur.get_CP(1)) // quand la navette arrive à proximité du poste 4, on le fait arrêter au niveau du poste
 		{
-			modif=1;
+			display();
 			M[115]--;
 			cmd.Stop_PS(3);
+			M[150]++;
 			M[116]++;
+		}
+
+		if(M[150]==1 && capteur.get_PS(2))
+		{
+			display();
+			M[150]--;
+			M[151]++;
+		}
+
+		if(M[151]==1 && !capteur.get_PS(2))
+		{
+			display();
+			M[151]--;
+			cmd.Stop_PS(2);
 		}
 
 		if (M[116]==1 && capteur.get_PS(3)) // le robot 2 prend le produit B sur la navette et le met sur le poste 4
 		{
-			modif=1;
+			display();
 			M[116]--;
 			robot.DeplacerPiece(ROBOT_2,3,4);
 			M[117]++;
@@ -286,147 +316,45 @@ int main(int argc, char **argv)
 
 		if (M[117]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On fait la tache du poste 4 pendant 5s
 		{
-			modif=1;
+			display();
 			M[117]--;
 			robot.DoTask(POSTE_4,5);
 			M[118]++;
 		}
 
-		if (M[118]==1 && robot.IsTaskOver(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
+		if(M[118]==1 && capteur.get_PS(2))
 		{
-			modif=1;
+			display();
 			M[118]--;
+			robot.DeplacerPiece(ROBOT_2,2,1);
+			M[119]++;
+		}
+
+		if(M[119]==1 && robot.FinDeplacerPiece(ROBOT_2))
+		{
+			display();
+			M[119]--;
+			robot.Evacuer();
+			M[120]++;
+		}
+
+		if (M[120]==1 && robot.IsTaskOver(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
+		{
+			display();
+			M[120]--;
 			robot.DeplacerPiece(ROBOT_2,4,1);
 			M[122]++;
 		}
 
 		if (M[122]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On évacue le produit final et redémarre la navette
 		{
-			modif=1;
+			display();
 			M[122]--;
 			robot.Evacuer(); // Evacue le produit
 			cmd.Ouvrir_PS(3); // la navette repart
+			cmd.Ouvrir_PS(2);
 			M[123]++;
 		}
-
-
-		/*if (M[15]!=0 && capteur.get_PS(20)==1) // faire arreter la navette devant le robot 1
-		  {
-		  modif=1;
-		  M[15]--;
-		  cmd.Stop_PS(21);
-		  robot.DoTask(1,4,1);
-		  robot.DoTask(2,4,1);
-		  robot.AjouterProduit(3,6);
-		  M[1]++;
-		  }
-
-		  if (M[1]!=0 && robot.TaskPos4Etat(1)==1)
-		  {
-		  modif=1;
-		  M[1]--;
-		  robot.DeplacerPiece(1,4,1);
-		  M[2]++;
-		  }
-
-		  if (M[2]!=0 && capteur.get_PS(21)==1)
-		  {
-		  modif=1;
-		  M[2]--;
-		  robot.DoTask(1,1,2);
-		  M[3]++;
-		  }
-		  if (M[3]!=0 && robot.TaskPos1Etat(1)==1)
-		  {
-		  modif=1;
-		  M[3]--;
-		  robot.DeplacerPiece(1,1,2);
-		  cmd.Ouvrir_PS(21);
-		  cmd.Stop_PS(3);
-		  M[4]++;
-		  }
-
-		  if (M[4]!=0 && capteur.get_PS(3)==1) //orientation des aiguillages pour la boucle principale
-		  {
-		  M[4]--;
-		  modif=1;
-		//aiguillage.Gauche(1);
-		//aiguillage.Gauche(2);
-		//aiguillage.Gauche(3);
-		//aiguillage.Gauche(10);
-		robot.DeplacerPiece(2,3,1);
-		robot.DoTask(2,1,1);
-		M[5]++;
-		}
-
-		if (M[5]!=0 && robot.TaskPos1Etat(2)==1)
-		{
-		M[5]--;
-		modif=1;
-		robot.Evacuer();
-		cmd.Ouvrir_PS(3);
-		}*/
-
-		///////////////////////////////////////////////////////////////////////////
-		////////////////////AFFICHAGE//////////////////////////////////////////////
-		///////////////////////////////////////////////////////////////////////////
-
-		if(modif)
-		{
-
-			cout<<"D0 : M[0]="<<M[0]<<endl<<endl;
-			cout<<"Robot 1 libre : M[50]="<<M[50]<<endl<<endl;
-			cout<<"Robot 2 libre : M[250]="<<M[250]<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T1;i++)
-			{
-				if(M[i]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i<<"] = "<<M[i]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i<<"] = "<<M[i]<<", ";
-				}
-			}
-			cout<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T2;i++)
-			{
-				if(M[i+100]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i+100<<"] = "<<M[i+100]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i+100<<"] = "<<M[i+100]<<", ";
-				}
-			}
-			cout<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T3;i++)
-			{
-				if(M[i+200]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i+200<<"] = "<<M[i+200]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i+200<<"] = "<<M[i+200]<<", ";
-				}
-			}
-			cout<<endl<<endl;
-
-			for (int i=1;i<=Nb_Place_T4;i++)
-			{
-				if(M[i+300]!=0)
-				{
-					cout<<BOLDRED<<"M["<<i+300<<"] = "<<M[i+300]<<RESET<<", ";
-				}else
-				{
-					cout<<"M["<<i+300<<"] = "<<M[i+300]<<", ";
-				}
-			}
-			cout<<endl<<endl;
-		}
-		modif=0;
 
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées
 		loop_rate.sleep(); //permet de synchroniser la boucle while. Il attend le temps qu'il reste pour faire le 25Hz (ou la fréquence indiquée dans le loop_rate)

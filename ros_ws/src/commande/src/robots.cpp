@@ -519,7 +519,7 @@ int Robots::FinDeplacerPiece(int numRobot)
 //Macro-fonction. Utilise les blocs élémentaires définis plus haut
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
-	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0))
+	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0)&&(num_robot>0 && num_robot<5))
 	{
 		robotMacroDeplacement[num_robot-1]=0;
 		deplacer_msg.num_robot = num_robot;

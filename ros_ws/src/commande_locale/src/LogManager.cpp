@@ -22,7 +22,7 @@ string filepath=path.substr(0,path.length()-(15+11))+"log.txt"; // 15="commande_
 
 ofstream monFlux(filepath, ios::app);  //On essaye d'ouvrir le fichier
 
-void ProduitEvacCallback(std_msgs::Int32MultiArray msg)
+void ProduitEvacCallback(const std_msgs::Int32MultiArray::ConstPtr& msg)
 {
 	ros::Rate loop_rate(25);
 	pubSim_getTime.publish(std_msgs::Byte());
@@ -38,14 +38,14 @@ void ProduitEvacCallback(std_msgs::Int32MultiArray msg)
 	monFlux<<"Sortie";
 	for (int i=0;i<4;i++)
 	{
-		couleur[i]=msg.data[i];
+		couleur[i]=msg->data[i];
 		monFlux<<" :" <<couleur[i];
 	}
 	monFlux<<fixed<<setprecision(2)<<" :"<<temps;
 	monFlux<<endl;
 }
 
-void NewProductCallback(commande_locale::Msg_AddProduct msg)
+void NewProductCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg)
 {
 	ros::Rate loop_rate(25);
 	pubSim_getTime.publish(std_msgs::Byte());
@@ -58,7 +58,7 @@ void NewProductCallback(commande_locale::Msg_AddProduct msg)
 	float temps=valueSim_getTime;
 
 	monFlux<<"NewProduct: ";
-	monFlux<<msg.num_produit;
+	monFlux<<msg->num_produit;
 	monFlux<<fixed<<setprecision(2)<<" :"<<temps;
 	monFlux<<endl;
 }

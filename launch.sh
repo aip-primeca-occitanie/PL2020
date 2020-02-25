@@ -40,8 +40,8 @@ echo "            Launching the 'commande locale' node "
 echo "${bold}--------------------------------------------------------------"
    if [ "$1" = "" ]; then
    	echo "        The simulation file was not defined."
-	echo "      Default file SimulationKinetic.ttt will be used."
-	roslaunch launcher launch_alpha.launch simFile:="SimulationKinetic" & 
+	echo "      Default file Simulation4Robots.ttt will be used."
+	roslaunch launcher launch_alpha.launch simFile:="Simulation4Robots" & 
    else
    	echo "        The simulation file chosen is $1.ttt"
 	roslaunch launcher launch_alpha.launch simFile:=$1 &

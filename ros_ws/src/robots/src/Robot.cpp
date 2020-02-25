@@ -1001,6 +1001,8 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 		cout << "retourDebTask=" << retour << endl;
 		if(msg->position==1)
 		{
+			if(poste_pos_1.isTaskEnCours())
+				ROS_ERROR("ERREUR : Nouvelle tache pendant une tache en cours !");
 			//  commence la tache seulement si retour ok
 			if(retourDebTask!=-1)
 				poste_pos_1.debutTask(time,msg->duree);
@@ -1012,6 +1014,8 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 		}
 		else
 		{
+			if(poste_pos_4.isTaskEnCours())
+				ROS_ERROR("ERREUR : Nouvelle tache pendant une tache en cours !");
 			//  commence la tache seulement si retour ok
 			if(retourDebTask!=-1)
 				poste_pos_4.debutTask(time,msg->duree);
@@ -1244,11 +1248,11 @@ void Robot::init(ros::NodeHandle noeud)
 			break;
 
 		case 3:
-			nom="Table#6";
-			numero_poste=5;
-			poste_pos_1.init(nom,numero_poste);
 			nom="Table#7";
 			numero_poste=6;
+			poste_pos_1.init(nom,numero_poste);
+			nom="Table#6";
+			numero_poste=5;
 			poste_pos_4.init(nom,numero_poste);
 			break;
 

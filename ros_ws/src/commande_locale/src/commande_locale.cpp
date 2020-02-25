@@ -3,6 +3,8 @@
 #include "inOutController.h"
 #include "commande_locale/SrvAddProduct.h"
 #include "commande_locale/Msg_AddProduct.h"
+#include "commande_locale/SrvFinInit.h"
+#include "commande_locale/SrvAddProductPushBack.h"
 #include <unistd.h>
 #include <thread>
 #include <ros/ros.h>
@@ -11,6 +13,7 @@ using namespace std;
 
 vrepController VREPController;
 commande_locale::Msg_AddProduct msg0;
+bool initEnCours(true);
 
 void spinner()
 {
@@ -36,6 +39,12 @@ void SpawnShuttlesCallback(const std_msgs::Int32::ConstPtr& msg)
 	}
 }
 
+bool finInit(commande_locale::SrvFinInit::Request &req, commande_locale::SrvFinInit::Response &res)
+{
+	initEnCours=false;
+	return true;
+}
+
 int main(int argc, char **argv)
 {
 	//Initialisation du noeud ROS
@@ -46,6 +55,9 @@ int main(int argc, char **argv)
 	ros::Subscriber sub_spawnShuttles = nh.subscribe("/commande_locale/nbNavettes",10,SpawnShuttlesCallback);
 
 	ros::ServiceServer service = nh.advertiseService("srv_add_product", AddProduct);
+	ros::ServiceClient clientAddProduct = nh.serviceClient<commande_locale::SrvAddProductPushBack>("srv_add_product_push_back");
+	commande_locale::SrvAddProductPushBack srv;
+	ros::ServiceServer serviceInit = nh.advertiseService("srv_fin_init", finInit);
 
 	ROS_INFO("Simulation file: %s \n", argv[1]);
 
@@ -61,13 +73,17 @@ int main(int argc, char **argv)
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();
 
-
-
-
-
 	thread spinnerThread(spinner);
 
 	///////////////////////
+
+	// On attend l'initialisation du reste du projet
+	ros::Rate loop_rate(25);
+	while(ros::ok() && initEnCours)
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
 
 	int choix=0;
 	int choixProduit=0;
@@ -93,18 +109,18 @@ int main(int argc, char **argv)
 			switch(choix)
 			{
 				case 1:
-					cout << "Ajout de produit : quel poste ? [1..4]" << endl;
+					cout << "Ajout de produit : quel poste ? [1..8]" << endl;
 					cin >> choixPoste;
-					if(cin.fail() || choixPoste<1 || choixPoste>4)
+					if(cin.fail() || choixPoste<1 || choixPoste>8)
 					{
 						cout << endl << " [Erreur mauvais choix ..]" << endl;
 						cin.clear();
 						cin.ignore(256,'\n');
 						break;
 					}
-					cout << "Quel produit ? [1..6]" << endl;
+					cout << "Quel produit ? [1..8]" << endl;
 					cin >> choixProduit;
-					if(cin.fail() || choixProduit<1 || choixProduit>6)
+					if(cin.fail() || choixProduit<1 || choixProduit>8)
 					{
 						cout << endl << " [Erreur mauvais choix ..]" << endl;
 						cin.clear();
@@ -113,8 +129,11 @@ int main(int argc, char **argv)
 					}
 					msg0.num_poste = choixPoste;
 					msg0.num_produit = choixProduit*10+4;
-					pubProductAdd.publish(msg0);
+					pubProductAdd.publish(msg0); // log
 					VREPController.addProduct(choixProduit,choixPoste);
+					srv.request.poste=choixPoste;
+					srv.request.produit=choixProduit;
+					clientAddProduct.call(srv);
 					break;
 
 				case 2:
@@ -132,6 +151,8 @@ int main(int argc, char **argv)
 					break;
 			}
 		}
+
+		ros::spinOnce();
 	}
 
 	VREPController.close();

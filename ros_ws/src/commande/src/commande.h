@@ -9,6 +9,7 @@
 #include <std_msgs/Int32.h>
 #include <commande_locale/Msg_StopControl.h>
 #include <commande_locale/Msg_AddProduct.h>
+#include <commande_locale/SrvFinInit.h>
 #include <iostream>
 #include <string>
 #include <cstdlib>
@@ -29,11 +30,18 @@ class Commande
 
 	ros::Subscriber sub_nouveau_produit;
 
+	ros::ServiceClient clientFinInit;
+	commande_locale::SrvFinInit srvFinInit;
+
 	// Actionneurs
 	ros::Publisher pub_navettes_stops;
 	ros::Publisher pub_actionneurs_simu_aiguillages;
   	ros::Publisher pub_actionneurs_simu_pins;
 
+	ros::Subscriber sub_playSim;
+	ros::Subscriber sub_pauseSim;
+
+	bool play;
 	int arrivee_produit;
 	int poste;
 	int produit;
@@ -54,6 +62,10 @@ public:
 	Commande(ros::NodeHandle noeud, std::string executionPath);
 
 	void Initialisation();
+
+	void PlayCallback(const std_msgs::Byte::ConstPtr& msg);
+	void PauseCallback(const std_msgs::Byte::ConstPtr& msg);
+	bool getPlay();
 
   	void NouveauProduitCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg);
 	void Stop_PS(int point_stop);

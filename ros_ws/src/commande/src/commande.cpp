@@ -26,9 +26,6 @@ using namespace std;
 
 Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 {
-  	//Pour être informé de l'arrivée d'un produit sur un poste
-	sub_nouveau_produit = noeud.subscribe("/commande_locale/AddProduct", 1000, &Commande::NouveauProduitCallback, this);
-
 	// Actionner ergots
 	//subPinOn = noeud.subscribe("/Poste_Cmde/SortirErgots", 10, &Commande::SortirErgotCallback, this);
 	//subPinOff = noeud.subscribe("/Poste_Cmde/RentrerErgots", 10, &Commande::RentrerErgotCallback, this);
@@ -39,10 +36,15 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	SubAiguillagesGauches = noeud.subscribe("/commande/AiguillageGauche", 1000, &Commande::AiguillagesgauchesCallback, this);
 	SubAiguillagesDroits = noeud.subscribe("/commande/AiguillageDroite", 1000, &Commande::AiguillagesdroitsCallback, this);
 
+	sub_pauseSim = noeud.subscribe("/sim_ros_interface/services/vrep_controller/PauseSimulation",10,&Commande::PauseCallback,this);
+	sub_playSim = noeud.subscribe("/sim_ros_interface/services/vrep_controller/StartSimulation",10,&Commande::PlayCallback,this);
+	play=false;
+	clientFinInit = noeud.serviceClient<commande_locale::SrvFinInit>("srv_fin_init");
+
 	// Publishers messages actionneurs
 	pub_navettes_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 100);
 	pub_actionneurs_simu_aiguillages = noeud.advertise<commande_locale::Msg_SwitchControl>("/commande/Simulation/Actionneurs_aiguillages", 100);
-  	pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 100);
+	pub_actionneurs_simu_pins = noeud.advertise<commande_locale::Msg_PinControl>("/commande/Simulation/Actionneurs_pins", 100);
 
 	ros::Duration(1).sleep();
 
@@ -54,8 +56,8 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aiguillages.RD[i] = 0;
 	for(int i=1;i<=12;i++) actionneurs_simulation_Aiguillages.RG[i] = 0;
 
-  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = 0;
-  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = 1;
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = 0;
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = 1;
 }
 
 void Commande::Initialisation()
@@ -73,29 +75,25 @@ void Commande::Initialisation()
 	for(int i=0;i<13;i++) Vx[i]=0;
 	for(int i=0;i<13;i++) Dx[i]=0;
 	for(int i=0;i<9;i++) PIx[i]=0;
+
+	clientFinInit.call(srvFinInit);
 }
 
-void Commande::NouveauProduitCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg)
+void Commande::PlayCallback(const std_msgs::Byte::ConstPtr& msg)
 {
-	poste=msg->num_poste;
-	produit=msg->num_produit;
-	arrivee_produit=1;
+	play=true;
 }
 
-int Commande::get_arrivee_nouveau_produit()
+void Commande::PauseCallback(const std_msgs::Byte::ConstPtr& msg)
 {
-	return arrivee_produit;
+	play=false;
 }
 
-int Commande::get_code_arrivee()
+bool Commande::getPlay()
 {
-	return produit+poste;
+	return play;
 }
 
-void Commande::renitialiser_arrivee_nouveau_produit()
-{
-  arrivee_produit=0;
-}
 
 void Commande::Stop_PS(int point_stop)
 {
@@ -146,8 +144,8 @@ void Commande::AiguillagesdroitsCallback(const std_msgs::Int32::ConstPtr& msg)
 void Commande::SortirErgot(int num_ergot)
 {
 	PIx[num_ergot]=1;
-  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
-  	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
+	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
 	pub_actionneurs_simu_pins.publish(actionneurs_simulation_Pin);
 }
 

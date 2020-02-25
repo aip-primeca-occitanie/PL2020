@@ -53,6 +53,7 @@ Robots::Robots(ros::NodeHandle noeud)
 	sub_retourRobot = noeud.subscribe("/commande/Simulation/retourCommande", 100, &Robots::RetourRobotCallback,this);
 
 	client = noeud.serviceClient<commande_locale::SrvAddProduct>("srv_add_product");
+	serverPushBack = noeud.advertiseService("srv_add_product_push_back",&Robots::ProductAddPushBack,this);
 
 	ros::Duration(1).sleep();
 }
@@ -342,57 +343,57 @@ void Robots::RetourRobotCallback(const robots::Msg_numrobot::ConstPtr& msg)
 	switch(msg->data)
 	{
 		case 0:
-			cout <<  BOLDCYAN << "Robot" << msg->num_robot << "initialise"<< RESET << endl;
+			cout <<  BOLDCYAN << "Robot " << msg->num_robot << " : Initialise"<< RESET << endl;
 			robotInit[msg->num_robot-1]=1;
 			break;
 
 		case 1:
-			cout <<  BOLDCYAN << "Mouvement non effectue pour le robot " << msg->num_robot << RESET << endl;
+			cout <<  BOLDCYAN << "Robot " << msg->num_robot << " : Mouvement non effectue" << RESET << endl;
 			robotPosition[msg->num_robot-1]=0;
 			break;
 
 		case 2:
-			cout <<  BOLDCYAN << "Robot" << msg->num_robot << "en position" << RESET << endl;
+			cout <<  BOLDCYAN << "Robot " << msg->num_robot << " : en position" << RESET << endl;
 			robotPosition[msg->num_robot-1]=EN_POSITION;
 			break;
 
 		case 3:
-			cout <<  BOLDCYAN << "Bras bloque pour le robot " << msg->num_robot << RESET << endl;
+			cout <<  BOLDCYAN << "Robot " << msg->num_robot << " : Bras bloque" << RESET << endl;
 			robotBras[msg->num_robot-1] = 0;
 			break;
 
 		case 4:
-			cout << BOLDCYAN << "Bras descendu pour le robot " << msg->num_robot << RESET << endl;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Bras descendu" << RESET << endl;
 			robotBras[msg->num_robot-1] = BAS;
 			break;
 
 		case 5:
-			cout << BOLDCYAN << "Bras monte pour le robot " << msg->num_robot << RESET << endl;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Bras monte" << RESET << endl;
 			robotBras[msg->num_robot-1] = HAUT;
 			break;
 
 		case 6:
-			cout << BOLDCYAN << "Pince fermee pour le robot " << msg->num_robot << RESET << endl;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Pince fermee" << RESET << endl;
 			robotPince[msg->num_robot-1] = FERMEE;
 			break;
 
 		case 7:
-			cout << BOLDCYAN << "Pince ouverte pour le robot " << msg->num_robot << RESET << endl;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Pince ouverte" << RESET << endl;
 			robotPince[msg->num_robot-1] = OUVERTE;
 			break;
 
 		case 8:
-			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Tache du poste en position 1 terminée" << RESET << endl;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Tache du poste en position 1 terminee" << RESET << endl;
 			robotTask[msg->num_robot-1][0]=1;
 			break;
 
 		case 9:
-			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Tache du poste en position 4 terminée" << RESET << endl;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Tache du poste en position 4 terminee" << RESET << endl;
 			robotTask[msg->num_robot-1][1]=1;
 			break;
 
 		case 10:
-			cout << BOLDCYAN << "Robot " << msg->num_robot << " : FIN MACRO DEPLACER PIECE" << RESET << endl;
+			cout << BOLDCYAN << "Robot " << msg->num_robot << " : Deplacer piece terminee" << RESET << endl;
 			robotMacroDeplacement[msg->num_robot-1]=1;
 			break;
 	}
@@ -601,8 +602,30 @@ void Robots::AjouterProduit(int poste, int produit)
 	srv.request.choixProduit = produit;
 	client.call(srv);
 
+	// Pour le log
 	msg0.num_poste = poste;
 	//rappel, code produit A:14, B:24, C:34 etc.
 	msg0.num_produit = produit*10+4;
 	pubProductAdd.publish(msg0);
+
+	produit_a_ajouter.push_back(poste*10+produit);
+}
+
+bool Robots::ProductAddPushBack(commande_locale::SrvAddProductPushBack::Request& req, commande_locale::SrvAddProductPushBack::Response& rep)
+{
+	int poste=req.poste;
+	int produit=req.produit;
+	produit_a_ajouter.push_back(poste*10+produit);
+	return true;
+}
+
+int Robots::AjoutProduitEnAttente()
+{
+	int retour=-1;
+	if(produit_a_ajouter.size()>0)
+	{
+		retour = produit_a_ajouter.back();
+		produit_a_ajouter.pop_back();
+	}
+	return retour;
 }

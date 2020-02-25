@@ -245,28 +245,7 @@ void vrepController::addProduct(int produit, int poste)
 	// On ajoute le produit
 	msgSim_changeColor.data.clear();
 	msgSim_changeColor.data.push_back(computeTableId(poste));
-	int couleur=-1;
-	switch(produit)
-	{
-		case 1:
-			couleur=14;
-			break;
-		case 2:
-			couleur=24;
-			break;
-		case 3:
-			couleur=34;
-			break;
-		case 4:
-			couleur=44;
-			break;
-		case 5:
-			couleur=54;
-			break;
-		case 6:
-			couleur=64;
-			break;
-	}
+	int couleur=produit*10+4;
 	msgSim_changeColor.data.push_back(couleur);
 
 	msgSim_changeColor.data.push_back(0);

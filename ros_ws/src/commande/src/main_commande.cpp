@@ -12,23 +12,22 @@ using namespace std;
 #define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
 #define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
 #define Nb_Place 1000
-#define place_debut_display 1
-#define Nb_Place_Display 200		
 
 int M[Nb_Place];
 
 // Pour l'affichage //
 void display() 
 {
-	for (int i=place_debut_display;i<=place_debut_display+Nb_Place_Display;i++)
+	cout << endl;
+	for (int i=0;i<=Nb_Place;i++)
 	{
+		if(i==0)
+			cout << "Marquage : ";
+		else if(i==500)
+			cout << endl << "Produits ajoutes : ";
+
 		if(M[i]!=0)
-		{
-			cout<<BOLDRED<<"M["<<i<<"] = "<<M[i]<<RESET<<", ";
-		}else
-		{
-			cout<<"M["<<i<<"] = "<<M[i]<<", ";
-		}
+			cout<<BOLDRED<<"M["<<i<<"]="<<M[i]<<RESET<<", ";
 	}
 	cout<<endl<<endl;
 }
@@ -58,13 +57,6 @@ int main(int argc, char **argv)
 		loop_rate.sleep();
 	}
 
-	cmd.Initialisation();
-	int code_arrivee;//dépend du produit et du poste sur lequel il apparait
-
-	for(int i=0;i<Nb_Place;i++) M[i]=0;
-
-	M[100]=1; // initialisation
-
 	// Creation des Navettes
 	int nbNavettes=2;//Mettre 0 pour demander a l'utilisateur
 	while(nbNavettes<1||nbNavettes>6)
@@ -78,284 +70,280 @@ int main(int argc, char **argv)
 			cin.ignore(256,'\n');
 		}
 	}
-
 	std_msgs::Int32 msg_nbNavettes;
 	msg_nbNavettes.data=nbNavettes;
 	pub_spawnShuttles.publish(msg_nbNavettes);
 
+	int code_produit_a_ajouter=-1;
+
+	cmd.Initialisation();
+	for(int i=0;i<Nb_Place;i++) M[i]=0;
+
+	////////////////////////////////////
+	////// | MARQUAGE INITIAL | ////////
+	////////////////////////////////////
+	M[0]=1; 
+	display();
+
 	while (ros::ok())
 	{
-		if(cmd.get_arrivee_nouveau_produit())
+		// Seulement si la simulation est en cours
+		if(cmd.getPlay()==true)
 		{
-			display();
-			code_arrivee=cmd.get_code_arrivee();
-			switch(code_arrivee)
+			/////////////////////////////////
+			/// | GESTION AJOUT PRODUIT | ///
+			/////////////////////////////////
+
+			// Code_produit : dizaine=poste, unité=produit
+			// Ex : code=24 => Produit 4 sur poste 2
+			code_produit_a_ajouter=robot.AjoutProduitEnAttente();
+			while(code_produit_a_ajouter!=-1) // Tant qu'il reste des produits à ajouter
 			{
-				case 15: //Produit A sur poste 1
-					M[15]++;break;
-				case 16: //Produit A sur poste 2
-					M[16]++;break;
-				case 17: //Produit A sur poste 3
-					M[17]++;break;
-				case 18: //Produit A sur poste 4
-					M[18]++;break;
-
-				case 25: //Produit B sur poste 1
-					M[26]++;break;
-				case 27: //Produit B sur poste 2
-					M[27]++;break;
-				case 28: //Produit B sur poste 3
-					M[28]++;break;
-				case 29: //Produit B sur poste 4
-					M[29]++;break;
-
-				case 35: //Produit C sur poste 1
-					M[35]++;break;
-				case 36: //Produit C sur poste 2
-					M[36]++;break;
-				case 37: //Produit C sur poste 3
-					M[37]++;break;
-				case 38: //Produit C sur poste 4
-					M[38]++;break;
-
-				case 45: //Produit D sur poste 1
-					M[45]++;break;
-				case 46: //Produit D sur poste 2
-					M[46]++;break;
-				case 47: //Produit D sur poste 3
-					M[47]++;break;
-				case 48: //Produit D sur poste 4
-					M[48]++;break;
-
-				case 55: //Produit E sur poste 1
-					M[55]++;break;
-				case 56: //Produit E sur poste 2
-					M[56]++;break;
-				case 57: //Produit E sur poste 3
-					M[57]++;break;
-				case 58: //Produit E sur poste 4
-					M[58]++;break;
-
-				case 65: //Produit F sur poste 1
-					M[65]++;break;
-				case 66: //Produit F sur poste 2
-					M[66]++;break;
-				case 67: //Produit F sur poste 3
-					M[67]++;break;
-				case 68: //Produit F sur poste 4
-					M[68]++;break;
+				M[500+code_produit_a_ajouter]++;
+				code_produit_a_ajouter=robot.AjoutProduitEnAttente();
+				display();
 			}
-			cmd.renitialiser_arrivee_nouveau_produit();
-		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////// | DEBUT PETRI | ////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		// On veut simuler ça -> B : 1 3 : 13 15 : 1
-		// comme défini dans le fichier .config
-		// Signifie:
-		//	- on fait apparaitre un produit B sur n'importe quel poste (pas n'importance)
-		//	- Sur ce produit on veut effectuer succesivement les tâches 1 et 3 (donc aux postes 1 et 3) pendant 13s et 15s
-		//	- une des navettes va nous servir à faire passer le produit d'un poste à l'autre
-		//	- on crée 1 seul produit B avec cette enchainement de tâches
-		//
-		// -->	Pour que ce Petri fonctionne, on doit pouvoir savoir si le déplacement d'un robot est fini
-		//	donc j'ai ajouté dans les if l'état "robot.FinDeplacement(num_Robot)" comme modèle
+			if (M[0]) // apparaitre produit B sur poste 3
+			{
+				M[0]--;
+				robot.AjouterProduit(POSTE_3,2); // ajout produit n°2 (donc B) sur poste 3
+				robot.AjouterProduit(POSTE_7,6);
+				cmd.Stop_PS(10);
+				M[10]++;
+				display();
+			}
 
-		if (M[100]==1) // apparaitre produit B sur poste 3
-		{
-			display();
-			M[100]--;
-			robot.AjouterProduit(POSTE_3,2); // ajout produit n°2 (donc B) sur poste 3
-			robot.AjouterProduit(POSTE_7,6);
-			cmd.Stop_PS(10);
-			M[101]++;
-		}
+			if (M[10] && capteur.get_PS(1)) // quand navette à proximité du poste 3, on le fait arrêter au niveau du poste
+			{
+				M[10]--;
+				M[532]--; // Enleve le marquage des produits
+				M[576]--; // Enleve le marquage des produits
+				cmd.Stop_PS(2);
+				robot.DoTask(POSTE_7,3);
+				M[20]++;
+				display();
+			}
 
-		if (M[101]==1 && capteur.get_PS(1)) // quand navette à proximité du poste 3, on le fait arrêter au niveau du poste
-		{
-			display();
-			M[101]--;
-			cmd.Stop_PS(2);
-			robot.DoTask(POSTE_7,3);
-			M[102]++;
-		}
+			if (M[20] && capteur.get_PS(2) && robot.IsTaskOver(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
+			{
+				M[20]--;
+				robot.DeplacerPiece(ROBOT_2,1,2);
+				robot.DeplacerPiece(ROBOT_4,1,3);
+				cmd.SortirErgot(1);
+				M[30]++;
+				display();
+			}
 
-		if (M[102]==1 && capteur.get_PS(2) && robot.IsTaskOver(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
-		{
-			display();
-			M[102]--;
-			robot.DeplacerPiece(ROBOT_2,1,2);
-			robot.DeplacerPiece(ROBOT_4,1,3);
-			cmd.SortirErgot(1);
-			M[103]++;
-		}
+			if (M[30]  && robot.FinDeplacerPiece(ROBOT_2) && robot.FinDeplacerPiece(ROBOT_4)) // la navette repars du poste 3 avec le produit B
+			{
+				M[30]--;
+				cmd.Ouvrir_PS(2);
+				cmd.Ouvrir_PS(10);
+				aiguillage.Droite(2);
+				cmd.Stop_PS(6);
+				cmd.Stop_PS(14);
+				M[40]++;
+				display();
+			}
 
-		if (M[103]==1  && robot.FinDeplacerPiece(ROBOT_2) && robot.FinDeplacerPiece(ROBOT_4)) // la navette repars du poste 3 avec le produit B
-		{
-			display();
-			M[103]--;
-			cmd.Ouvrir_PS(2);
-			cmd.Ouvrir_PS(10);
-			aiguillage.Droite(2);
-			cmd.Stop_PS(6);
-			cmd.Stop_PS(14);
-			M[104]++;
-		}
+			if (M[40] && capteur.get_PS(6) && capteur.get_PS(14))// && robot.IsTaskOver(POSTE_8)) // On dirige la navette vers le poste 1
+			{
+				M[40]--;
+				robot.DeplacerPiece(ROBOT_3,2,1);
+				aiguillage.Gauche(3);
+				aiguillage.Gauche(10); // on le met ici car pas de capteur de position entre aiguillage 3 et 10
+				M[50]++;
+				display();
+			}
 
-		if (M[104]==1 && capteur.get_PS(6) && capteur.get_PS(14))// && robot.IsTaskOver(POSTE_8)) // On dirige la navette vers le poste 1
-		{
-			display();
-			M[104]--;
-			robot.DeplacerPiece(ROBOT_3,2,1);
-			aiguillage.Gauche(3);
-			aiguillage.Gauche(10); // on le met ici car pas de capteur de position entre aiguillage 3 et 10
-			M[105]++;
-		}
+			if (M[50] && capteur.get_DG(3) && capteur.get_DG(10) && robot.FinDeplacerPiece(ROBOT_3))// quand les aiguillages ont fini de tourner on fait partir la navette
+			{
+				M[50]--;
+				cmd.Ouvrir_PS(6);
+				cmd.Stop_PS(22);
+				robot.DoTask(POSTE_6,6);
+				M[60]++;
+				display();
+			}
 
-		if (M[105]==1 && capteur.get_DG(3) && capteur.get_DG(10) && robot.FinDeplacerPiece(ROBOT_3))// && robot.FinDeplacerPiece(ROBOT_4)) // quand les aiguillages ont fini de tourner on fait partir la navette
-		{
-			display();
-			M[105]--;
-			cmd.Ouvrir_PS(6);
-			cmd.Stop_PS(22);
-			robot.DoTask(POSTE_6,6);
-			M[106]++;
-		}
+			if (M[60] && capteur.get_PS(20)) // Attend front descendant de PS20
+			{
+				M[60]--;
+				M[70]++;
+				display();
+			}
 
-		if (M[106]==1 && capteur.get_PS(20)) // Attend front descendant de PS20
-		{
-			display();
-			M[106]--;
-			M[320]++;
-		}
+			if(M[70] && !capteur.get_PS(20)) // Front descendant : la navette 1 est passée, on bouge les aiguillages pour la navette 0
+			{
+				M[70]--;
+				aiguillage.Droite(10);
+				aiguillage.Droite(3);
+				M[80]++;
+				display();
+			}
 
-		if(M[320]==1 && !capteur.get_PS(20)) // Front descendant : la navette 1 est passée, on bouge les aiguillages pour la navette 0
-		{
-			display();
-			M[320]--;
-			aiguillage.Droite(10);
-			aiguillage.Droite(3);
-			M[107]++;
-		}
+			if (M[80] && robot.IsTaskOver(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
+			{
+				M[80]--;
+				robot.DeplacerPiece(ROBOT_3,1,4);
+				M[90]++;
+				display();
+			}
 
-		if (M[107]==1 && robot.IsTaskOver(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
-		{
-			display();
-			M[107]--;
-			robot.DeplacerPiece(ROBOT_3,1,4);
-			M[109]++;
-		}
+			if (M[90] && capteur.get_PS(22) && robot.FinDeplacerPiece(ROBOT_3)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
+			{
+				M[90]--;
+				robot.DeplacerPiece(ROBOT_1,3,4);
+				robot.DoTask(POSTE_5,3);
+				cmd.SortirErgot(8);
+				M[100]++;
+				display();
+			}
 
-		if (M[109]==1 && capteur.get_PS(22) && robot.FinDeplacerPiece(ROBOT_3)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
-		{
-			display();
-			M[109]--;
-			robot.DeplacerPiece(ROBOT_1,3,4);
-			robot.DoTask(POSTE_5,3);
-			cmd.SortirErgot(8);
-			M[110]++;
-		}
+			if (M[100] && robot.FinDeplacerPiece(1)) // robot 1 fais tache 1 pendant 4s
+			{
+				M[100]--;
+				robot.DoTask(POSTE_1,4);
+				M[110]++;
+				display();
+			}
 
-		if (M[110]==1 && robot.FinDeplacerPiece(1)) // robot 1 fais tache 1 pendant 4s
+			if (M[110] && robot.IsTaskOver(POSTE_1) && robot.IsTaskOver(POSTE_5)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
+			{
+				M[110]--;
+				robot.DeplacerPiece(ROBOT_1,4,3);
+				robot.DeplacerPiece(ROBOT_3,4,2);
+				M[120]++;
+				display();
+			}
 
-		{
-			display();
-			M[110]--;
-			robot.DoTask(POSTE_1,4);
-			M[111]++;
-		}
+			if (M[120] && robot.FinDeplacerPiece(ROBOT_1) && robot.FinDeplacerPiece(ROBOT_3)) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
+			{
+				M[120]--;
+				cmd.Ouvrir_PS(22);
+				cmd.Ouvrir_PS(14);
+				M[130]++;
+				display();
+			}
 
-		if (M[111]==1 && robot.IsTaskOver(POSTE_1) && robot.IsTaskOver(POSTE_5)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
-		{
-			display();
-			M[111]--;
-			robot.DeplacerPiece(ROBOT_1,4,3);
-			robot.DeplacerPiece(ROBOT_3,4,2);
-			M[112]++;
-		}
+			if(M[130] && capteur.get_PS(1))
+			{
+				M[130]--;
+				aiguillage.Gauche(11);
+				aiguillage.Gauche(12);
+				M[140]++;
+				display();
+			}
 
-		if (M[112]==1 && robot.FinDeplacerPiece(ROBOT_1) && robot.FinDeplacerPiece(ROBOT_3)) // la navette repars du poste 1 avec le produit B qui a fait la tâche 1
-		{
-			display();
-			M[112]--;
-			cmd.Ouvrir_PS(22);
-			cmd.Ouvrir_PS(14);
-			M[115]++;
-		}
+			if (M[140] && capteur.get_CP(1)) // quand la navette arrive à proximité du poste 4, on le fait arrêter au niveau du poste
+			{
+				M[140]--;
+				cmd.Stop_PS(3);
+				M[141]++;
+				M[150]++;
+				display();
+			}
 
-		if (M[115]==1 && capteur.get_CP(1)) // quand la navette arrive à proximité du poste 4, on le fait arrêter au niveau du poste
-		{
-			display();
-			M[115]--;
-			cmd.Stop_PS(3);
-			M[150]++;
-			M[116]++;
-		}
+			if(M[141] && capteur.get_PS(2))
+			{
+				M[141]--;
+				M[142]++;
+				display();
+			}
 
-		if(M[150]==1 && capteur.get_PS(2))
-		{
-			display();
-			M[150]--;
-			M[151]++;
-		}
+			if(M[142] && !capteur.get_PS(2))
+			{
+				M[142]--;
+				cmd.Stop_PS(2);
+				display();
+			}
 
-		if(M[151]==1 && !capteur.get_PS(2))
-		{
-			display();
-			M[151]--;
-			cmd.Stop_PS(2);
-		}
+			if (M[150] && capteur.get_PS(3)) // le robot 2 prend le produit B sur la navette et le met sur le poste 4
+			{
+				M[150]--;
+				robot.DeplacerPiece(ROBOT_2,3,4);
+				M[160]++;
+				display();
+			}
 
-		if (M[116]==1 && capteur.get_PS(3)) // le robot 2 prend le produit B sur la navette et le met sur le poste 4
-		{
-			display();
-			M[116]--;
-			robot.DeplacerPiece(ROBOT_2,3,4);
-			M[117]++;
-		}
+			if (M[160] && robot.FinDeplacerPiece(ROBOT_2)) // On fait la tache du poste 4 pendant 5s
+			{
+				M[160]--;
+				robot.DoTask(POSTE_4,5);
+				M[170]++;
+				display();
+			}
 
-		if (M[117]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On fait la tache du poste 4 pendant 5s
-		{
-			display();
-			M[117]--;
-			robot.DoTask(POSTE_4,5);
-			M[118]++;
-		}
+			if(M[170] && capteur.get_PS(2))
+			{
+				M[170]--;
+				robot.DeplacerPiece(ROBOT_2,2,1);
+				M[180]++;
+				display();
+			}
 
-		if(M[118]==1 && capteur.get_PS(2))
-		{
-			display();
-			M[118]--;
-			robot.DeplacerPiece(ROBOT_2,2,1);
-			M[119]++;
-		}
+			if(M[180] && robot.FinDeplacerPiece(ROBOT_2))
+			{
+				M[180]--;
+				robot.Evacuer();
+				M[190]++;
+				display();
+			}
 
-		if(M[119]==1 && robot.FinDeplacerPiece(ROBOT_2))
-		{
-			display();
-			M[119]--;
-			robot.Evacuer();
-			M[120]++;
-		}
+			if (M[190] && robot.IsTaskOver(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
+			{
+				M[190]--;
+				robot.DeplacerPiece(ROBOT_2,4,1);
+				M[200]++;
+				display();
+			}
 
-		if (M[120]==1 && robot.IsTaskOver(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
-		{
-			display();
-			M[120]--;
-			robot.DeplacerPiece(ROBOT_2,4,1);
-			M[122]++;
-		}
+			if (M[200] && robot.FinDeplacerPiece(ROBOT_2)) // On évacue le produit final et redémarre la navette
+			{
+				M[200]--;
+				robot.Evacuer(); // Evacue le produit
+				cmd.Ouvrir_PS(3); // la navette repart
+				cmd.Ouvrir_PS(2);
+				aiguillage.Gauche(3);
+				aiguillage.Gauche(10);
+				M[210]++;
+				display();
+			}
 
-		if (M[122]==1 && robot.FinDeplacerPiece(ROBOT_2)) // On évacue le produit final et redémarre la navette
-		{
-			display();
-			M[122]--;
-			robot.Evacuer(); // Evacue le produit
-			cmd.Ouvrir_PS(3); // la navette repart
-			cmd.Ouvrir_PS(2);
-			M[123]++;
+			if(M[210] && capteur.get_PS(6))
+			{
+				M[210]--;
+				M[220]++;
+				display();
+			}
+
+			if(M[220] && !capteur.get_PS(6))
+			{
+				M[220]--;
+				M[230]++;
+				display();
+			}
+
+			if(M[230] && capteur.get_PS(6))
+			{
+				M[230]--;
+				M[240]++;
+				display();
+			}
+
+			if(M[240] && !capteur.get_PS(6))
+			{
+				M[240]--;
+				aiguillage.Gauche(1);
+				aiguillage.Gauche(2);
+				M[250]++;
+				display();
+			}
 		}
 
 		ros::spinOnce(); //permet aux fonction callback de ros dans les objets d'êtres appelées

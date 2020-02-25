@@ -639,7 +639,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 		srv.request.position=position;
 		client.call(srv);
 		idNavette = srv.response.IdShuttle;
-		ROS_INFO("Merci, le shuttle Manager me dit que c'est la navette %d", idNavette);
+		ROS_INFO("Navette %d", idNavette);
 	}
 
 	if(idNavette==66) // 66=Erreur
@@ -662,10 +662,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 		c[1]='\0';
 		string signal;
 		if(position==2 || position==3) // Si navette
-		{
 			signal="Shuttle"+string(c);
-			cout << "signal=" << signal << endl;
-		}
 		else if(position==1 || position==4) // Si poste
 		{
 			if(position==1)
@@ -732,10 +729,6 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 				couleur_vide=false;
 		}
 
-		cout << "get color" << endl;
-		for(int i=0; i<4; i++)
-			cout << "couleur[" << i << "]=" << couleur[i] << endl;
-
 		// colore le poste ou navette en pos 1 avec couleur en mémoire
 		if(position==2 || position==3) // Si navette
 		{
@@ -800,8 +793,6 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 
 int Robot::colorerPosteDebutTask(int positionPoste)
 {
-	cout << "debut colorerPosteDebutTask" << endl;
-
 	string signal;
 	string fin;
 	int couleur[4];
@@ -849,8 +840,6 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 
 	}while(i<4 && couleur_last!=0);
 
-	cout << "fin=" << fin << endl;
-
 	if(i==1)
 	{
 		ROS_ERROR("TACHE SUR AUCUN PRODUIT !!!");
@@ -871,7 +860,6 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 		// mettre couleur sur signal/case i-1
 		string idStr= signal.substr(6);
 		int idPoste = atoi(idStr.c_str());
-		cout << "idPoste=" << idPoste << endl;
 		msgSim_changeColor.data.clear();
 		msgSim_changeColor.data.push_back(idPoste);
 
@@ -946,7 +934,6 @@ int Robot::colorerPosteFinTask(int positionPoste, int duree)
 	// mettre couleur sur signal i-1
 	string idStr= signal.substr(6);
 	int idPoste = atoi(idStr.c_str());
-	cout << "idPoste=" << idPoste << endl;
 	msgSim_changeColor.data.clear();
 	msgSim_changeColor.data.push_back(idPoste);
 
@@ -998,7 +985,6 @@ void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
 		float time=valueSim_getTime;
 
 		int retourDebTask = colorerPosteDebutTask(msg->position);
-		cout << "retourDebTask=" << retour << endl;
 		if(msg->position==1)
 		{
 			if(poste_pos_1.isTaskEnCours())

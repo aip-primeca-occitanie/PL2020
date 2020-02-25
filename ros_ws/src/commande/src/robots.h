@@ -9,11 +9,13 @@
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Byte.h>
+#include <vector>
 #include "robots/DoTaskMsg.h"
 #include "robots/Msg_numrobot.h"
 #include "commande_locale/SrvAddProduct.h"
 #include "commande_locale/Msg_AddProduct.h"
 #include "commande/DeplacerPieceMsg.h"
+#include "commande_locale/SrvAddProductPushBack.h"
 
 // Etats robot
 #define HAUT		1
@@ -63,6 +65,7 @@ private:
 	ros::Subscriber sub_retourRobot;
 
 	ros::ServiceClient client;
+	ros::ServiceServer serverPushBack;
 	commande_locale::SrvAddProduct srv;
 	commande_locale::Msg_AddProduct msg0;
 	commande::DeplacerPieceMsg deplacer_msg;
@@ -75,6 +78,8 @@ private:
 	int pince[4];
 	int robotTask[4][2];
 	int robotMacroDeplacement[4];
+
+	std::vector<int> produit_a_ajouter;
 
 	robots::DoTaskMsg tache_msg;
 
@@ -108,5 +113,8 @@ public:
 	int FinDeplacerPiece(int num_robot);
 	void Evacuer();
 	void AjouterProduit(int poste, int produit);
+	int AjoutProduitEnAttente();
+
+	bool ProductAddPushBack(commande_locale::SrvAddProductPushBack::Request& req, commande_locale::SrvAddProductPushBack::Response& rep);
 };
 #endif

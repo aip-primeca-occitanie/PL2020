@@ -18,7 +18,7 @@ Robot::Robot(int num_du_robot)
 		mymodes[i]=1;
 	}
 
-	for(int i=0; i<4; i++)
+	for(int i=0; i<NB_CUBE; i++)
 		couleur_transportee[i]=0;
 
 	repSim_getObjectHandle=false;
@@ -31,13 +31,10 @@ Robot::Robot(int num_du_robot)
 
 	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
 	msgSim_setJointState.layout.dim[0].label="handles";
-	msgSim_setJointState.layout.dim[0].size=7;
-	msgSim_setJointState.layout.dim[0].stride=1;
+	msgSim_setJointState.layout.dim[0].size=7; // On utilise que cette valeur
 	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
 	msgSim_setJointState.layout.dim[0].label="values";
 	msgSim_setJointState.layout.dim[0].size=7;
-	msgSim_setJointState.layout.dim[0].stride=1;
-	msgSim_setJointState.layout.data_offset=0;
 
 	loop_rate = new ros::Rate(25);
 	loop_ok = new ros::Rate(2);
@@ -630,8 +627,8 @@ int Robot::computeTableId(int position)
 }
 
 void Robot::Colorer(int position, int type)//attention c'est forcement quand on transporte !!
-	// type==0 <=> prise /  =1 <=> pose
 {
+	// type==0 <=> prise /  =1 <=> pose
 	int idNavette=-1;
 	if(position==2 || position==3) // Si navette
 	{
@@ -645,7 +642,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 	if(idNavette==66) // 66=Erreur
 	{
 		ROS_ERROR("ERREUR : ShuttleManager n'a pas trouvé la navette");	
-		for(int i=0; i<4; i++)
+		for(int i=0; i<NB_CUBE; i++)
 			couleur_transportee[i]=0;
 		transport(false);
 	}
@@ -653,7 +650,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 	{
 		// regarde la couleur de ce qu'on veut prendre
 		bool couleur_vide=true;
-		int couleur[4];
+		int couleur[NB_CUBE];
 		char c[2];
 		if(idNavette==0)
 			c[0]=(char)(idNavette+90);
@@ -705,7 +702,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 
 		string fin;
 
-		for(int i=0; i<4; i++)
+		for(int i=0; i<NB_CUBE; i++)
 		{
 			fin.clear();
 			fin.append(signal);
@@ -723,7 +720,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 			repSim_getColor=false;
 			couleur[i]=valueSim_getColor;
 		}
-		for(int i=0; i<4; i++)
+		for(int i=0; i<NB_CUBE; i++)
 		{
 			if(couleur[i]!=0)
 				couleur_vide=false;
@@ -734,7 +731,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 		{
 			msgSim_changeShuttleColor.data.clear();
 			msgSim_changeShuttleColor.data.push_back(idNavette);
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NB_CUBE; i++)
 				msgSim_changeShuttleColor.data.push_back(couleur_transportee[i]);
 			pubSim_changeShuttleColor.publish(msgSim_changeShuttleColor);
 			while(!repSim_changeShuttleColor&&ros::ok())
@@ -748,7 +745,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 		{
 			msgSim_changeColor.data.clear();
 			msgSim_changeColor.data.push_back(computeTableId(position));
-			for(int i=0; i<4; i++)
+			for(int i=0; i<NB_CUBE; i++)
 				msgSim_changeColor.data.push_back(couleur_transportee[i]);
 			pubSim_changeColor.publish(msgSim_changeColor);
 			while(!repSim_changeColor&&ros::ok())
@@ -760,19 +757,14 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 		}
 
 		// on met a jour la couleur en mémoire (qu'on transporte) seulement si prise
-		if(type==0)
+		for(int i=0; i<NB_CUBE; i++)
 		{
-			for(int i=0; i<4; i++)
+			if(type==0)
 				couleur_transportee[i]=couleur[i];
-		}
-		else
-		{
-			for(int i=0; i<4; i++)
+			else
 				couleur_transportee[i]=0;
-		}
-		for(int i=0; i<4; i++)
 			cout << "couleur_trasportee[" << i << "]=" << couleur_transportee[i] << endl;
-
+		}
 
 		// Mise jour modele pince (si tiens quelque chose, non vide)
 		if(type==0 && !couleur_vide)
@@ -795,8 +787,8 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 {
 	string signal;
 	string fin;
-	int couleur[4];
-	for(int i=0; i<4; couleur[i++]=0){}
+	int couleur[NB_CUBE];
+	for(int i=0; i<NB_CUBE; couleur[i++]=0){}
 	int couleur_last(0);
 	int retour=-1;
 	int n_poste;
@@ -838,7 +830,7 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 
 		i++;
 
-	}while(i<4 && couleur_last!=0);
+	}while(i<NB_CUBE && couleur_last!=0);
 
 	if(i==1)
 	{
@@ -848,7 +840,7 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 		pub_erreur_log.publish(msg_erreur);
 	}
 
-	else if(i==4 && couleur_last!=0)
+	else if(i==NB_CUBE && couleur_last!=0)
 	{
 		ROS_ERROR("PRODUIT PLEIN !!!");
 		msg_erreur.code=2;
@@ -866,7 +858,7 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 		couleur[i-1]=couleur_a_ajouter;
 		cout << "couleur_a_ajouter=" << couleur_a_ajouter << endl;
 
-		for(int j=0; j<4; j++)
+		for(int j=0; j<NB_CUBE; j++)
 			msgSim_changeColor.data.push_back(couleur[j]);
 		pubSim_changeColor.publish(msgSim_changeColor);
 		while(!repSim_changeColor&&ros::ok())
@@ -886,8 +878,8 @@ int Robot::colorerPosteFinTask(int positionPoste, int duree)
 {
 	string signal;
 	string fin;
-	int couleur[4];
-	for(int i=0; i<4; couleur[i++]=0){}
+	int couleur[NB_CUBE];
+	for(int i=0; i<NB_CUBE; couleur[i++]=0){}
 	int couleur_last(0);
 	int retour=-1;
 	int n_poste;
@@ -929,7 +921,7 @@ int Robot::colorerPosteFinTask(int positionPoste, int duree)
 
 		i++;
 
-	}while(i<4 && couleur_last!=0);
+	}while(i<NB_CUBE && couleur_last!=0);
 
 	// mettre couleur sur signal i-1
 	string idStr= signal.substr(6);
@@ -937,7 +929,7 @@ int Robot::colorerPosteFinTask(int positionPoste, int duree)
 	msgSim_changeColor.data.clear();
 	msgSim_changeColor.data.push_back(idPoste);
 
-	if(i==4 && couleur_last!=0)
+	if(i==NB_CUBE && couleur_last!=0)
 	{
 		couleur[i-1]=couleur_a_ajouter;
 		retour = i-1;
@@ -949,7 +941,7 @@ int Robot::colorerPosteFinTask(int positionPoste, int duree)
 	}
 	cout << "couleur_a_ajouter=" << couleur_a_ajouter << endl;
 
-	for(int j=0; j<4; j++)
+	for(int j=0; j<NB_CUBE; j++)
 		msgSim_changeColor.data.push_back(couleur[j]);
 	pubSim_changeColor.publish(msgSim_changeColor);
 	while(!repSim_changeColor&&ros::ok())
@@ -1120,11 +1112,11 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 		cout << "Evacuer" << endl;
 		int position=1;  // on evacue sur la position 1 du robot 2 <=> poste 3
 
-		int couleur[4];
+		int couleur[NB_CUBE];
 		string signal=poste_pos_1.get_nom();
 		msg_log_couleur.data.clear();
 		string fin;
-		for(int i=0; i<4; i++)
+		for(int i=0; i<NB_CUBE; i++)
 		{
 			fin.clear();
 			fin.append(signal);
@@ -1145,14 +1137,14 @@ void Robot::Evacuer(const std_msgs::Byte::ConstPtr& msg)
 			msg_log_couleur.data.push_back(couleur[i]);
 			cout << "couleur[" << i << "]=" << couleur[i] << endl;
 		}
-
+		
 		//pour le log
 		pub_produitEvac.publish(msg_log_couleur);
 
 		// On fait disparaitre
 		msgSim_changeColor.data.clear();
 		msgSim_changeColor.data.push_back(computeTableId(position));
-		for(int i=0; i<4; i++)
+		for(int i=0; i<NB_CUBE; i++)
 			msgSim_changeColor.data.push_back(0);
 		pubSim_changeColor.publish(msgSim_changeColor);
 		while(!repSim_changeColor&&ros::ok())
@@ -1292,7 +1284,6 @@ void Robot::init(ros::NodeHandle noeud)
 	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras",10,&Robot::DescendreBrasCallback,this);
 	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras",10,&Robot::MonterBrasCallback,this);
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras",10,&Robot::ControlerRobotCallback,this);
-	//sub_colorer = noeud.subscribe("/commande/Simulation/Colorer",10,&Robot::ColorerCallback,this);
 	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
 	sub_evacuer=noeud.subscribe("/commande/Simulation/Evacuer",10,&Robot::Evacuer,this);
 	subStopTache=noeud.subscribe("/commande/Simulation/Robot"+to_string(num_robot)+"/StopTache",10,&Robot::stopTacheCallback,this);

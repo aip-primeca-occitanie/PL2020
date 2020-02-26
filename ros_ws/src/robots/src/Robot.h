@@ -29,6 +29,9 @@
 #include "Poste.h"
 #include "shuttles/shuttle_id.h"
 
+// Nombre de cube max sur les postes et navettes
+#define NB_CUBE 6
+
 
 class Robot
 {
@@ -124,7 +127,7 @@ private:
 	unsigned char mymodes[7];
 	float Rpos[7];
 	int Rints[7];
-	int couleur_transportee[4];
+	int couleur_transportee[NB_CUBE];
 	// numero du robot
 	int num_robot;
 	ros::Rate* loop_rate;

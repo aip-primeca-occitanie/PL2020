@@ -28,6 +28,8 @@
 
 #include <aiguillages/ExchangeSh.h>
 
+#include "../../robots/src/Robot.h"
+
 
 class vrepController
 {

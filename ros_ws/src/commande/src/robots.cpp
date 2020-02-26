@@ -592,6 +592,9 @@ void Robots::Evacuer()
 {
 	std_msgs::Byte msg;
 	pub_evacuer_piece.publish(msg);
+	
+	// Pour eviter les conflits d'appel de service Coppelia en même temps
+	ros::Duration(1).sleep(); 
 
 	cout << BOLDCYAN << "Evacuation !" << RESET << endl;
 }

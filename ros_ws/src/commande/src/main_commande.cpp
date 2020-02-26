@@ -23,8 +23,6 @@ void display()
 	{
 		if(i==0)
 			cout << "Marquage : ";
-		else if(i==500)
-			cout << endl << "Produits ajoutes : ";
 
 		if(M[i]!=0)
 			cout<<BOLDRED<<"M["<<i<<"]="<<M[i]<<RESET<<", ";
@@ -151,7 +149,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[40] && capteur.get_PS(6) && capteur.get_PS(14))// && robot.IsTaskOver(POSTE_8)) // On dirige la navette vers le poste 1
+			if (M[40] && capteur.get_PS(6) && capteur.get_PS(14))//On dirige la navette vers le poste 1
 			{
 				M[40]--;
 				robot.DeplacerPiece(ROBOT_3,2,1);
@@ -187,28 +185,31 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[80] && robot.IsTaskOver(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
+			if (M[80] && capteur.get_PS(22) && robot.IsTaskOver(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
 			{
 				M[80]--;
 				robot.DeplacerPiece(ROBOT_3,1,4);
+				robot.DeplacerPiece(ROBOT_1,3,4);
+				cmd.SortirErgot(8);
 				M[90]++;
 				display();
 			}
 
-			if (M[90] && capteur.get_PS(22) && robot.FinDeplacerPiece(ROBOT_3)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
+			if (M[90] && robot.FinDeplacerPiece(ROBOT_1) && robot.FinDeplacerPiece(ROBOT_3)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
 			{
 				M[90]--;
-				robot.DeplacerPiece(ROBOT_1,3,4);
 				robot.DoTask(POSTE_5,3);
-				cmd.SortirErgot(8);
+				robot.DoTask(POSTE_1,4);
 				M[100]++;
 				display();
 			}
 
-			if (M[100] && robot.FinDeplacerPiece(1)) // robot 1 fais tache 1 pendant 4s
+			if (M[100] && robot.IsTaskOver(POSTE_5)) // robot 1 fais tache 1 pendant 4s
 			{
 				M[100]--;
-				robot.DoTask(POSTE_1,4);
+				robot.DoTask(POSTE_5,1);
+				cmd.Ouvrir_PS(14);
+				cmd.Stop_PS(15);
 				M[110]++;
 				display();
 			}
@@ -217,7 +218,7 @@ int main(int argc, char **argv)
 			{
 				M[110]--;
 				robot.DeplacerPiece(ROBOT_1,4,3);
-				robot.DeplacerPiece(ROBOT_3,4,2);
+				robot.DeplacerPiece(ROBOT_3,4,3);
 				M[120]++;
 				display();
 			}
@@ -226,7 +227,7 @@ int main(int argc, char **argv)
 			{
 				M[120]--;
 				cmd.Ouvrir_PS(22);
-				cmd.Ouvrir_PS(14);
+				cmd.Ouvrir_PS(15);
 				M[130]++;
 				display();
 			}
@@ -290,6 +291,13 @@ int main(int argc, char **argv)
 			if(M[180] && robot.FinDeplacerPiece(ROBOT_2))
 			{
 				M[180]--;
+				robot.DoTask(POSTE_3,1);
+				M[182]++;
+				display();
+			}
+			if(M[182] && robot.IsTaskOver(POSTE_3))
+			{
+				M[182]--;
 				robot.Evacuer();
 				M[190]++;
 				display();

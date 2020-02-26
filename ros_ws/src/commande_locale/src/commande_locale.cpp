@@ -78,6 +78,7 @@ int main(int argc, char **argv)
 	///////////////////////
 
 	// On attend l'initialisation du reste du projet
+	cout << "Attente fin de l'initialisation ..." << endl;
 	ros::Rate loop_rate(25);
 	while(ros::ok() && initEnCours)
 	{
@@ -118,9 +119,9 @@ int main(int argc, char **argv)
 						cin.ignore(256,'\n');
 						break;
 					}
-					cout << "Quel produit ? [1..8]" << endl;
+					cout << "Quel produit ? [1..6]" << endl;
 					cin >> choixProduit;
-					if(cin.fail() || choixProduit<1 || choixProduit>8)
+					if(cin.fail() || choixProduit<1 || choixProduit>6)
 					{
 						cout << endl << " [Erreur mauvais choix ..]" << endl;
 						cin.clear();

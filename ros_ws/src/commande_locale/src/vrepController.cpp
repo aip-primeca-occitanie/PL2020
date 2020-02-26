@@ -247,10 +247,8 @@ void vrepController::addProduct(int produit, int poste)
 	msgSim_changeColor.data.push_back(computeTableId(poste));
 	int couleur=produit*10+4;
 	msgSim_changeColor.data.push_back(couleur);
-
-	msgSim_changeColor.data.push_back(0);
-	msgSim_changeColor.data.push_back(0);
-	msgSim_changeColor.data.push_back(0);
+	for(int i=0; i<NB_CUBE-1; i++)
+		msgSim_changeColor.data.push_back(0);
 
 	pubSim_changeColor.publish(msgSim_changeColor);
 	while(!repSim_changeColor && ros::ok())

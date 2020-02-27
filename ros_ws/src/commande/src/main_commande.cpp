@@ -55,7 +55,11 @@ int main(int argc, char **argv)
 
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
-	for(int i=0; i<25*2; i++) // Wait 2s
+	// On attend la fin de l'initialisation des robots
+	while(!robot.RobotInitialise(1)
+	|| !robot.RobotInitialise(2)
+	|| !robot.RobotInitialise(3)
+	|| !robot.RobotInitialise(4))
 	{
 		ros::spinOnce();
 		loop_rate.sleep();
@@ -138,8 +142,8 @@ int main(int argc, char **argv)
 				robot.DeplacerPiece(ROBOT_2,1,2);
 				robot.DeplacerPiece(ROBOT_4,1,3);
 				cmd.SortirErgot(1);
+				M[30]++;
 				display();
-				M[1000]++;
 			}
 
 			if (M[30]  && robot.FinDeplacerPiece(ROBOT_2) && robot.FinDeplacerPiece(ROBOT_4)) // la navette repars du poste 3 avec le produit B
@@ -362,6 +366,11 @@ int main(int argc, char **argv)
 			{
 				display();
 				cout << endl << "SIMULATION TERMINEE" << endl;
+				while(ros::ok())
+				{
+					ros::spinOnce();
+					loop_rate.sleep();
+				}
 			}
 		}
 

@@ -44,8 +44,8 @@ guiFontSize_Win = 13 // -1=default
 guiFontSize_Mac = -1 // -1=default
 guiFontSize_Linux = 13 // -1=default
 statusbarInitiallyVisible = true
-modelBrowserInitiallyVisible = true
-sceneHierarchyInitiallyVisible = true
+modelBrowserInitiallyVisible = false
+sceneHierarchyInitiallyVisible = false
 sceneHierarchyHiddenDuringSimulation = false
 scriptEditorFont =  // empty=default.
 scriptEditorFontSize = -1 // -1=default.

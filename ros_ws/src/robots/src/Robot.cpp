@@ -134,7 +134,7 @@ void Robot::EnvoyerRobot(int numposition)
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001&&ros::ok())
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -210,7 +210,7 @@ void Robot::EnvoyerJoints(int joint1, int joint2, int joint3, int joint4, int jo
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001&&ros::ok())
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -284,7 +284,7 @@ void Robot::DescendreBras()
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001&&ros::ok())
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -361,7 +361,7 @@ void Robot::MonterBras()
 		Position = valueSim_getJointState;
 
 		//Attente jusqu'à ce que la position soit atteinte
-		while(abs(Position-Rpos[i])>=0.001)
+		while(abs(Position-Rpos[i])>=0.001&&ros::ok())
 		{
 			pubSim_getJointState.publish(msgSim_getJointState);
 			while(!repSim_getJointState&&ros::ok())
@@ -416,7 +416,7 @@ void Robot::FermerPince()
 		t0 = valueSim_getTime;
 
 		time = t0;
-		while(time - t0 < 0.5)
+		while(time - t0 < 0.5 &&ros::ok())
 		{
 			pubSim_getTime.publish(msgSim_getTime);
 			while(!repSim_getTime&&ros::ok())
@@ -466,7 +466,7 @@ void Robot::OuvrirPince()
 		t0 = valueSim_getTime;
 
 		time = t0;
-		while(time - t0 < 0.5)
+		while(time - t0 < 0.5&&ros::ok())
 		{
 			pubSim_getTime.publish(msgSim_getTime);
 			while(!repSim_getTime&&ros::ok())
@@ -830,7 +830,7 @@ int Robot::colorerPosteDebutTask(int positionPoste)
 
 		i++;
 
-	}while(i<NB_CUBE && couleur_last!=0);
+	}while(i<NB_CUBE && couleur_last!=0&&ros::ok());
 
 	if(i==1)
 	{
@@ -921,7 +921,7 @@ int Robot::colorerPosteFinTask(int positionPoste, int duree)
 
 		i++;
 
-	}while(i<NB_CUBE && couleur_last!=0);
+	}while(i<NB_CUBE && couleur_last!=0&&ros::ok());
 
 	// mettre couleur sur signal i-1
 	string idStr= signal.substr(6);
@@ -1052,7 +1052,7 @@ void Robot::update()
 					couleur=valueSim_getColor;
 
 					loop_rate->sleep();
-				}while(couleur!=poste_pos_1.get_color());
+				}while(couleur!=poste_pos_1.get_color()&&ros::ok());
 
 				retour.data=8;
 				pub_retourCommande.publish(retour);
@@ -1089,7 +1089,7 @@ void Robot::update()
 					couleur=valueSim_getColor;
 
 					loop_rate->sleep();
-				}while(couleur!=poste_pos_4.get_color());
+				}while(couleur!=poste_pos_4.get_color()&&ros::ok());
 				retour.data=9;
 				pub_retourCommande.publish(retour);
 			}

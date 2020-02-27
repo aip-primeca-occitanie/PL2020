@@ -16,6 +16,7 @@ using namespace std;
 vrepController VREPController;
 commande_locale::Msg_AddProduct msg0;
 bool initEnCours(true);
+bool initCoppeliaEnCours(true);
 
 void spinner()
 {
@@ -52,6 +53,11 @@ bool finInit(commande_locale::SrvFinInit::Request &req, commande_locale::SrvFinI
 	return true;
 }
 
+void CoppeliaFinInitCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+	initCoppeliaEnCours=false;
+}
+
 int main(int argc, char **argv)
 {
 	//Initialisation du noeud ROS
@@ -64,10 +70,13 @@ int main(int argc, char **argv)
 	ros::ServiceServer service = nh.advertiseService("srv_add_product", AddProduct);
 	ros::ServiceClient clientAddProduct = nh.serviceClient<commande_locale::SrvAddProductPushBack>("srv_add_product_push_back");
 	commande_locale::SrvAddProductPushBack srv;
-	ros::ServiceServer serviceInit = nh.advertiseService("srv_fin_init", finInit);
 	ros::Publisher pub_shutdown = nh.advertise<std_msgs::Byte>("/commande_locale/shutdown",10);
 	ros::Subscriber sub_shutdown = nh.subscribe("/commande_locale/shutdown",10,ShutdownCallback);
 
+	ros::ServiceServer serviceInit = nh.advertiseService("srv_fin_init", finInit);
+	ros::Subscriber sub_coppeliaFinInit = nh.subscribe("/sim_ros_interface/FinInit",10,&CoppeliaFinInitCallback);
+
+	ros::Publisher pub_stopSim = nh.advertise<std_msgs::Byte>("/sim_ros_interface/StopSimulation",100);
 
 	ROS_INFO("Simulation file: %s \n", argv[1]);
 
@@ -78,7 +87,15 @@ int main(int argc, char **argv)
 	inOutController IOController(&VREPController);
 	IOController.init(nh);
 
-	ros::Duration(3).sleep();
+	ros::Rate loop_rate(25);
+	cout << "Attente fin demarrage Coppelia ..." << endl;
+	while(initCoppeliaEnCours && ros::ok())
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}
+
+	system("roslaunch launcher launch_beta.launch &");
 
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();
@@ -89,8 +106,7 @@ int main(int argc, char **argv)
 
 	// On attend l'initialisation du reste du projet
 	cout << "Attente fin de l'initialisation ..." << endl;
-	ros::Rate loop_rate(25);
-	while(ros::ok() && initEnCours)
+	while(initEnCours && ros::ok())
 	{
 		ros::spinOnce();
 		loop_rate.sleep();
@@ -160,6 +176,7 @@ int main(int argc, char **argv)
 
 				case 4:
 					cout << "Fin Programme" << endl;
+					pub_stopSim.publish(std_msgs::Byte());
 					pub_shutdown.publish(msg_shutdown);
 					ros::Duration(1).sleep();
 					break;

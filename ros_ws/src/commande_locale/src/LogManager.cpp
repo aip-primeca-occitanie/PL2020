@@ -9,6 +9,7 @@
 #include "robots/TacheFinieMsg.h"
 #include <iostream>
 #include <fstream>
+#include <ctime>
 
 using namespace std;
 
@@ -16,6 +17,8 @@ ros::Publisher pubSim_getTime;
 ros::Subscriber subSim_getTime;
 bool repSim_getTime;
 float valueSim_getTime;
+time_t tmm = time(0);
+char* dt = ctime(&tmm);
 
 string path=ros::package::getPath("commande_locale");
 string filepath=path.substr(0,path.length()-(15+11))+"log.txt"; // 15="commande_locale.length 11="ros_ws/src/".length
@@ -100,6 +103,17 @@ void ErreurCallback(const commande_locale::Msg_Erreur::ConstPtr& msg)
 			ROS_INFO("	sur le poste: %d",msg->n_poste);
 			break;
 
+		// Manipulation d'un produit en cours de traitement
+		case 4:
+			monFlux<<"PerteNavette: ";
+			monFlux<<msg->n_poste; // Correspond à la file
+			monFlux<<endl;
+
+			//a supprimer plus tard
+			ROS_INFO("ERREUR Perte navette");
+			ROS_INFO("	sur la file: %d",msg->n_poste);
+			break;
+
 		// Ecrasement d'un produit (ajout produit ou deplacement)
 		case 66:
 			monFlux<<"EcrasementProduit:";
@@ -156,6 +170,7 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	ROS_INFO("LogManager initialise\n");
+	monFlux << "Creation fichier log: " << dt << endl;
 
 	while (ros::ok())
 	{

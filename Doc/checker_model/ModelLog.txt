@@ -1,0 +1,38 @@
+// ATTENTION ceci est un document modele consistant a donner une liste d'information nécessaire devant apparaitre dans le vrai log
+//Les messages sont identifié par le premier mot, on respectera donc la syntaxe donné
+//
+//
+//- si on fait une opération sur un poste vide NumPoste, syntaxe = OperationPosteVide : NumPoste
+//OperationPosteVide: 3
+//
+//- si il y a un écrasement de produit lors d'une tache, syntaxe= EcrasementProduit: NumRobot
+//EcrasementProduit: 2
+//
+//- si on fait une opération sur un produit qui a déjà les MAX_TACHES taches maximale, syntaxe = OperationProduitPlein : NumPoste
+//OperationProduitPlein: 2
+//
+//- si on perd une navette sur un tronçon à cause de l'aiguillage qui est enclenché trop tard, c'est à dire que l'aiguillage n'était pas en buté droite ou gauche (car en mouvement) lorsque la navette s'est engagé, syntaxe = PerteNavette: NumTronçon
+//PerteNavette: 2
+//
+//- si un produit P est crée sur un poste quelconque, syntaxe = NewProduct: Produit :temps
+//NewProduct: 14 :2.5
+//
+//- Le temps T d'une tache D sur un produit P, syntaxe = TempoT:P :D :durée
+//TempoT:14 :1 :11
+//
+//- la sortie d'un produit et son empilement de 3 taches (D1, D2 et D3) , syntaxe = Sortie : Produit: D1 :D2 :D3 :temps
+//Sortie :14 :13 :23 :33 :487.5
+
+NewProduct: 24 :0.8
+NewProduct: 64 :1.2
+TempoT:24 :1 :4
+TempoT:24 :4 :5
+TempoT:64 :7 :3
+TempoT:64 :6 :6
+TempoT:64 :5 :3
+Sortie :24 :13 :43 :0 :23.7
+Sortie :64 :73 :63 :53 :32.6
+NewProduct: 24 :35.4
+TempoT:24 :1 :4
+TempoT:24 :4 :5
+Sortie :24 :13 :43 :0 :53.2

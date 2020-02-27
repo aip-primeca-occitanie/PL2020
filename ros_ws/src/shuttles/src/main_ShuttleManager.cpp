@@ -5,6 +5,7 @@
 #include <std_msgs/Int32.h>
 #include "capteurs.h"
 #include <std_msgs/Byte.h>
+#include "commande_locale/Msg_Erreur.h"
 
 
 #include <iostream>
@@ -72,6 +73,7 @@ int main(int argc, char **argv)
 
 	ros::ServiceServer service = noeud.advertiseService("get_id_shuttle_at_poste", shuttle_at_poste);
 	ros::Subscriber sub_shutdown = noeud.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
+	ros::Publisher pub_erreur_log=noeud.advertise<commande_locale::Msg_Erreur>("/commande/Simulation/Erreur_log",10);
 
 	Capteurs capteur(noeud);
 
@@ -183,6 +185,10 @@ int main(int argc, char **argv)
 				if (file_attente_suivante==-1)
 				{
 					liste_file[i]->delete_navette_in_queue();
+					commande_locale::Msg_Erreur msgErreur;
+					msgErreur.code=4;
+					msgErreur.n_poste=i;
+					pub_erreur_log.publish(msgErreur);
 				}
 			file_attente_suivante=-2;
 			}

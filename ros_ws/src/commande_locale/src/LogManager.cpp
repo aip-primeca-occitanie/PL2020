@@ -100,6 +100,17 @@ void ErreurCallback(const commande_locale::Msg_Erreur::ConstPtr& msg)
 			ROS_INFO("	sur le poste: %d",msg->n_poste);
 			break;
 
+		// Manipulation d'un produit en cours de traitement
+		case 4:
+			monFlux<<"PerteNavette: ";
+			monFlux<<msg->n_poste; // Correspond à la file 
+			monFlux<<endl;
+
+			//a supprimer plus tard
+			ROS_INFO("ERREUR Perte navette");
+			ROS_INFO("	sur la file: %d",msg->n_poste);
+			break;
+
 		// Ecrasement d'un produit (ajout produit ou deplacement)
 		case 66:
 			monFlux<<"EcrasementProduit:";

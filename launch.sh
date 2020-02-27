@@ -41,10 +41,10 @@ echo "${bold}--------------------------------------------------------------"
    if [ "$1" = "" ]; then
    	echo "        The simulation file was not defined."
 	echo "      Default file Simulation4Robots.ttt will be used."
-	roslaunch launcher launch_alpha.launch simFile:="Simulation4Robots" & 
+	roslaunch launcher launch_alpha.launch nbRobot:="4" & 
    else
    	echo "        The simulation file chosen is $1.ttt"
-	roslaunch launcher launch_alpha.launch simFile:=$1 &
+	roslaunch launcher launch_alpha.launch nbRobot:=$1 &
    fi
 echo "--------------------------------------------------------------${normal}"
 

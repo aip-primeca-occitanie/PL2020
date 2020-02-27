@@ -80,10 +80,14 @@ int main(int argc, char **argv)
 
 	ros::Publisher pub_actuator = nh.advertise<std_msgs::Byte>("/actuator",100);
 
-	ROS_INFO("Simulation file: %s \n", argv[1]);
+	string nombreRobotStr=string(argv[1]);
+	if(nombreRobotStr!="2" && nombreRobotStr!="4")
+		nombreRobotStr="4";
+
+	string simulationFile="Simulation"+nombreRobotStr+"Robots";
 
 	// VREP CONTROLLER
-	VREPController.init(nh,argv[0], argv[1]);
+	VREPController.init(nh,argv[0], simulationFile.c_str());
 
 	// IN & OUT CONTROLLER
 	inOutController IOController(&VREPController);
@@ -97,7 +101,8 @@ int main(int argc, char **argv)
 		loop_rate.sleep();
 	}
 
-	system("roslaunch launcher launch_beta.launch &");
+	string cmd="roslaunch launcher launch_beta.launch nbRobot:=" + nombreRobotStr + " &";
+	system(cmd.c_str());
 
 	cout << "Pause envoyée" << endl;
 	VREPController.pause();

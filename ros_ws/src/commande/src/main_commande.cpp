@@ -48,8 +48,7 @@ int main(int argc, char **argv)
 	ros::Publisher pub_spawnShuttles = noeud.advertise<std_msgs::Int32>("/commande_locale/nbNavettes",10);
 	ros::Subscriber sub_shutdown = noeud.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
 
-	//int nbRobot=atoi(argv[1]);
-	int nbRobot=4;
+	int nbRobot=atoi(argv[1]);
 	
 	cout << "nbRobot" << endl;
 

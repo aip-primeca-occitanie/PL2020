@@ -1,6 +1,8 @@
 <launch>
 
- 	<node name="commande" pkg="commande" type="run" output="screen" launch-prefix="xterm -geometry '80x20+550+0' -e"/>
+	<arg name="nbRobot" default="4"/>
+
+ 	<node name="commande" pkg="commande" type="run" output="screen" launch-prefix="xterm -geometry '80x20+550+0' -e" args="$(arg nbRobot)"/>
 
 	<node name="aiguillage" pkg="aiguillages" type="run_Aiguillage"/>
 

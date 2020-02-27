@@ -16,7 +16,7 @@ using namespace std;
 int M[Nb_Place];
 
 // Pour l'affichage //
-void display() 
+void display()
 {
 	cout << endl;
 	for (int i=0;i<=Nb_Place;i++)
@@ -30,6 +30,11 @@ void display()
 	cout<<endl<<endl;
 }
 
+void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+		ros::shutdown();
+}
+
 int main(int argc, char **argv)
 {
 	////////////////////////////////////////////////////
@@ -41,6 +46,7 @@ int main(int argc, char **argv)
 	ros::NodeHandle noeud;
 
 	ros::Publisher pub_spawnShuttles = noeud.advertise<std_msgs::Int32>("/commande_locale/nbNavettes",10);
+	ros::Subscriber sub_shutdown = noeud.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
 
 	Commande cmd(noeud,argv[0]);
 	Robots robot(noeud);
@@ -71,7 +77,6 @@ int main(int argc, char **argv)
 	std_msgs::Int32 msg_nbNavettes;
 	msg_nbNavettes.data=nbNavettes;
 	pub_spawnShuttles.publish(msg_nbNavettes);
-
 	int code_produit_a_ajouter=-1;
 
 	cmd.Initialisation();
@@ -80,7 +85,7 @@ int main(int argc, char **argv)
 	////////////////////////////////////
 	////// | MARQUAGE INITIAL | ////////
 	////////////////////////////////////
-	M[0]=1; 
+	M[0]=1;
 	display();
 
 	while (ros::ok())
@@ -133,8 +138,8 @@ int main(int argc, char **argv)
 				robot.DeplacerPiece(ROBOT_2,1,2);
 				robot.DeplacerPiece(ROBOT_4,1,3);
 				cmd.SortirErgot(1);
-				M[30]++;
 				display();
+				M[1000]++;
 			}
 
 			if (M[30]  && robot.FinDeplacerPiece(ROBOT_2) && robot.FinDeplacerPiece(ROBOT_4)) // la navette repars du poste 3 avec le produit B

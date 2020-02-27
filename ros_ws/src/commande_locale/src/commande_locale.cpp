@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <thread>
 #include <ros/ros.h>
+#include <std_msgs/Byte.h>
+
 
 using namespace std;
 
@@ -39,6 +41,11 @@ void SpawnShuttlesCallback(const std_msgs::Int32::ConstPtr& msg)
 	}
 }
 
+void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+		ros::shutdown();
+}
+
 bool finInit(commande_locale::SrvFinInit::Request &req, commande_locale::SrvFinInit::Response &res)
 {
 	initEnCours=false;
@@ -58,6 +65,9 @@ int main(int argc, char **argv)
 	ros::ServiceClient clientAddProduct = nh.serviceClient<commande_locale::SrvAddProductPushBack>("srv_add_product_push_back");
 	commande_locale::SrvAddProductPushBack srv;
 	ros::ServiceServer serviceInit = nh.advertiseService("srv_fin_init", finInit);
+	ros::Publisher pub_shutdown = nh.advertise<std_msgs::Byte>("/commande_locale/shutdown",10);
+	ros::Subscriber sub_shutdown = nh.subscribe("/commande_locale/shutdown",10,ShutdownCallback);
+
 
 	ROS_INFO("Simulation file: %s \n", argv[1]);
 
@@ -74,7 +84,7 @@ int main(int argc, char **argv)
 	VREPController.pause();
 
 	thread spinnerThread(spinner);
-
+	std_msgs::Byte msg_shutdown;
 	///////////////////////
 
 	// On attend l'initialisation du reste du projet
@@ -95,7 +105,8 @@ int main(int argc, char **argv)
 		cout << "Que voulez faire ?" 	<< endl <<
 			"	1- Ajouter un produit" << endl <<
 			"	2- Pause simu" 	<< endl <<
-			"	3- Play simu" 	<< endl;
+			"	3- Play simu" 	<< endl<<
+			"	4- Fin programme" 	<< endl;
 		cout << "Choix : ";
 		cin >> choix;
 		if(cin.fail())
@@ -138,13 +149,19 @@ int main(int argc, char **argv)
 					break;
 
 				case 2:
-					cout << "Mise en pause de la simu" << endl;
+					cout << "Mise en Pause de la simu" << endl;
 					VREPController.pause();
 					break;
 
 				case 3:
 					cout << "Mise en Play de la simu" << endl;
 					VREPController.play();
+					break;
+
+				case 4:
+					cout << "Fin Programme" << endl;
+					pub_shutdown.publish(msg_shutdown);
+					ros::Duration(1).sleep();
 					break;
 
 				default:

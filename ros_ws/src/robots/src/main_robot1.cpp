@@ -5,11 +5,18 @@
 #include <ros/ros.h>
 
 
+void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+		ros::shutdown();
+}
+
 int main(int argc, char **argv)
 {
 	//Initialisation du noeud ROS
 	ros::init(argc,argv,"robot1");
 	ros::NodeHandle nh;
+	ros::Subscriber sub_shutdown = nh.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
+
 
 	//CmdRobot
 	Robot robot1(1);
@@ -26,5 +33,7 @@ int main(int argc, char **argv)
 		}
 		ros::spinOnce();
 		loop_rate.sleep();
+
+
 	}
 }

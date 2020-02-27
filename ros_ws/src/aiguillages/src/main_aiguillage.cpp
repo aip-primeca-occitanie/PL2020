@@ -4,12 +4,19 @@
 #include "Aiguillage.h"
 #include <iostream>
 
+
 using namespace std;
+
+void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+		ros::shutdown();
+}
 
 int main(int argc, char **argv)
 {
 	ros::init(argc, argv, "main_aiguillage");
 	ros::NodeHandle noeud;
+	ros::Subscriber sub_shutdown = noeud.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
 
 	Aiguillage *gerer_aiguillage = new Aiguillage(noeud);
 

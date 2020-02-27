@@ -68,7 +68,7 @@ void ErreurCallback(const commande_locale::Msg_Erreur::ConstPtr& msg)
 	switch(msg->code)
 	{
 		// Operation sur un poste vide
-		case 1:	
+		case 1:
 			monFlux<<"OperationPosteVide: ";
 			monFlux<<msg->n_poste;
 			monFlux<<endl;
@@ -79,7 +79,7 @@ void ErreurCallback(const commande_locale::Msg_Erreur::ConstPtr& msg)
 			break;
 
 		// Operation sur un produit plein
-		case 2:	
+		case 2:
 			monFlux<<"OperationProduitPlein: ";
 			monFlux<<msg->n_poste;
 			monFlux<<endl;
@@ -128,6 +128,10 @@ void getTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 	repSim_getTime=true;
 }
 
+void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+		ros::shutdown();
+}
 int main(int argc, char **argv)
 {
 	ofstream monFlux2(filepath);
@@ -140,6 +144,7 @@ int main(int argc, char **argv)
 	ros::Subscriber subProduitEvac = nh.subscribe("/commande/Simulation/produitEvac", 1, &ProduitEvacCallback);
 	ros::Subscriber subNewProduit = nh.subscribe("/commande_locale/AddProduct", 1, &NewProductCallback);
 	ros::Subscriber subErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurCallback);
+	ros::Subscriber sub_shutdown = nh.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
 
 	// GetTime VREP
 	pubSim_getTime=nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/LogManager/GetTime",100);

@@ -4,6 +4,8 @@
 #include "FileAttente.h"
 #include <std_msgs/Int32.h>
 #include "capteurs.h"
+#include <std_msgs/Byte.h>
+
 
 #include <iostream>
 #include "shuttles/shuttle_id.h"
@@ -54,6 +56,12 @@ void initPosNavetteCallback(const std_msgs::Int32::ConstPtr& msg)
 	initPos=1;
 }
 
+
+void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+		ros::shutdown();
+}
+
 int main(int argc, char **argv)
 {
 	cout << "debut Shuttle manager" << endl;
@@ -63,6 +71,7 @@ int main(int argc, char **argv)
 	ros::Subscriber subNbNavette = noeud.subscribe("/commande_locale/nbNavettes", 100, &initPosNavetteCallback);
 
 	ros::ServiceServer service = noeud.advertiseService("get_id_shuttle_at_poste", shuttle_at_poste);
+	ros::Subscriber sub_shutdown = noeud.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
 
 	Capteurs capteur(noeud);
 

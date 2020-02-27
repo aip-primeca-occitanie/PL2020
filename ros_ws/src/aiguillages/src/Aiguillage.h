@@ -4,6 +4,8 @@
 #include <ros/ros.h>
 #include <std_msgs/Int32.h>
 #include <unistd.h>
+#include <std_msgs/Byte.h>
+
 
 using namespace std;
 

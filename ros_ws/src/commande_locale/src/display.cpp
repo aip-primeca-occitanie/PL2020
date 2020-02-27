@@ -28,6 +28,11 @@ void update()
     }
 }
 
+void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+		ros::shutdown();
+}
+
 void getSimuStream(const sensor_msgs::ImageConstPtr& msg)
 {
 	imageSimu = cv_bridge::toCvShare(msg, "bgr8")->image;
@@ -47,6 +52,7 @@ int main(int argc, char **argv)
 	image_transport::ImageTransport it(nh);
 	subImage = it.subscribe("sim_ros_interface/VisionSensorData", 1, &getSimuStream);
 	pub = nh.advertise<std_msgs::Byte>("/actuator",100);
+    ros::Subscriber sub_shutdown = nh.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
 
 	usleep(3000000);
 

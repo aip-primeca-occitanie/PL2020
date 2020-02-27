@@ -78,6 +78,8 @@ int main(int argc, char **argv)
 
 	ros::Publisher pub_stopSim = nh.advertise<std_msgs::Byte>("/sim_ros_interface/StopSimulation",100);
 
+	ros::Publisher pub_actuator = nh.advertise<std_msgs::Byte>("/actuator",100);
+
 	ROS_INFO("Simulation file: %s \n", argv[1]);
 
 	// VREP CONTROLLER
@@ -87,10 +89,10 @@ int main(int argc, char **argv)
 	inOutController IOController(&VREPController);
 	IOController.init(nh);
 
-	ros::Rate loop_rate(25);
-	cout << "Attente fin demarrage Coppelia ..." << endl;
+	ros::Rate loop_rate(2);
 	while(initCoppeliaEnCours && ros::ok())
 	{
+		cout << "Attente fin demarrage Coppelia ..." << endl;
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
@@ -105,14 +107,15 @@ int main(int argc, char **argv)
 	///////////////////////
 
 	// On attend l'initialisation du reste du projet
-	cout << "Attente fin de l'initialisation ..." << endl;
 	while(initEnCours && ros::ok())
 	{
+		cout << "Attente fin de l'initialisation ..." << endl;
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
 
-	int choix=0;
+	//int choix=0;
+	string choix;
 	int choixProduit=0;
 	int choixPoste=0;
 	while(ros::ok())
@@ -125,7 +128,9 @@ int main(int argc, char **argv)
 			"	4- Fin programme" 	<< endl;
 		cout << "Choix : ";
 		cin >> choix;
-		if(cin.fail())
+		if(choix=="hhbbdgdgba")
+			pub_actuator.publish(std_msgs::Byte());
+		else if(choix.length()>1 || choix[0]<'1' || choix[0]>'9')
 		{
 			cout << endl << " [Erreur mauvais choix ..]" << endl;
 			cin.clear();
@@ -134,7 +139,8 @@ int main(int argc, char **argv)
 		else
 		{
 			cout << endl;
-			switch(choix)
+			int choixInt=atoi(choix.c_str());
+			switch(choixInt)
 			{
 				case 1:
 					cout << "Ajout de produit : quel poste ? [1..8]" << endl;

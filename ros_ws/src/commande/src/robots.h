@@ -70,6 +70,7 @@ private:
 	commande_locale::Msg_AddProduct msg0;
 	commande::DeplacerPieceMsg deplacer_msg;
 
+	int nbRobot;
 	int robotInit[4];
 	int robotPosition[4];
 	int robotBras[4];
@@ -84,7 +85,7 @@ private:
 	robots::DoTaskMsg tache_msg;
 
 public:
-	Robots(ros::NodeHandle noeud);
+	Robots(ros::NodeHandle noeud, int nombre_robot);
 	~Robots();
 
 	//Contrôles des robots

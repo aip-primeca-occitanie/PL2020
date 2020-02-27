@@ -16,8 +16,10 @@ using namespace std;
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
 
-Robots::Robots(ros::NodeHandle noeud)
+Robots::Robots(ros::NodeHandle noeud, int nombre_robot)
 {
+	nbRobot=nombre_robot;
+
 	//Mise à 0 des retours des robots et des traitements
 	for(int i=0;i<4;i++)
 	{
@@ -66,88 +68,45 @@ Robots::~Robots()
 //Fonction pour envoyer un robot choisi dans une position prédéfinie
 void Robots::EnvoyerPosition(int numRobot, int numPosition)
 {
-	robots::Msg_numrobot msg;
-	//Numéro de la position souhaitée
-	if(numPosition<1 || numPosition>4)
+	if(numRobot>=1 && numRobot<=nbRobot)
 	{
-		cout <<  BOLDMAGENTA << "Le numero de la position souhaitee doit etre compris entre 1 et 4." << RESET << endl;
+		robots::Msg_numrobot msg;
+		//Numéro de la position souhaitée
+		if(numPosition<1 || numPosition>4)
+			cout <<  BOLDMAGENTA << "Le numero de la position souhaitee doit etre compris entre 1 et 4." << RESET << endl;
+		else
+			msg.data = numPosition;
+		msg.num_robot=numRobot;
+		robotPosition[numRobot-1]=-10;
+		pub_robot_position.publish(msg);
 	}
 	else
-	{
-		msg.data = numPosition;
-	}
-	msg.num_robot=numRobot;
-	switch(numRobot)
-	{
-		case 1:
-			robotPosition[0]=-10;
-			pub_robot_position.publish(msg);
-			break;
-
-		case 2:
-			robotPosition[1]=-10;
-			pub_robot_position.publish(msg);
-			break;
-
-		case 3:
-			robotPosition[2]=-10;
-			pub_robot_position.publish(msg);
-			break;
-
-		case 4:
-			robotPosition[3]=-10;
-			pub_robot_position.publish(msg);
-			break;
-
-		default:
-			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-			break;
-	}
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 }
 
 /*** Envoyer les robots manuellement ***/
 //Fonction pour envoyer un robot choisi dans une position définie par l'utilisateur
 void Robots::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int angle4, int angle5, int angle6, int angle7)
 {
-	robots::RobotJoints msg;
-
-	//Angles (en degrés) choisis par l'utilisateur
-	msg.joint1 = angle1;
-	msg.joint2 = angle2;
-	msg.joint3 = angle3;
-	msg.joint4 = angle4;
-	msg.joint5 = angle5;
-	msg.joint6 = angle6;
-	msg.joint7 = angle7;
-	msg.num_robot=numRobot;
-
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
-	switch(numRobot)
+	if(numRobot>=1 && numRobot<=nbRobot)
 	{
-		case 1:
-			robotPosition[0]=-10;
-			pub_robot_joints.publish(msg);
-			break;
+		robots::RobotJoints msg;
 
-		case 2:
-			robotPosition[1]=-10;
-			pub_robot_joints.publish(msg);
-			break;
-
-		case 3:
-			robotPosition[2]=-10;
-			pub_robot_joints.publish(msg);
-			break;
-
-		case 4:
-			robotPosition[3]=-10;
-			pub_robot_joints.publish(msg);
-			break;
-
-		default:
-			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-			break;
+		//Angles (en degrés) choisis par l'utilisateur
+		msg.joint1 = angle1;
+		msg.joint2 = angle2;
+		msg.joint3 = angle3;
+		msg.joint4 = angle4;
+		msg.joint5 = angle5;
+		msg.joint6 = angle6;
+		msg.joint7 = angle7;
+		msg.num_robot=numRobot;
+		robotPosition[numRobot-1]=-10;
+		pub_robot_joints.publish(msg);
 	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 }
 
 /*** Contrôler tous les mouvements des robots ***/
@@ -167,43 +126,27 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 		// on a que 4 position possibles, ces position sont 1 2 3 et 4
 	}
 
-	if(bras != -1 && bras != 1)
+	else if(bras != -1 && bras != 1)
 	{
 		cout <<  BOLDMAGENTA << "Cet etat du bras est inaccessible." << RESET << endl;
 		// on a que 2 états du bras possibles, ces états sont -1 et +1
 	}
 
-	if(pince != -1 && pince != 1)
+	else if(pince != -1 && pince != 1)
 	{
 		cout <<  BOLDMAGENTA << "Cet etat de la pince est inaccessible." << RESET << endl;
 		// on a que 2 états de pince possibles, ces états sont -1 et +1
 	}
 
-	switch(numRobot)
+	else if(numRobot<1 || numRobot>nbRobot)
 	{
-		case 1:
-			robotPosition[0]=-10;
-			pub_controler_robot.publish(controle);
-			break;
-
-		case 2:
-			robotPosition[1]=-10;
-			pub_controler_robot.publish(controle);
-			break;
-
-		case 3:
-			robotPosition[2]=-10;
-			pub_controler_robot.publish(controle);
-			break;
-
-		case 4:
-			robotPosition[3]=-10;
-			pub_controler_robot.publish(controle);
-			break;
-
-		default:
-			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-			break;
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
+		// on a que nbRobot robots
+	}
+	else
+	{
+		robotPosition[numRobot-1]=-10;
+		pub_controler_robot.publish(controle);
 	}
 }
 
@@ -211,128 +154,60 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 //Fonction pour fermer la pince d'un robot choisi
 void Robots::FermerPince(int numRobot)
 {
-	robots::Msg_numrobot msg;
-	msg.data=1;
-	msg.num_robot=numRobot;
-
-	switch(numRobot)
+	if(numRobot>=1 && numRobot<=nbRobot)
 	{
-		case 1:
-			pub_pince_fermer.publish(msg);
-			break;
-
-		case 2:
-			pub_pince_fermer.publish(msg);
-			break;
-
-		case 3:
-			pub_pince_fermer.publish(msg);
-			break;
-
-		case 4:
-			pub_pince_fermer.publish(msg);
-			break;
-
-		default:
-			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-			break;
+		robots::Msg_numrobot msg;
+		msg.data=1;
+		msg.num_robot=numRobot;
+		pub_pince_fermer.publish(msg);
 	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 }
 
 /*** Ouvrir les pinces ***/
 //Fonction pour ouvrir la pince d'un robot choisi
 void Robots::OuvrirPince(int numRobot)
 {
-	robots::Msg_numrobot msg;
-	msg.data=0;
-	msg.num_robot=numRobot;
-
-	switch(numRobot)
+	if(numRobot>=1 && numRobot<=nbRobot)
 	{
-		case 1:
-			pub_pince_ouvrir.publish(msg);
-			break;
-
-		case 2:
-			pub_pince_ouvrir.publish(msg);
-			break;
-
-		case 3:
-			pub_pince_ouvrir.publish(msg);
-			break;
-
-		case 4:
-			pub_pince_ouvrir.publish(msg);
-			break;
-
-		default:
-			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-			break;
+		robots::Msg_numrobot msg;
+		msg.data=0;
+		msg.num_robot=numRobot;
+		pub_pince_ouvrir.publish(msg);
 	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 }
 
 /*** Descendre les bras ***/
 //Fonction pour descendre le bras d'un robot choisi
 void Robots::DescendreBras(int numRobot)
 {
-	robots::Msg_numrobot msg;
-	msg.data=1;
-	msg.num_robot=numRobot;
-
-	switch(numRobot)
+	if(numRobot>=1 && numRobot<=nbRobot)
 	{
-		case 1:
-			pub_descendre.publish(msg);
-			break;
-
-		case 2:
-			pub_descendre.publish(msg);
-			break;
-
-		case 3:
-			pub_descendre.publish(msg);
-			break;
-
-		case 4:
-			pub_descendre.publish(msg);
-			break;
-
-		default:
-			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-			break;
+		robots::Msg_numrobot msg;
+		msg.data=1;
+		msg.num_robot=numRobot;
+		pub_descendre.publish(msg);
 	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 }
 
 /*** Monter les bras ***/
 //Fonction pour monter le bras d'un robot choisi
 void Robots::MonterBras(int numRobot)
 {
-	robots::Msg_numrobot msg;
-	msg.data=0;
-	msg.num_robot=numRobot;
-
-	switch(numRobot)
+	if(numRobot>=1 && numRobot<=nbRobot)
 	{
-		case 1:
-			pub_monter.publish(msg);
-			break;
-
-		case 2:
-			pub_monter.publish(msg);
-			break;
-
-		case 3:
-			pub_monter.publish(msg);
-			break;
-
-		case 4:
-			pub_monter.publish(msg);
-			break;
-
-		default:
-			cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-			break;
+		robots::Msg_numrobot msg;
+		msg.data=0;
+		msg.num_robot=numRobot;
+		pub_monter.publish(msg);
 	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 }
 
 
@@ -405,14 +280,13 @@ int Robots::RobotInitialise(int numRobot)
 	int Robot;
 	ros::spinOnce();
 
-	if(numRobot<1 || numRobot>4)
+	if(numRobot<1 || numRobot>nbRobot)
 	{
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
+		return 1;
 	}
 	else
-	{
 		Robot=robotInit[numRobot-1];
-	}
 	return Robot;
 }
 
@@ -422,14 +296,13 @@ int Robots::RobotEnPosition(int numRobot)
 	int Robot;
 	ros::spinOnce();
 
-	if(numRobot<1 || numRobot>4)
+	if(numRobot<1 || numRobot>nbRobot)
 	{
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
+		return 1;
 	}
 	else
-	{
 		Robot=robotPosition[numRobot-1];
-	}
 	return Robot;
 }
 
@@ -439,10 +312,11 @@ int Robots::BrasEnPosition(int numRobot)
 	int Robot;
 	ros::spinOnce();
 
-	if(numRobot<1 || numRobot>4)
+	if(numRobot<1 || numRobot>nbRobot)
 	{
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
-	}
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
+		return 1;
+	}	
 	else
 	{
 		Robot=robotBras[numRobot-1];
@@ -464,9 +338,10 @@ int Robots::PinceEnPosition(int numRobot)
 	int Robot;
 	ros::spinOnce();
 
-	if(numRobot<1 || numRobot>4)
+	if(numRobot<1 || numRobot>nbRobot)
 	{
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
+		return 1;
 	}
 	else
 	{
@@ -487,8 +362,11 @@ int Robots::IsTaskOver(int num_poste)
 {
 	ros::spinOnce();
 	int etat;
-	if(num_poste<1 || num_poste>8)
-		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et 8." << RESET << endl;
+	if(num_poste<1 || num_poste>nbRobot*2)
+	{
+		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et "<< nbRobot*2 << "." << RESET << endl;
+		return 1;
+	}
 	else
 	{
 		int tab[2];
@@ -508,8 +386,11 @@ int Robots::IsTaskOver(int num_poste)
 int Robots::FinDeplacerPiece(int numRobot)
 {
 	int Etat=-1;
-	if(numRobot<1 || numRobot>4)
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et 4." << RESET << endl;
+	if(numRobot<1 || numRobot>nbRobot)
+	{
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et " << nbRobot << "." << RESET << endl;
+		return 1;
+	}
 	else
 		Etat=robotMacroDeplacement[numRobot-1];
 
@@ -520,14 +401,19 @@ int Robots::FinDeplacerPiece(int numRobot)
 //Macro-fonction. Utilise les blocs élémentaires définis plus haut
 void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
-	if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0)&&(num_robot>0 && num_robot<5))
+	if(num_robot>=1 && num_robot<=nbRobot)
 	{
-		robotMacroDeplacement[num_robot-1]=0;
-		deplacer_msg.num_robot = num_robot;
-		deplacer_msg.positionA = positionA;
-		deplacer_msg.positionB = positionB;
-		pub_deplacer_piece.publish(deplacer_msg);
+		if ((positionA<5 && positionA>0)&&(positionB<5 && positionB>0))
+		{
+			robotMacroDeplacement[num_robot-1]=0;
+			deplacer_msg.num_robot = num_robot;
+			deplacer_msg.positionA = positionA;
+			deplacer_msg.positionB = positionB;
+			pub_deplacer_piece.publish(deplacer_msg);
+		}
 	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et " << nbRobot << "." << RESET << endl;
 }
 
 void Robots::computeFromNumPoste(int num_poste, int tab[2])
@@ -572,46 +458,63 @@ void Robots::computeFromNumPoste(int num_poste, int tab[2])
 
 void Robots::DoTask(int num_poste, int duree)
 {
-	int tab[2];
-	computeFromNumPoste(num_poste,tab);
-	int num_robot=tab[0];
-	int position=tab[1];
-	if(position==1)
-		robotTask[num_robot-1][0]=0;
-	if(position==4)
-		robotTask[num_robot-1][1]=0;
-	tache_msg.num_robot=num_robot;
-	tache_msg.position=position;
-	tache_msg.duree=duree;
-	pub_doTask.publish(tache_msg);
+	if(num_poste>=1 && num_poste<=nbRobot*2)
+	{
+		int tab[2];
+		computeFromNumPoste(num_poste,tab);
+		int num_robot=tab[0];
+		int position=tab[1];
+		if(position==1)
+			robotTask[num_robot-1][0]=0;
+		if(position==4)
+			robotTask[num_robot-1][1]=0;
+		tache_msg.num_robot=num_robot;
+		tache_msg.position=position;
+		tache_msg.duree=duree;
+		pub_doTask.publish(tache_msg);
 
-	sleep(1);
+		ros::Duration(1).sleep();
+	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et "<< nbRobot*2 << "." << RESET << endl;
 }
 
 void Robots::Evacuer()
 {
 	std_msgs::Byte msg;
 	pub_evacuer_piece.publish(msg);
-	
+
 	// Pour eviter les conflits d'appel de service Coppelia en même temps
-	ros::Duration(1).sleep(); 
+	ros::Duration(1).sleep();
 
 	cout << BOLDCYAN << "Evacuation !" << RESET << endl;
 }
 
 void Robots::AjouterProduit(int poste, int produit)
 {
-	srv.request.choixPoste = poste;
-	srv.request.choixProduit = produit;
-	client.call(srv);
+	if(poste>=1 && poste<=nbRobot*2)
+	{
+		if(produit>=1 && produit<=6)
+		{
+			srv.request.choixPoste = poste;
+			srv.request.choixProduit = produit;
+			client.call(srv);
 
-	// Pour le log
-	msg0.num_poste = poste;
-	//rappel, code produit A:14, B:24, C:34 etc.
-	msg0.num_produit = produit*10+4;
-	pubProductAdd.publish(msg0);
+			// Pour le log
+			msg0.num_poste = poste;
+			//rappel, code produit A:14, B:24, C:34 etc.
+			msg0.num_produit = produit*10+4;
+			pubProductAdd.publish(msg0);
 
-	produit_a_ajouter.push_back(poste*10+produit);
+			produit_a_ajouter.push_back(poste*10+produit);
+		}
+		else
+			cout <<  BOLDMAGENTA << "Le produit doit etre compris entre 1 et 6." << RESET << endl;
+
+	}
+	else
+		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et "<< nbRobot*2 << "." << RESET << endl;
+
 }
 
 bool Robots::ProductAddPushBack(commande_locale::SrvAddProductPushBack::Request& req, commande_locale::SrvAddProductPushBack::Response& rep)

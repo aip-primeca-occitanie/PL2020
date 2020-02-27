@@ -349,8 +349,14 @@ int main(int argc, char **argv)
 				M[240]--;
 				aiguillage.Gauche(1);
 				aiguillage.Gauche(2);
-				M[250]++;
+				M[1000]++;
 				display();
+			}
+
+			if(M[1000])
+			{
+				display();
+				cout << endl << "SIMULATION TERMINEE" << endl;
 			}
 		}
 

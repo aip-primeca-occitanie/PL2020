@@ -28,6 +28,7 @@ Robot::Robot(int num_du_robot)
 	repSim_changeColor=false;
 	repSim_changeShuttleColor=false;
 	repSim_getColor=false;
+	repSim_getColorUpdate=false;
 
 	msgSim_setJointState.layout.dim.push_back(std_msgs::MultiArrayDimension());
 	msgSim_setJointState.layout.dim[0].label="handles";
@@ -1271,7 +1272,10 @@ void Robot::init(ros::NodeHandle noeud)
 	subSim_changeShuttleColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/ChangeShuttleColor",100,&Robot::simChangeShuttleColorCallback,this);
 
 	pubSim_getColor = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetColor",100);
-	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColor",100,&Robot::simGetColorCallback,this);
+	subSim_getColor = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColor",100,&Robot::simGetColorCallback,this);	
+
+	pubSim_getColorUpdate = noeud.advertise<std_msgs::String>("/sim_ros_interface/services/robot"+to_string(num_robot)+"/GetColorUpdate",100);
+	subSim_getColorUpdate = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColorUpdate",100,&Robot::simGetColorUpdateCallback,this);
 
 	pub_robot_transport=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras"+to_string(num_robot),10);
 	pub_tache_finie=noeud.advertise<robots::TacheFinieMsg>("/commande/Simulation/TacheFinie",10);
@@ -1399,4 +1403,10 @@ void Robot::simGetColorCallback(const std_msgs::Int32::ConstPtr& msg)
 {
 	valueSim_getColor=msg->data;
 	repSim_getColor=true;
+}
+
+void Robot::simGetColorUpdateCallback(const std_msgs::Int32::ConstPtr& msg)
+{
+	valueSim_getColorUpdate=msg->data;
+	repSim_getColorUpdate=true;
 }

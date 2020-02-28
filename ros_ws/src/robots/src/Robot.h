@@ -93,6 +93,13 @@ private:
 	bool repSim_getColor;
 	int valueSim_getColor;
 
+	// GetColorUpdate
+	ros::Publisher pubSim_getColorUpdate;
+	std_msgs::String msgSim_getColorUpdate;
+	ros::Subscriber subSim_getColorUpdate;
+	bool repSim_getColorUpdate;
+	int valueSim_getColorUpdate;
+
 	/** Subscribers aux topics de la commande **/
 	ros::Subscriber planifSendPosition;
 	ros::Subscriber planifSendJoints;
@@ -213,6 +220,7 @@ public:
 	void simChangeColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simChangeShuttleColorCallback(const std_msgs::Byte::ConstPtr& msg);
 	void simGetColorCallback(const std_msgs::Int32::ConstPtr& msg);
+	void simGetColorUpdateCallback(const std_msgs::Int32::ConstPtr& msg);
 };
 
 

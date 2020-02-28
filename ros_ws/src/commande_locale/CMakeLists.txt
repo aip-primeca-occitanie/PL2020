@@ -31,7 +31,6 @@ add_service_files(
 add_message_files(
 	FILES
 	Msg_AddProduct.msg
-	Msg_SensorState.msg
 	Msg_StopControl.msg
 	Msg_Color.msg
 	Msg_SwitchControl.msg

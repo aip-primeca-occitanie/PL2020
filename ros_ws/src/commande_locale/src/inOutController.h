@@ -18,7 +18,7 @@
 #include "commande_locale/Msg_SwitchControl.h"
 #include "commande_locale/Msg_StopControl.h"
 #include "commande_locale/Msg_PinControl.h"
-#include "commande_locale/Msg_SensorState.h"
+#include "aiguillages/Msg_SensorState.h"
 #include <std_msgs/Int32.h>
 #include <unistd.h>
 
@@ -44,7 +44,7 @@ private:
 	commande_locale::Msg_StopControl StopControl;
 	commande_locale::Msg_PinControl PinControl;
 	commande_locale::Msg_SwitchControl SwitchControl;
-	commande_locale::Msg_SensorState SensorState;
+	aiguillages::Msg_SensorState SensorState;
 public:
 	inOutController(vrepController* vrepSA);
 	void init(ros::NodeHandle nh);

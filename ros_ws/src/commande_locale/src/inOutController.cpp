@@ -120,7 +120,7 @@ void inOutController::init(ros::NodeHandle nh)
 	VREPSwitchControllerLock = nh.advertise<std_msgs::Int32>("/sim_ros_interface/SwitchControllerLock", 100);
 	VREPStopController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/StopController", 100);
 	VREPGoController = nh.advertise<std_msgs::Int32>("/sim_ros_interface/GoController", 100);
-	planifRailSensorState = nh.advertise<commande_locale::Msg_SensorState>("/commande/Simulation/Capteurs", 100);
+	planifRailSensorState = nh.advertise<aiguillages::Msg_SensorState>("/commande/Simulation/Capteurs", 100);
 
 	// Initialisation des capteurs des Ergots
 	for(int i=1;i<9;i++) SensorState.CPI[i]=0;

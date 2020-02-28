@@ -1,6 +1,4 @@
-#include <ros/ros.h>
 #include "capteurs.h"
-#include <commande_locale/Msg_SensorState.h>
 
 Capteurs::Capteurs(ros::NodeHandle noeud)
 {
@@ -16,7 +14,7 @@ Capteurs::~Capteurs()
 {
 }
 
-void Capteurs::Callback_capteurs_simulation(const commande_locale::Msg_SensorState::ConstPtr& msg)
+void Capteurs::Callback_capteurs_simulation(const aiguillages::Msg_SensorState::ConstPtr& msg)
 {
 	for(int i=1;i<25;i++) PSx[i]=msg->PS[i];
 	for(int i=1;i<13;i++) DxD[i]=msg->DD[i];

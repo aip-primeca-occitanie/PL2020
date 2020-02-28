@@ -77,7 +77,7 @@ void Robots::EnvoyerPosition(int numRobot, int numPosition)
 		else
 			msg.data = numPosition;
 		msg.num_robot=numRobot;
-		robotPosition[numRobot-1]=-10;
+		robotPosition[numRobot-1]=0;
 		pub_robot_position.publish(msg);
 	}
 	else
@@ -102,7 +102,7 @@ void Robots::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int
 		msg.joint6 = angle6;
 		msg.joint7 = angle7;
 		msg.num_robot=numRobot;
-		robotPosition[numRobot-1]=-10;
+		robotPosition[numRobot-1]=0;
 		pub_robot_joints.publish(msg);
 	}
 	else
@@ -145,7 +145,7 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 	}
 	else
 	{
-		robotPosition[numRobot-1]=-10;
+		robotPosition[numRobot-1]=0;
 		pub_controler_robot.publish(controle);
 	}
 }
@@ -156,6 +156,7 @@ void Robots::FermerPince(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
+		robotPince[numRobot-1]=0;
 		robots::Msg_numrobot msg;
 		msg.data=1;
 		msg.num_robot=numRobot;
@@ -171,6 +172,7 @@ void Robots::OuvrirPince(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
+		robotPince[numRobot-1]=0;
 		robots::Msg_numrobot msg;
 		msg.data=0;
 		msg.num_robot=numRobot;
@@ -186,6 +188,7 @@ void Robots::DescendreBras(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
+		robotBras[numRobot-1]=0;
 		robots::Msg_numrobot msg;
 		msg.data=1;
 		msg.num_robot=numRobot;
@@ -201,6 +204,7 @@ void Robots::MonterBras(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
+		robotBras[numRobot-1]=0;
 		robots::Msg_numrobot msg;
 		msg.data=0;
 		msg.num_robot=numRobot;
@@ -277,91 +281,64 @@ void Robots::RetourRobotCallback(const robots::Msg_numrobot::ConstPtr& msg)
 //Fonction permettant de savoir si le robot choisi est initalisé
 int Robots::RobotInitialise(int numRobot)
 {
-	int Robot;
-	ros::spinOnce();
-
+	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
 	{
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 		return 1;
 	}
 	else
-		Robot=robotInit[numRobot-1];
-	return Robot;
+		Etat=robotInit[numRobot-1];
+	return Etat;
 }
 
 //Fonction permettant de savoir si le robot choisi est en position
 int Robots::RobotEnPosition(int numRobot)
 {
-	int Robot;
-	ros::spinOnce();
-
+	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
 	{
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
 		return 1;
 	}
 	else
-		Robot=robotPosition[numRobot-1];
-	return Robot;
+		Etat=robotPosition[numRobot-1];
+	return Etat;
 }
 
 //Fonction permettant de savoir si le bras du robot choisi est en position
 int Robots::BrasEnPosition(int numRobot)
 {
-	int Robot;
-	ros::spinOnce();
-
+	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
 	{
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et " << nbRobot << "." << RESET << endl;
 		return 1;
-	}	
-	else
-	{
-		Robot=robotBras[numRobot-1];
-		robotBras[numRobot-1]=-10;
-
-		if((Robot != 0)&&(Robot != -1)&&(Robot != 1))
-		{
-			Robot=bras[numRobot-1];
-		}
-
-		bras[numRobot-1] = Robot;
 	}
-	return Robot;
+	else
+		Etat=robotBras[numRobot-1];
+
+	return Etat;
 }
 
 //Fonction permettant de savoir si la pince du robot choisi est en position
 int Robots::PinceEnPosition(int numRobot)
 {
-	int Robot;
-	ros::spinOnce();
-
+	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
 	{
-		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et "<< nbRobot << "." << RESET << endl;
+		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et " << nbRobot << "." << RESET << endl;
 		return 1;
 	}
 	else
-	{
-		Robot=robotPince[numRobot-1];
-		robotPince[numRobot-1]=-10;
+		Etat=robotPince[numRobot-1];
 
-		if((Robot != 0)&&(Robot != -1)&&(Robot != 1))
-		{
-			Robot=pince[numRobot-1];
-		}
-
-		pince[numRobot-1] = Robot;
-	}
-	return Robot;
+	return Etat;
 }
 
 int Robots::IsTaskOver(int num_poste)
 {
-	ros::spinOnce();
-	int etat;
+	int Etat;
 	if(num_poste<1 || num_poste>nbRobot*2)
 	{
 		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et "<< nbRobot*2 << "." << RESET << endl;
@@ -375,17 +352,17 @@ int Robots::IsTaskOver(int num_poste)
 		int position=tab[1];
 
 		if(position==1)
-			etat=robotTask[num_robot-1][0];
+			Etat=robotTask[num_robot-1][0];
 		if(position==4)
-			etat=robotTask[num_robot-1][1];
+			Etat=robotTask[num_robot-1][1];
 	}
 
-	return etat;
+	return Etat;
 }
 
 int Robots::FinDeplacerPiece(int numRobot)
 {
-	int Etat=-1;
+	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
 	{
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et " << nbRobot << "." << RESET << endl;

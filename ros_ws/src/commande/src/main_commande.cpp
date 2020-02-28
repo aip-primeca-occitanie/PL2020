@@ -12,7 +12,8 @@ using namespace std;
 #define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
 #define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
-#define PlaceFin 1000
+
+#define PlaceFin 1000 /* Marquage à ne pas dépasser */
 
 int M[PlaceFin+1];
 

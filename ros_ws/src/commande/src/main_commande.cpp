@@ -11,21 +11,23 @@ using namespace std;
 #define RESET   "\033[0m"
 #define BOLDRED     "\033[1m\033[31m"      /* Bold Red */
 #define BOLDGREEN   "\033[1m\033[32m"      /* Bold Green */
-#define Nb_Place 1000
+#define PlaceFin 1000
 
-int M[Nb_Place];
+int M[PlaceFin+1];
 
 // Pour l'affichage //
 void display()
 {
 	cout << endl;
-	for (int i=0;i<=Nb_Place;i++)
+	for (int i=0;i<=PlaceFin;i++)
 	{
 		if(i==0)
 			cout << "Marquage : ";
 
-		if(M[i]!=0)
+		if(M[i]>0)
 			cout<<BOLDRED<<"M["<<i<<"]="<<M[i]<<RESET<<", ";
+		if(M[i]<0)
+			cout<<BOLDGREEN<<"M["<<i<<"]="<<M[i]<<RESET<<", ";
 	}
 	cout<<endl<<endl;
 }
@@ -49,8 +51,6 @@ int main(int argc, char **argv)
 	ros::Subscriber sub_shutdown = noeud.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
 
 	int nbRobot=atoi(argv[1]);
-	
-	cout << "nbRobot" << endl;
 
 	Commande cmd(noeud,argv[0]);
 	Robots robot(noeud,nbRobot);
@@ -60,16 +60,21 @@ int main(int argc, char **argv)
 	ros::Rate loop_rate(25); //fréquence de la boucle
 
 	// On attend la fin de l'initialisation des robots
-	while(!robot.RobotInitialise(1)
-	|| !robot.RobotInitialise(2)
-	|| !robot.RobotInitialise(3)
-	|| !robot.RobotInitialise(4))
+	while(!robot.RobotInitialise(1) || !robot.RobotInitialise(2))
+	{
+		ros::spinOnce();
+		loop_rate.sleep();
+	}	
+	while(nbRobot==4 && (!robot.RobotInitialise(3) || !robot.RobotInitialise(4)))
 	{
 		ros::spinOnce();
 		loop_rate.sleep();
 	}
 
-	// Creation des Navettes
+	///////////////////////////////
+	// | Creation des Navettes | //
+	///////////////////////////////
+
 	int nbNavettes=2;//Mettre 0 pour demander a l'utilisateur
 	while(nbNavettes<1||nbNavettes>6)
 	{
@@ -88,7 +93,7 @@ int main(int argc, char **argv)
 	int code_produit_a_ajouter=-1;
 
 	cmd.Initialisation();
-	for(int i=0;i<Nb_Place;i++) M[i]=0;
+	for(int i=0;i<PlaceFin;i++) M[i]=0;
 
 	////////////////////////////////////
 	////// | MARQUAGE INITIAL | ////////
@@ -362,14 +367,19 @@ int main(int argc, char **argv)
 				M[240]--;
 				aiguillage.Gauche(1);
 				aiguillage.Gauche(2);
-				M[1000]++;
+				M[PlaceFin]++;
 				display();
 			}
 
-			if(M[1000])
+			///////////////////////////////
+			// | Place de fin de Petri | //
+			///////////////////////////////
+
+			if(M[PlaceFin])
 			{
 				display();
 				cout << endl << "SIMULATION TERMINEE" << endl;
+				cmd.FinPetri();
 				while(ros::ok())
 				{
 					ros::spinOnce();

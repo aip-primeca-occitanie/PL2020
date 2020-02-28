@@ -31,15 +31,16 @@ Commande::Commande(ros::NodeHandle noeud, std::string executionPath)
 	//subPinOff = noeud.subscribe("/Poste_Cmde/RentrerErgots", 10, &Commande::RentrerErgotCallback, this);
 
 	//Commande aiguillages
-	SubDeverouilleAiguillages = noeud.subscribe("/commande/DeverouilleAiguillage", 1000, &Commande::DeverouilleAiguillagesCallback, this);
-	SubVerouilleAiguillages = noeud.subscribe("/commande/VerouilleAiguillage", 1000, &Commande::VerouilleAiguillagesCallback, this);
-	SubAiguillagesGauches = noeud.subscribe("/commande/AiguillageGauche", 1000, &Commande::AiguillagesgauchesCallback, this);
-	SubAiguillagesDroits = noeud.subscribe("/commande/AiguillageDroite", 1000, &Commande::AiguillagesdroitsCallback, this);
+	SubDeverouilleAiguillages = noeud.subscribe("/commande/DeverouilleAiguillage", 100, &Commande::DeverouilleAiguillagesCallback, this);
+	SubVerouilleAiguillages = noeud.subscribe("/commande/VerouilleAiguillage", 100, &Commande::VerouilleAiguillagesCallback, this);
+	SubAiguillagesGauches = noeud.subscribe("/commande/AiguillageGauche", 100, &Commande::AiguillagesgauchesCallback, this);
+	SubAiguillagesDroits = noeud.subscribe("/commande/AiguillageDroite", 100, &Commande::AiguillagesdroitsCallback, this);
 
 	sub_pauseSim = noeud.subscribe("/sim_ros_interface/services/vrep_controller/PauseSimulation",10,&Commande::PauseCallback,this);
 	sub_playSim = noeud.subscribe("/sim_ros_interface/services/vrep_controller/StartSimulation",10,&Commande::PlayCallback,this);
 	play=false;
 	clientFinInit = noeud.serviceClient<commande_locale::SrvFinInit>("srv_fin_init");
+	pub_PetriTermine = noeud.advertise<std_msgs::Byte>("/commande/PetriTermine",10);
 
 	// Publishers messages actionneurs
 	pub_navettes_stops = noeud.advertise<commande_locale::Msg_StopControl>("/commande/Simulation/Actionneurs_stops", 100);
@@ -155,4 +156,9 @@ void Commande::RentrerErgot(int num_ergot)
 	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINON[i] = PIx[i];
 	for(int i=1;i<=8;i++) actionneurs_simulation_Pin.PINOFF[i] = !PIx[i];
 	pub_actionneurs_simu_pins.publish(actionneurs_simulation_Pin);
+}
+
+void Commande::FinPetri()
+{
+	pub_PetriTermine.publish(std_msgs::Byte());
 }

@@ -641,7 +641,7 @@ void Robot::Colorer(int position, int type)//attention c'est forcement quand on 
 
 	if(idNavette==66) // 66=Erreur
 	{
-		ROS_ERROR("ERREUR : ShuttleManager n'a pas trouvé la navette");	
+		ROS_ERROR("ERREUR : Pas de navette a la position demandee");	
 		for(int i=0; i<NB_CUBE; i++)
 			couleur_transportee[i]=0;
 		transport(false);

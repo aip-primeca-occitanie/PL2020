@@ -8,8 +8,10 @@
 
 	<node name="Robot1" pkg="robots" type="robot1" output="screen" launch-prefix="xterm -geometry '80x20+0+315' -e"/>
 	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -geometry '80x20+550+315' -e"/>
-	<node name="Robot3" pkg="robots" type="robot3" output="screen" launch-prefix="xterm -geometry '80x20+0+607' -e"/>
-	<node name="Robot4" pkg="robots" type="robot4" output="screen" launch-prefix="xterm -geometry '80x20+550+607' -e"/>
+	<group if="$(eval arg('nbRobot')==4)">
+		<node name="Robot3" pkg="robots" type="robot3" output="screen" launch-prefix="xterm -geometry '80x20+0+607' -e"/>
+		<node name="Robot4" pkg="robots" type="robot4" output="screen" launch-prefix="xterm -geometry '80x20+550+607' -e"/>
+	</group>
 
 
 	<node name="shuttleManager" pkg="shuttles" type="main_ShuttleManager"/>

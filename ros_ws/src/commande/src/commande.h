@@ -29,6 +29,7 @@ class Commande
 	//ros::Subscriber subPinOff;
 
 	ros::Subscriber sub_nouveau_produit;
+	ros::Publisher pub_PetriTermine;
 
 	ros::ServiceClient clientFinInit;
 	commande_locale::SrvFinInit srvFinInit;
@@ -81,5 +82,7 @@ public:
 	int get_code_arrivee();
 	int get_arrivee_nouveau_produit();
 	void renitialiser_arrivee_nouveau_produit();
+
+	void FinPetri();
 };
 #endif

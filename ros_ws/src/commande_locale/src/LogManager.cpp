@@ -144,8 +144,14 @@ void getTimeCallback(const std_msgs::Float32::ConstPtr& msg)
 
 void ShutdownCallback(const std_msgs::Byte::ConstPtr& msg)
 {
-		ros::shutdown();
+	ros::shutdown();
 }
+
+void PetriTermineCallback(const std_msgs::Byte::ConstPtr& msg)
+{
+	monFlux<<endl<<"Petri terminé" << endl;
+}
+
 int main(int argc, char **argv)
 {
 	ofstream monFlux2(filepath);
@@ -159,6 +165,7 @@ int main(int argc, char **argv)
 	ros::Subscriber subNewProduit = nh.subscribe("/commande_locale/AddProduct", 1, &NewProductCallback);
 	ros::Subscriber subErreur = nh.subscribe("/commande/Simulation/Erreur_log", 1, &ErreurCallback);
 	ros::Subscriber sub_shutdown = nh.subscribe("/commande_locale/shutdown",10,&ShutdownCallback);
+	ros::Subscriber sub_terminee = nh.subscribe("/commande/PetriTermine",10,&PetriTermineCallback);
 
 	// GetTime VREP
 	pubSim_getTime=nh.advertise<std_msgs::Byte>("/sim_ros_interface/services/LogManager/GetTime",100);

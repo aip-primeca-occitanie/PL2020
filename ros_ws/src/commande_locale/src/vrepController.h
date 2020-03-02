@@ -28,6 +28,8 @@
 
 #include <aiguillages/ExchangeSh.h>
 
+// Cf la documentation paragraphe 4
+// pour modifier le nombre de cube max
 #define NB_CUBE 6
 
 class vrepController

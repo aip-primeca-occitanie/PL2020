@@ -6,7 +6,7 @@
 #include <std_msgs/Float32.h>
 #include "commande_locale/Msg_AddProduct.h"
 #include "commande_locale/Msg_Erreur.h"
-#include "robots/TacheFinieMsg.h"
+#include "commande_locale/TacheFinieMsg.h"
 #include <iostream>
 #include <fstream>
 #include <ctime>
@@ -127,7 +127,7 @@ void ErreurCallback(const commande_locale::Msg_Erreur::ConstPtr& msg)
 	}
 }
 
-void TachefinieCallback(const robots::TacheFinieMsg::ConstPtr& msg)
+void TachefinieCallback(const commande_locale::TacheFinieMsg::ConstPtr& msg)
 {
 	monFlux<<"TempoT";
 	monFlux<<": "<<msg->num_produit;

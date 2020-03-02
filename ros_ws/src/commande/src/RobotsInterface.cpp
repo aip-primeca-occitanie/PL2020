@@ -7,7 +7,6 @@
 using namespace std;
 
 //Messages
-#include <robots/RobotJoints.h>
 #include <std_msgs/Int32.h>
 
 using namespace std;
@@ -38,7 +37,7 @@ RobotsInterface::RobotsInterface(ros::NodeHandle noeud, int nombre_robot)
 
 
 	pub_robot_position=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/SendPositionRobot",10);
-	pub_robot_joints=noeud.advertise<robots::RobotJoints>("/commande/Simulation/SendJointsRobot",10);
+	pub_robot_joints=noeud.advertise<commande_locale::RobotJoints>("/commande/Simulation/SendJointsRobot",10);
 	pub_pince_fermer=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/FermerPinceRobot",10);
 	pub_pince_ouvrir=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/OuvrirPinceRobot",10);
 	pub_descendre=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/DescendreBras",10);
@@ -91,7 +90,7 @@ void RobotsInterface::EnvoyerAngles(int numRobot, int angle1, int angle2, int an
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
-		robots::RobotJoints msg;
+		commande_locale::RobotJoints msg;
 
 		//Angles (en degrés) choisis par l'utilisateur
 		msg.joint1 = angle1;

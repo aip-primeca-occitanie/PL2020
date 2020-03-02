@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 
 //Messages
-#include <robots/RobotJoints.h>
+#include <commande_locale/RobotJoints.h>
 #include <robots/MoveRobot.h>
 #include <robots/FaireTacheMsg.h>
 #include <std_msgs/Int32.h>
@@ -16,7 +16,7 @@
 #include <std_msgs/Float32.h>
 #include <sensor_msgs/JointState.h>
 #include <robots/Msg_numrobot.h>
-#include <robots/TacheFinieMsg.h>
+#include <commande_locale/TacheFinieMsg.h>
 #include <commande_locale/Msg_Erreur.h>
 #include "commande/DeplacerPieceMsg.h"
 
@@ -124,7 +124,7 @@ private:
 	ros::Publisher pub_erreur_log;
 	ros::Publisher pub_tache_finie;
 
-	robots::TacheFinieMsg msg_tache_finie;
+	commande_locale::TacheFinieMsg msg_tache_finie;
 
 	ros::ServiceClient client;
 	shuttles::shuttle_id srv;
@@ -188,7 +188,7 @@ public:
 	void SendPositionCallback(const robots::Msg_numrobot::ConstPtr& msg);
 
 	//Pour atteindre une position définie manuellement
-	void SendJointsCallback(const robots::RobotJoints::ConstPtr& msg);
+	void SendJointsCallback(const commande_locale::RobotJoints::ConstPtr& msg);
 
 	//Pour monter ou descendre le bras
 	void DescendreBrasCallback(const robots::Msg_numrobot::ConstPtr& msg);

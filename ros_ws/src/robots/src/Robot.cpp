@@ -510,7 +510,7 @@ void Robot::SendPositionCallback(const robots::Msg_numrobot::ConstPtr& msg)
 
 /** Envoyer le robot manuellement **/
 //Fonction Callback permettant d'envoyer le robot dans une position choisie par l'utilisateur à la réception du message de Commande
-void Robot::SendJointsCallback(const robots::RobotJoints::ConstPtr& msg)
+void Robot::SendJointsCallback(const commande_locale::RobotJoints::ConstPtr& msg)
 {
 	if(num_robot==msg->num_robot)
 	{
@@ -1278,7 +1278,7 @@ void Robot::init(ros::NodeHandle noeud)
 	subSim_getColorUpdate = noeud.subscribe("/sim_ros_interface/services/response/robot"+to_string(num_robot)+"/GetColorUpdate",100,&Robot::simGetColorUpdateCallback,this);
 
 	pub_robot_transport=noeud.advertise<std_msgs::Bool>("/commande/Simulation/TransportBras"+to_string(num_robot),10);
-	pub_tache_finie=noeud.advertise<robots::TacheFinieMsg>("/commande/Simulation/TacheFinie",10);
+	pub_tache_finie=noeud.advertise<commande_locale::TacheFinieMsg>("/commande/Simulation/TacheFinie",10);
 
 	//Subscribers
 	planifSendPosition = noeud.subscribe("/commande/Simulation/SendPositionRobot",10,&Robot::SendPositionCallback,this);

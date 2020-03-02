@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 #include <iostream>
 
-#include <robots/RobotJoints.h>
+#include <commande_locale/RobotJoints.h>
 #include <robots/MoveRobot.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/Bool.h>

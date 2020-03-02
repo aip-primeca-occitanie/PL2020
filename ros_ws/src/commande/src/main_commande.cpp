@@ -147,7 +147,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[20] && capteur.get_PS(2) && robot.IsTaskOver(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
+			if (M[20] && capteur.get_PS(2) && robot.TacheFinie(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
 			{
 				M[20]--;
 				robot.DeplacerPiece(ROBOT_2,1,2);
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[80] && capteur.get_PS(22) && robot.IsTaskOver(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
+			if (M[80] && capteur.get_PS(22) && robot.TacheFinie(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
 			{
 				M[80]--;
 				robot.DeplacerPiece(ROBOT_3,1,4);
@@ -224,7 +224,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[100] && robot.IsTaskOver(POSTE_5)) // robot 1 fais tache 1 pendant 4s
+			if (M[100] && robot.TacheFinie(POSTE_5)) // robot 1 fais tache 1 pendant 4s
 			{
 				M[100]--;
 				robot.FaireTache(POSTE_5,1);
@@ -234,7 +234,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[110] && robot.IsTaskOver(POSTE_1) && robot.IsTaskOver(POSTE_5)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
+			if (M[110] && robot.TacheFinie(POSTE_1) && robot.TacheFinie(POSTE_5)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
 			{
 				M[110]--;
 				robot.DeplacerPiece(ROBOT_1,4,3);
@@ -315,7 +315,7 @@ int main(int argc, char **argv)
 				M[182]++;
 				display();
 			}
-			if(M[182] && robot.IsTaskOver(POSTE_3))
+			if(M[182] && robot.TacheFinie(POSTE_3))
 			{
 				M[182]--;
 				robot.Evacuer();
@@ -323,7 +323,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[190] && robot.IsTaskOver(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
+			if (M[190] && robot.TacheFinie(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
 			{
 				M[190]--;
 				robot.DeplacerPiece(ROBOT_2,4,1);

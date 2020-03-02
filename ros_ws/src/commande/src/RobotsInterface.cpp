@@ -336,7 +336,7 @@ int RobotsInterface::PinceEnPosition(int numRobot)
 	return Etat;
 }
 
-int RobotsInterface::IsTaskOver(int num_poste)
+int RobotsInterface::TacheFinie(int num_poste)
 {
 	int Etat;
 	if(num_poste<1 || num_poste>nbRobot*2)

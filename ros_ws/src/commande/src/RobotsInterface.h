@@ -109,7 +109,7 @@ public:
 
 	void RobotTransport(int num_robot, bool valeur);
 	void FaireTache(int num_poste, int duree);
-	int IsTaskOver(int num_poste);
+	int TacheFinie(int num_poste);
 	void computeFromNumPoste(int num_poste,int tab[2]);
 	int FinDeplacerPiece(int num_robot);
 	void Evacuer();

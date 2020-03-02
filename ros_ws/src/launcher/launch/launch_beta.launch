@@ -6,11 +6,11 @@
 
 	<node name="aiguillage" pkg="aiguillages" type="run_Aiguillage"/>
 
-	<node name="Robot1" pkg="robots" type="robot1" output="screen" launch-prefix="xterm -geometry '80x20+0+315' -e"/>
-	<node name="Robot2" pkg="robots" type="robot2" output="screen" launch-prefix="xterm -geometry '80x20+550+315' -e"/>
+	<node name="Robot1" pkg="robots" type="robot" output="screen" launch-prefix="xterm -geometry '80x20+0+315' -e" args="1"/>
+	<node name="Robot2" pkg="robots" type="robot" output="screen" launch-prefix="xterm -geometry '80x20+550+315' -e" args="2"/>
 	<group if="$(eval arg('nbRobot')==4)">
-		<node name="Robot3" pkg="robots" type="robot3" output="screen" launch-prefix="xterm -geometry '80x20+0+607' -e"/>
-		<node name="Robot4" pkg="robots" type="robot4" output="screen" launch-prefix="xterm -geometry '80x20+550+607' -e"/>
+		<node name="Robot3" pkg="robots" type="robot" output="screen" launch-prefix="xterm -geometry '80x20+0+607' -e" args="3"/>
+		<node name="Robot4" pkg="robots" type="robot" output="screen" launch-prefix="xterm -geometry '80x20+550+607' -e" args="4"/>
 	</group>
 
 

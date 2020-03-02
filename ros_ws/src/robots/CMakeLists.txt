@@ -57,20 +57,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+add_executable(robot src/main_robot.cpp src/Robot.cpp src/Poste.cpp)
+target_link_libraries(robot ${catkin_LIBRARIES})
+add_dependencies(robot ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
 
-
-add_executable(robot1 src/main_robot1.cpp src/Robot.cpp src/Poste.cpp)
-target_link_libraries(robot1 ${catkin_LIBRARIES})
-add_dependencies(robot1 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(robot2 src/main_robot2.cpp src/Robot.cpp src/Poste.cpp)
-target_link_libraries(robot2 ${catkin_LIBRARIES})
-add_dependencies(robot2 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(robot3 src/main_robot3.cpp src/Robot.cpp src/Poste.cpp)
-target_link_libraries(robot3 ${catkin_LIBRARIES})
-add_dependencies(robot3 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})
-
-add_executable(robot4 src/main_robot4.cpp src/Robot.cpp src/Poste.cpp)
-target_link_libraries(robot4 ${catkin_LIBRARIES})
-add_dependencies(robot4 ${PROJECT_NAME}_gencpp ${catkin_EXPORTED_TARGETS})

@@ -4,7 +4,7 @@
 #include <ros/ros.h>
 #include "actionneurs.h"
 #include "capteurs.h"
-#include "robots.h"
+#include "RobotsInterface.h"
 #include <std_msgs/Bool.h>
 #include <std_msgs/Int32.h>
 #include <commande_locale/Msg_StopControl.h>

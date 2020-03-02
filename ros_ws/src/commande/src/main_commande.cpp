@@ -1,7 +1,7 @@
 #include "capteurs.h"
 #include "actionneurs.h"
 #include "commande.h"
-#include "robots.h"
+#include "RobotsInterface.h"
 #include "AigsInterface.h"
 #include <ros/ros.h>
 #include <unistd.h>
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 	int nbRobot=atoi(argv[1]);
 
 	Commande cmd(noeud,argv[0]);
-	Robots robot(noeud,nbRobot);
+	RobotsInterface robot(noeud,nbRobot);
 	AigsInterface aiguillage(noeud);
 	Capteurs capteur(noeud);
 

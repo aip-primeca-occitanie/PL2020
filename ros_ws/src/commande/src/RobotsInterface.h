@@ -41,7 +41,7 @@
 #define POSTE_8 8
 
 
-class Robots
+class RobotsInterface
 {
 private:
 
@@ -85,8 +85,8 @@ private:
 	robots::DoTaskMsg tache_msg;
 
 public:
-	Robots(ros::NodeHandle noeud, int nombre_robot);
-	~Robots();
+	RobotsInterface(ros::NodeHandle noeud, int nombre_robot);
+	~RobotsInterface();
 
 	//Contrôles des robots
 	void EnvoyerPosition(int numRobot, int numPosition);

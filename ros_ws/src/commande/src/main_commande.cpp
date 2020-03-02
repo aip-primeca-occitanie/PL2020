@@ -142,7 +142,7 @@ int main(int argc, char **argv)
 				M[532]--; // Enleve le marquage des produits
 				M[576]--; // Enleve le marquage des produits
 				cmd.Stop_PS(2);
-				robot.DoTask(POSTE_7,3);
+				robot.FaireTache(POSTE_7,3);
 				M[20]++;
 				display();
 			}
@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 				M[50]--;
 				cmd.Ouvrir_PS(6);
 				cmd.Stop_PS(22);
-				robot.DoTask(POSTE_6,6);
+				robot.FaireTache(POSTE_6,6);
 				M[60]++;
 				display();
 			}
@@ -218,8 +218,8 @@ int main(int argc, char **argv)
 			if (M[90] && robot.FinDeplacerPiece(ROBOT_1) && robot.FinDeplacerPiece(ROBOT_3)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
 			{
 				M[90]--;
-				robot.DoTask(POSTE_5,3);
-				robot.DoTask(POSTE_1,4);
+				robot.FaireTache(POSTE_5,3);
+				robot.FaireTache(POSTE_1,4);
 				M[100]++;
 				display();
 			}
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
 			if (M[100] && robot.IsTaskOver(POSTE_5)) // robot 1 fais tache 1 pendant 4s
 			{
 				M[100]--;
-				robot.DoTask(POSTE_5,1);
+				robot.FaireTache(POSTE_5,1);
 				cmd.Ouvrir_PS(14);
 				cmd.Stop_PS(15);
 				M[110]++;
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 			if (M[160] && robot.FinDeplacerPiece(ROBOT_2)) // On fait la tache du poste 4 pendant 5s
 			{
 				M[160]--;
-				robot.DoTask(POSTE_4,5);
+				robot.FaireTache(POSTE_4,5);
 				M[170]++;
 				display();
 			}
@@ -311,7 +311,7 @@ int main(int argc, char **argv)
 			if(M[180] && robot.FinDeplacerPiece(ROBOT_2))
 			{
 				M[180]--;
-				robot.DoTask(POSTE_3,1);
+				robot.FaireTache(POSTE_3,1);
 				M[182]++;
 				display();
 			}

@@ -44,7 +44,7 @@ RobotsInterface::RobotsInterface(ros::NodeHandle noeud, int nombre_robot)
 	pub_descendre=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/DescendreBras",10);
 	pub_monter=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/MonterBras",10);
 	pub_controler_robot=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras",10);
-	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
+	pub_faireTache=noeud.advertise<robots::FaireTacheMsg>("/commande/Simulation/faireTache", 10);
 	pub_evacuer_piece=noeud.advertise<std_msgs::Byte>("/commande/Simulation/Evacuer",10);
 	pubProductAdd= noeud.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
 	pub_deplacer_piece= noeud.advertise<commande::DeplacerPieceMsg>("/commande/Simulation/DeplacerPiece",10);
@@ -433,7 +433,7 @@ void RobotsInterface::computeFromNumPoste(int num_poste, int tab[2])
 	}
 }
 
-void RobotsInterface::DoTask(int num_poste, int duree)
+void RobotsInterface::FaireTache(int num_poste, int duree)
 {
 	if(num_poste>=1 && num_poste<=nbRobot*2)
 	{
@@ -448,7 +448,7 @@ void RobotsInterface::DoTask(int num_poste, int duree)
 		tache_msg.num_robot=num_robot;
 		tache_msg.position=position;
 		tache_msg.duree=duree;
-		pub_doTask.publish(tache_msg);
+		pub_faireTache.publish(tache_msg);
 
 		ros::Duration(1).sleep();
 	}

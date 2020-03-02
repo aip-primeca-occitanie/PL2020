@@ -962,7 +962,7 @@ int Robot::colorerPosteFinTask(int positionPoste, int duree)
 	return retour;
 }
 
-void Robot::doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg)
+void Robot::faireTacheCallback(const robots::FaireTacheMsg::ConstPtr& msg)
 {
 	if((msg->num_robot==num_robot)
 			&& (msg->position==1||msg->position==4)) // pas sur une navette
@@ -1288,7 +1288,7 @@ void Robot::init(ros::NodeHandle noeud)
 	planifDescendreBras = noeud.subscribe("/commande/Simulation/DescendreBras",10,&Robot::DescendreBrasCallback,this);
 	planifMonterBras = noeud.subscribe("/commande/Simulation/MonterBras",10,&Robot::MonterBrasCallback,this);
 	planifControlerRobot = noeud.subscribe("/commande/Simulation/ControlerBras",10,&Robot::ControlerRobotCallback,this);
-	sub_doTask = noeud.subscribe("/commande/Simulation/doTask",10,&Robot::doTaskCallback,this);
+	sub_faireTache = noeud.subscribe("/commande/Simulation/faireTache",10,&Robot::faireTacheCallback,this);
 	sub_evacuer=noeud.subscribe("/commande/Simulation/Evacuer",10,&Robot::Evacuer,this);
 	subStopTache=noeud.subscribe("/commande/Simulation/Robot"+to_string(num_robot)+"/StopTache",10,&Robot::stopTacheCallback,this);
 	subDeplacerPiece=noeud.subscribe("/commande/Simulation/DeplacerPiece",10,&Robot::DeplacerPieceCallback,this);

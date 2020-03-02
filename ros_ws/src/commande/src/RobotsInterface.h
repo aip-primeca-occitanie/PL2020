@@ -10,7 +10,7 @@
 #include <std_msgs/Bool.h>
 #include <std_msgs/Byte.h>
 #include <vector>
-#include "robots/DoTaskMsg.h"
+#include "robots/FaireTacheMsg.h"
 #include "robots/Msg_numrobot.h"
 #include "commande_locale/SrvAddProduct.h"
 #include "commande_locale/Msg_AddProduct.h"
@@ -53,7 +53,7 @@ private:
 	ros::Publisher pub_descendre;
 	ros::Publisher pub_monter;
 	ros::Publisher pub_controler_robot;
-	ros::Publisher pub_doTask;
+	ros::Publisher pub_faireTache;
 	ros::Publisher pub_robot_transport1;
 	ros::Publisher pub_robot_transport2;
 	ros::Publisher pub_robot_transport3;
@@ -82,7 +82,7 @@ private:
 
 	std::vector<int> produit_a_ajouter;
 
-	robots::DoTaskMsg tache_msg;
+	robots::FaireTacheMsg tache_msg;
 
 public:
 	RobotsInterface(ros::NodeHandle noeud, int nombre_robot);
@@ -108,7 +108,7 @@ public:
 	int PinceEnPosition(int numRobot); //retourne 1 si la pince du robot numRobot est fermée, -1 si elle est ouverte
 
 	void RobotTransport(int num_robot, bool valeur);
-	void DoTask(int num_poste, int duree);
+	void FaireTache(int num_poste, int duree);
 	int IsTaskOver(int num_poste);
 	void computeFromNumPoste(int num_poste,int tab[2]);
 	int FinDeplacerPiece(int num_robot);

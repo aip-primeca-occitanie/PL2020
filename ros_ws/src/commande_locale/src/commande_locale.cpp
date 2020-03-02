@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 			"	4- Fin programme" 	<< endl;
 		cout << "Choix : ";
 		cin >> choix;
-		if(choix=="hhbbdgdgba")
+		if(choix=="hhbbgdgdba")
 			pub_actuator.publish(std_msgs::Byte());
 		else if(choix.length()>1 || choix[0]<'1' || choix[0]>'9')
 		{

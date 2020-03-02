@@ -6,7 +6,7 @@
 //Messages
 #include <robots/RobotJoints.h>
 #include <robots/MoveRobot.h>
-#include <robots/DoTaskMsg.h>
+#include <robots/FaireTacheMsg.h>
 #include <std_msgs/Int32.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float32MultiArray.h>
@@ -109,7 +109,7 @@ private:
 	ros::Subscriber planifMonterBras;
 	ros::Subscriber planifControlerRobot;
 	ros::Subscriber sub_colorer;
-	ros::Subscriber sub_doTask;
+	ros::Subscriber sub_faireTache;
 	ros::Subscriber sub_evacuer;
 	ros::Subscriber subStopTache;
 	ros::Subscriber subDeplacerPiece;
@@ -201,7 +201,7 @@ public:
 	//Pour contrôler l'ensemble des mouvements du robot
 	void ControlerRobotCallback(const robots::MoveRobot::ConstPtr& msg);
 	void Colorer(int position, int type);
-	void doTaskCallback(const robots::DoTaskMsg::ConstPtr& msg);
+	void faireTacheCallback(const robots::FaireTacheMsg::ConstPtr& msg);
 	void ajouter_produitCallback(commande_locale::Msg_AddProduct msg);
 
 	int colorerPosteDebutTask(int positionPoste);

@@ -1,4 +1,4 @@
-#include "robots.h"
+#include "RobotsInterface.h"
 
 #include <ros/ros.h>
 #include <iostream>
@@ -16,7 +16,7 @@ using namespace std;
 #define BOLDCYAN    "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLDMAGENTA "\033[1m\033[35m"      /* Bold Magenta */
 
-Robots::Robots(ros::NodeHandle noeud, int nombre_robot)
+RobotsInterface::RobotsInterface(ros::NodeHandle noeud, int nombre_robot)
 {
 	nbRobot=nombre_robot;
 
@@ -44,7 +44,7 @@ Robots::Robots(ros::NodeHandle noeud, int nombre_robot)
 	pub_descendre=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/DescendreBras",10);
 	pub_monter=noeud.advertise<robots::Msg_numrobot>("/commande/Simulation/MonterBras",10);
 	pub_controler_robot=noeud.advertise<robots::MoveRobot>("/commande/Simulation/ControlerBras",10);
-	pub_doTask=noeud.advertise<robots::DoTaskMsg>("/commande/Simulation/doTask", 10);
+	pub_faireTache=noeud.advertise<robots::FaireTacheMsg>("/commande/Simulation/faireTache", 10);
 	pub_evacuer_piece=noeud.advertise<std_msgs::Byte>("/commande/Simulation/Evacuer",10);
 	pubProductAdd= noeud.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
 	pub_deplacer_piece= noeud.advertise<commande::DeplacerPieceMsg>("/commande/Simulation/DeplacerPiece",10);
@@ -52,21 +52,21 @@ Robots::Robots(ros::NodeHandle noeud, int nombre_robot)
 
 
 	//Retour des robots vers la commande
-	sub_retourRobot = noeud.subscribe("/commande/Simulation/retourCommande", 100, &Robots::RetourRobotCallback,this);
+	sub_retourRobot = noeud.subscribe("/commande/Simulation/retourCommande", 100, &RobotsInterface::RetourRobotCallback,this);
 
 	client = noeud.serviceClient<commande_locale::SrvAddProduct>("srv_add_product");
-	serverPushBack = noeud.advertiseService("srv_add_product_push_back",&Robots::ProductAddPushBack,this);
+	serverPushBack = noeud.advertiseService("srv_add_product_push_back",&RobotsInterface::ProductAddPushBack,this);
 
 	ros::Duration(1).sleep();
 }
 
-Robots::~Robots()
+RobotsInterface::~RobotsInterface()
 {
 }
 
 /*** Envoyer les robots automatiquement ***/
 //Fonction pour envoyer un robot choisi dans une position prédéfinie
-void Robots::EnvoyerPosition(int numRobot, int numPosition)
+void RobotsInterface::EnvoyerPosition(int numRobot, int numPosition)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
@@ -86,7 +86,7 @@ void Robots::EnvoyerPosition(int numRobot, int numPosition)
 
 /*** Envoyer les robots manuellement ***/
 //Fonction pour envoyer un robot choisi dans une position définie par l'utilisateur
-void Robots::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int angle4, int angle5, int angle6, int angle7)
+void RobotsInterface::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int angle4, int angle5, int angle6, int angle7)
 {
 	//Publication du message vers le node robot en fonction du numéro de robot à commander
 	if(numRobot>=1 && numRobot<=nbRobot)
@@ -111,7 +111,7 @@ void Robots::EnvoyerAngles(int numRobot, int angle1, int angle2, int angle3, int
 
 /*** Contrôler tous les mouvements des robots ***/
 //Fonction permettant d'envoyer une position prédéfinie, l'état souhaité du bras et l'état souhaité de la pince d'un robot choisi
-void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
+void RobotsInterface::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 {
 	robots::MoveRobot controle;
 
@@ -152,7 +152,7 @@ void Robots::ControlerRobot(int numRobot, int numPosition, int bras, int pince)
 
 /*** Fermer les pinces ***/
 //Fonction pour fermer la pince d'un robot choisi
-void Robots::FermerPince(int numRobot)
+void RobotsInterface::FermerPince(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
@@ -168,7 +168,7 @@ void Robots::FermerPince(int numRobot)
 
 /*** Ouvrir les pinces ***/
 //Fonction pour ouvrir la pince d'un robot choisi
-void Robots::OuvrirPince(int numRobot)
+void RobotsInterface::OuvrirPince(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
@@ -184,7 +184,7 @@ void Robots::OuvrirPince(int numRobot)
 
 /*** Descendre les bras ***/
 //Fonction pour descendre le bras d'un robot choisi
-void Robots::DescendreBras(int numRobot)
+void RobotsInterface::DescendreBras(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
@@ -200,7 +200,7 @@ void Robots::DescendreBras(int numRobot)
 
 /*** Monter les bras ***/
 //Fonction pour monter le bras d'un robot choisi
-void Robots::MonterBras(int numRobot)
+void RobotsInterface::MonterBras(int numRobot)
 {
 	if(numRobot>=1 && numRobot<=nbRobot)
 	{
@@ -217,7 +217,7 @@ void Robots::MonterBras(int numRobot)
 
 /*** Retour des robots ***/
 //Callback pour le retour des informations relatives au robot 1
-void Robots::RetourRobotCallback(const robots::Msg_numrobot::ConstPtr& msg)
+void RobotsInterface::RetourRobotCallback(const robots::Msg_numrobot::ConstPtr& msg)
 {
 	switch(msg->data)
 	{
@@ -279,7 +279,7 @@ void Robots::RetourRobotCallback(const robots::Msg_numrobot::ConstPtr& msg)
 }
 
 //Fonction permettant de savoir si le robot choisi est initalisé
-int Robots::RobotInitialise(int numRobot)
+int RobotsInterface::RobotInitialise(int numRobot)
 {
 	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
@@ -293,7 +293,7 @@ int Robots::RobotInitialise(int numRobot)
 }
 
 //Fonction permettant de savoir si le robot choisi est en position
-int Robots::RobotEnPosition(int numRobot)
+int RobotsInterface::RobotEnPosition(int numRobot)
 {
 	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
@@ -307,7 +307,7 @@ int Robots::RobotEnPosition(int numRobot)
 }
 
 //Fonction permettant de savoir si le bras du robot choisi est en position
-int Robots::BrasEnPosition(int numRobot)
+int RobotsInterface::BrasEnPosition(int numRobot)
 {
 	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
@@ -322,7 +322,7 @@ int Robots::BrasEnPosition(int numRobot)
 }
 
 //Fonction permettant de savoir si la pince du robot choisi est en position
-int Robots::PinceEnPosition(int numRobot)
+int RobotsInterface::PinceEnPosition(int numRobot)
 {
 	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
@@ -336,7 +336,7 @@ int Robots::PinceEnPosition(int numRobot)
 	return Etat;
 }
 
-int Robots::IsTaskOver(int num_poste)
+int RobotsInterface::TacheFinie(int num_poste)
 {
 	int Etat;
 	if(num_poste<1 || num_poste>nbRobot*2)
@@ -360,7 +360,7 @@ int Robots::IsTaskOver(int num_poste)
 	return Etat;
 }
 
-int Robots::FinDeplacerPiece(int numRobot)
+int RobotsInterface::FinDeplacerPiece(int numRobot)
 {
 	int Etat;
 	if(numRobot<1 || numRobot>nbRobot)
@@ -376,7 +376,7 @@ int Robots::FinDeplacerPiece(int numRobot)
 
 
 //Macro-fonction. Utilise les blocs élémentaires définis plus haut
-void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
+void RobotsInterface::DeplacerPiece(int num_robot, int positionA, int positionB)
 {
 	if(num_robot>=1 && num_robot<=nbRobot)
 	{
@@ -393,7 +393,7 @@ void Robots::DeplacerPiece(int num_robot, int positionA, int positionB)
 		cout <<  BOLDMAGENTA << "Le numero du robot doit etre compris entre 1 et " << nbRobot << "." << RESET << endl;
 }
 
-void Robots::computeFromNumPoste(int num_poste, int tab[2])
+void RobotsInterface::computeFromNumPoste(int num_poste, int tab[2])
 {
 	// tab[0]=num_robot  tab[1]=position
 	switch(num_poste)
@@ -433,7 +433,7 @@ void Robots::computeFromNumPoste(int num_poste, int tab[2])
 	}
 }
 
-void Robots::DoTask(int num_poste, int duree)
+void RobotsInterface::FaireTache(int num_poste, int duree)
 {
 	if(num_poste>=1 && num_poste<=nbRobot*2)
 	{
@@ -448,7 +448,7 @@ void Robots::DoTask(int num_poste, int duree)
 		tache_msg.num_robot=num_robot;
 		tache_msg.position=position;
 		tache_msg.duree=duree;
-		pub_doTask.publish(tache_msg);
+		pub_faireTache.publish(tache_msg);
 
 		ros::Duration(1).sleep();
 	}
@@ -456,7 +456,7 @@ void Robots::DoTask(int num_poste, int duree)
 		cout <<  BOLDMAGENTA << "Le numero du poste doit etre compris entre 1 et "<< nbRobot*2 << "." << RESET << endl;
 }
 
-void Robots::Evacuer()
+void RobotsInterface::Evacuer()
 {
 	std_msgs::Byte msg;
 	pub_evacuer_piece.publish(msg);
@@ -467,7 +467,7 @@ void Robots::Evacuer()
 	cout << BOLDCYAN << "Evacuation !" << RESET << endl;
 }
 
-void Robots::AjouterProduit(int poste, int produit)
+void RobotsInterface::AjouterProduit(int poste, int produit)
 {
 	if(poste>=1 && poste<=nbRobot*2)
 	{
@@ -494,7 +494,7 @@ void Robots::AjouterProduit(int poste, int produit)
 
 }
 
-bool Robots::ProductAddPushBack(commande_locale::SrvAddProductPushBack::Request& req, commande_locale::SrvAddProductPushBack::Response& rep)
+bool RobotsInterface::ProductAddPushBack(commande_locale::SrvAddProductPushBack::Request& req, commande_locale::SrvAddProductPushBack::Response& rep)
 {
 	int poste=req.poste;
 	int produit=req.produit;
@@ -502,7 +502,7 @@ bool Robots::ProductAddPushBack(commande_locale::SrvAddProductPushBack::Request&
 	return true;
 }
 
-int Robots::AjoutProduitEnAttente()
+int RobotsInterface::AjoutProduitEnAttente()
 {
 	int retour=-1;
 	if(produit_a_ajouter.size()>0)

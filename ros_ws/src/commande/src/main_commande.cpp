@@ -1,7 +1,7 @@
 #include "capteurs.h"
 #include "actionneurs.h"
 #include "commande.h"
-#include "robots.h"
+#include "RobotsInterface.h"
 #include "AigsInterface.h"
 #include <ros/ros.h>
 #include <unistd.h>
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 	int nbRobot=atoi(argv[1]);
 
 	Commande cmd(noeud,argv[0]);
-	Robots robot(noeud,nbRobot);
+	RobotsInterface robot(noeud,nbRobot);
 	AigsInterface aiguillage(noeud);
 	Capteurs capteur(noeud);
 
@@ -142,12 +142,12 @@ int main(int argc, char **argv)
 				M[532]--; // Enleve le marquage des produits
 				M[576]--; // Enleve le marquage des produits
 				cmd.Stop_PS(2);
-				robot.DoTask(POSTE_7,3);
+				robot.FaireTache(POSTE_7,3);
 				M[20]++;
 				display();
 			}
 
-			if (M[20] && capteur.get_PS(2) && robot.IsTaskOver(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
+			if (M[20] && capteur.get_PS(2) && robot.TacheFinie(POSTE_7)) // le robot 2 prend le produit B sur le poste 3 et le met sur la navette
 			{
 				M[20]--;
 				robot.DeplacerPiece(ROBOT_2,1,2);
@@ -184,7 +184,7 @@ int main(int argc, char **argv)
 				M[50]--;
 				cmd.Ouvrir_PS(6);
 				cmd.Stop_PS(22);
-				robot.DoTask(POSTE_6,6);
+				robot.FaireTache(POSTE_6,6);
 				M[60]++;
 				display();
 			}
@@ -205,7 +205,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[80] && capteur.get_PS(22) && robot.IsTaskOver(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
+			if (M[80] && capteur.get_PS(22) && robot.TacheFinie(POSTE_6)) // Une fois l'aiguillage 10 lock on laisse passer la navette 0
 			{
 				M[80]--;
 				robot.DeplacerPiece(ROBOT_3,1,4);
@@ -218,23 +218,23 @@ int main(int argc, char **argv)
 			if (M[90] && robot.FinDeplacerPiece(ROBOT_1) && robot.FinDeplacerPiece(ROBOT_3)) // le robot 1 prend le produit B sur la navette et le met sur le poste 1
 			{
 				M[90]--;
-				robot.DoTask(POSTE_5,3);
-				robot.DoTask(POSTE_1,4);
+				robot.FaireTache(POSTE_5,3);
+				robot.FaireTache(POSTE_1,4);
 				M[100]++;
 				display();
 			}
 
-			if (M[100] && robot.IsTaskOver(POSTE_5)) // robot 1 fais tache 1 pendant 4s
+			if (M[100] && robot.TacheFinie(POSTE_5)) // robot 1 fais tache 1 pendant 4s
 			{
 				M[100]--;
-				robot.DoTask(POSTE_5,1);
+				robot.FaireTache(POSTE_5,1);
 				cmd.Ouvrir_PS(14);
 				cmd.Stop_PS(15);
 				M[110]++;
 				display();
 			}
 
-			if (M[110] && robot.IsTaskOver(POSTE_1) && robot.IsTaskOver(POSTE_5)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
+			if (M[110] && robot.TacheFinie(POSTE_1) && robot.TacheFinie(POSTE_5)) // le robot 1 prend le produit B sur le poste et le met sur la navette quand tache fini
 			{
 				M[110]--;
 				robot.DeplacerPiece(ROBOT_1,4,3);
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 			if (M[160] && robot.FinDeplacerPiece(ROBOT_2)) // On fait la tache du poste 4 pendant 5s
 			{
 				M[160]--;
-				robot.DoTask(POSTE_4,5);
+				robot.FaireTache(POSTE_4,5);
 				M[170]++;
 				display();
 			}
@@ -311,11 +311,11 @@ int main(int argc, char **argv)
 			if(M[180] && robot.FinDeplacerPiece(ROBOT_2))
 			{
 				M[180]--;
-				robot.DoTask(POSTE_3,1);
+				robot.FaireTache(POSTE_3,1);
 				M[182]++;
 				display();
 			}
-			if(M[182] && robot.IsTaskOver(POSTE_3))
+			if(M[182] && robot.TacheFinie(POSTE_3))
 			{
 				M[182]--;
 				robot.Evacuer();
@@ -323,7 +323,7 @@ int main(int argc, char **argv)
 				display();
 			}
 
-			if (M[190] && robot.IsTaskOver(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
+			if (M[190] && robot.TacheFinie(POSTE_4)) // le robot 2 prend le reproduit B sur le poste et le met sur le poste 3
 			{
 				M[190]--;
 				robot.DeplacerPiece(ROBOT_2,4,1);

@@ -3,7 +3,6 @@
 #define CAPT
 
 #include <aiguillages/Msg_SensorState.h>
-#include "commande/Capteurs.h"
 #include <ros/ros.h>
 
 class Capteurs

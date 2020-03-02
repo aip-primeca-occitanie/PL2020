@@ -39,6 +39,9 @@ add_message_files(
 	Msg_Erreur.msg
 	RobotJoints.msg
 	TacheFinieMsg.msg
+	DeplacerPieceMsg.msg
+	Actionneurs.msg
+	Capteurs.msg
 )
 generate_messages( DEPENDENCIES std_msgs)
 catkin_package( CATKIN_DEPENDS message_runtime)

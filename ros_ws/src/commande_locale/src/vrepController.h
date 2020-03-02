@@ -28,8 +28,7 @@
 
 #include <aiguillages/ExchangeSh.h>
 
-#include "../../robots/src/Robot.h"
-
+#define NB_CUBE 6
 
 class vrepController
 {

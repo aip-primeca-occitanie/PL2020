@@ -14,7 +14,7 @@
 #include "robots/Msg_numrobot.h"
 #include "commande_locale/SrvAddProduct.h"
 #include "commande_locale/Msg_AddProduct.h"
-#include "commande/DeplacerPieceMsg.h"
+#include "commande_locale/DeplacerPieceMsg.h"
 #include "commande_locale/SrvAddProductPushBack.h"
 
 // Etats robot
@@ -68,7 +68,7 @@ private:
 	ros::ServiceServer serverPushBack;
 	commande_locale::SrvAddProduct srv;
 	commande_locale::Msg_AddProduct msg0;
-	commande::DeplacerPieceMsg deplacer_msg;
+	commande_locale::DeplacerPieceMsg deplacer_msg;
 
 	int nbRobot;
 	int robotInit[4];

@@ -13,7 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
 	message_generation
 	)
 
-add_message_files(FILES Capteurs.msg Actionneurs.msg DeplacerPieceMsg.msg)
 add_service_files(FILES srv_recup_capteur_info.srv)
 generate_messages(DEPENDENCIES std_msgs)
 

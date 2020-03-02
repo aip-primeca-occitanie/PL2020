@@ -5,7 +5,7 @@
 #include <commande_locale/Msg_StopControl.h>
 #include "commande_locale/Msg_SwitchControl.h"
 #include "commande_locale/Msg_PinControl.h"
-#include "commande/Actionneurs.h"
+#include "commande_locale/Actionneurs.h"
 #include <ros/ros.h>
 
 

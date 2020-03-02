@@ -18,7 +18,7 @@
 #include <robots/Msg_numrobot.h>
 #include <commande_locale/TacheFinieMsg.h>
 #include <commande_locale/Msg_Erreur.h>
-#include "commande/DeplacerPieceMsg.h"
+#include "commande_locale/DeplacerPieceMsg.h"
 
 #include <vector>
 #include <sstream>
@@ -30,7 +30,8 @@
 #include "shuttles/shuttle_id.h"
 
 // Nombre de cube max sur les postes et navettes
-#define NB_CUBE 6
+//#define NB_CUBE 6
+#include "../../commande_locale/src/vrepController.h"
 
 
 class Robot
@@ -209,7 +210,7 @@ public:
 	void Evacuer(const std_msgs::Byte::ConstPtr& msg);
 
 	void stopTacheCallback(const std_msgs::Int32::ConstPtr& msg);
-	void DeplacerPieceCallback(const commande::DeplacerPieceMsg::ConstPtr& msg);
+	void DeplacerPieceCallback(const commande_locale::DeplacerPieceMsg::ConstPtr& msg);
 
 	// Callbacks pour V-Rep
 	void simGetObjectHandleCallback(const std_msgs::Int32::ConstPtr& msg);

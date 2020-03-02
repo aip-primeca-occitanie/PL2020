@@ -1173,7 +1173,7 @@ void Robot::stopTacheCallback(const std_msgs::Int32::ConstPtr& msg)
 	}
 }
 
-void Robot::DeplacerPieceCallback(const commande::DeplacerPieceMsg::ConstPtr& msg)
+void Robot::DeplacerPieceCallback(const commande_locale::DeplacerPieceMsg::ConstPtr& msg)
 {
 	if (num_robot==msg->num_robot)
 	{

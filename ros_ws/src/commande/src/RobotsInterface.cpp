@@ -46,7 +46,7 @@ RobotsInterface::RobotsInterface(ros::NodeHandle noeud, int nombre_robot)
 	pub_faireTache=noeud.advertise<robots::FaireTacheMsg>("/commande/Simulation/faireTache", 10);
 	pub_evacuer_piece=noeud.advertise<std_msgs::Byte>("/commande/Simulation/Evacuer",10);
 	pubProductAdd= noeud.advertise<commande_locale::Msg_AddProduct>("/commande_locale/AddProduct",10);
-	pub_deplacer_piece= noeud.advertise<commande::DeplacerPieceMsg>("/commande/Simulation/DeplacerPiece",10);
+	pub_deplacer_piece= noeud.advertise<commande_locale::DeplacerPieceMsg>("/commande/Simulation/DeplacerPiece",10);
 
 
 

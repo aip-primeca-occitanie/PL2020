@@ -13,8 +13,6 @@ find_package(catkin REQUIRED COMPONENTS
 	message_generation
 	)
 
-add_service_files(FILES srv_recup_capteur_info.srv)
-generate_messages(DEPENDENCIES std_msgs)
 
 catkin_package(CATKIN_DEPENDS roscpp message_runtime)
 

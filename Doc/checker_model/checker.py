@@ -420,7 +420,7 @@ if erreur_config == 0:
         for i in range(6):
             if nb_produit[i] != 0:
                 print(' ')
-                print("Le produit {} a été assemblé {} fois avec l'empilement de tâches: {}".format(i+1, nb_produit_log[i], production[i]))
+                print("Le produit {} a été assemblé {} fois avec l'empilement de tâches: {}".format(i+1, nb_produit_log[i], production[i][1:]))
                 print("Le temps moyen d'assemblage de ce produit est de {0:.2f}s".format(produit_duree[i]))
 
 print(' ') # sert juste à aérer l'affichage

@@ -125,7 +125,7 @@ for ligne in contenu : # on travail ligne par ligne, donc produit par produit
                 print("ERREUR: mauvaise déclaration dans config, destinations doit être entre 1 et 8")
         if taille_dest > MAX_TACHES: # erreur s'il y a plus de tâches que de cubes dans V-rep
             erreur_config = 1
-            print("ERREUR: mauvaise déclaration dans config, nombre max de destinations par produit est 3")
+            print("ERREUR: mauvaise déclaration dans config, nombre max de destinations par produit est {}".format(MAX_TACHES))
         if erreur_config == 0: # Si il n'y a pas d'erreur par l'utilisateur dans le .config, on ajoute la matrice des destinations dans la matrice tache dans la ligne correspondant au produit correspondant, et on définit la matrice production pour la ligne du produit correspondant
             production[produit_num-1][0] = produit_num
             for i in range(taille_dest):

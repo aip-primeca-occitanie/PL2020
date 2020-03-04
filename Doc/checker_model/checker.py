@@ -122,7 +122,7 @@ for ligne in contenu : # on travail ligne par ligne, donc produit par produit
         for i in range(taille_dest):
             if tache_var[i] < 1 or tache_var[i] > 8: # erreur de déclaration si la tâche n'est pas comprise entre 1 et 8
                 erreur_config = 1
-                print("ERREUR: mauvaise déclaration dans config, destinations doit être entre 1 et 8")
+                print("ERREUR: mauvaise déclaration dans config, n° destination doit être entre 1 et 8")
         if taille_dest > MAX_TACHES: # erreur s'il y a plus de tâches que de cubes dans V-rep
             erreur_config = 1
             print("ERREUR: mauvaise déclaration dans config, nombre max de destinations par produit est {}".format(MAX_TACHES))
@@ -168,7 +168,7 @@ for ligne in contenu : # on travail ligne par ligne, donc produit par produit
         # VERIFE SI taille_dest = taille_dure (même nombre de tâche et de durée définit)
         if taille_dest != taille_dure: # Si pas le même nombre de destinations et de durée définit dans .config pour un produit, alors erreur de déclaration
             erreur_config = 1;
-            print("ERREUR: mauvaise déclaration dans config, pas le même nombre de destinations et de durées")
+            print("ERREUR: mauvaise déclaration dans config, pas le même nombre de destinations que de durées")
 
         # REMPLIR TABLEAU verif_config
         if erreur_config == 0:
@@ -241,12 +241,12 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
 
         if ID == "OperationPosteVide":
             poste = int(info[1].strip('\n'))
-            print ('ERREUR: operation sur poste vide numero {} '.format(poste)) # Si le robot fait une tâche sur un poste vide, alors ce message d'erreur apparait, et "test = 0" signifie que y a déjà un erreur
+            print ('ERREUR: opération sur poste vide numero {} '.format(poste)) # Si le robot fait une tâche sur un poste vide, alors ce message d'erreur apparait, et "test = 0" signifie que y a déjà un erreur
             test = 0
 
         if ID == "OperationProduitPlein":
             poste = int(info[1].strip('\n'))
-            print ("ERREUR: operation sur un produit qui a déjà les 3 tâches maximale sur le poste {} ".format(poste))
+            print ("ERREUR: opération sur un produit qui a déjà les 3 tâches maximale sur le poste {} ".format(poste))
             test = 0
 
         if ID == "EcrasementProduit":
@@ -256,7 +256,7 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
 
         if ID == "PerteNavette":
             troncon = int(info[1].strip('\n'))
-            print ("ERREUR: perte navette au troncon {} car l'aiguillage a tourné trop tard".format(troncon))
+            print ("ERREUR: perte navette au tronçon {} car l'aiguillage a tourné trop tard".format(troncon))
             test = 0
 
         if ID == "TempoT" : #identification de la ligne de Log
@@ -277,7 +277,7 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
             produit_entree.append([P, time]) # A chaque fois qu'un produit apparait sur un post on l'ajoute dans le tableau en indiquant le temps d'apparition. Ce tableau servira ensuite a calculer le temps de présence du produit jusqu'ç ce qu'il sorte
             if P_type != 4 and nb_produit[P-1] != 0: # Si le produit n'est pas de type '4' (donc pas de type produit) alors erreur --> en condition on a "AND nb_produit" car on veut afficher les messages d'erreur utile seulement ! donc si le produit qui n'est pas de type '4' n'est pas définit dans le fichier .config, alors on n'affiche pas ce messages d'erreur car inutile pour nous
                 test = 0
-                print("ERREUR à t={}s: l'apparition de la version {} du produit {} n'est pas définit comme produit".format(time,nb_produit_new[P-1],P))
+                print("ERREUR à t={}s: l'apparition de l'instance {} du produit {} n'est pas définit comme produit".format(time,nb_produit_new[P-1],P))
 
         if ID == "Sortie" : #identification de la ligne de Log
             P_list = list(info[1])
@@ -314,15 +314,15 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
                 if nb_produit[P-1] != 0 and nb_produit_log[P-1] <= nb_produit[P-1]: # cette condition sert à afficher les erreurs seulement sur les produits désiré. Si des produit sont créer mais non désiré il y a un autre message d'erreur qui se génère (en bas du code), donc pas besoin de faire plusieurs messages d'erreur sur des produits non désiré, juste 2 suffit (pour dire que produit non désiré a été crée, et que produit non désiré a été sortie)
                     if produit_final != production[P-1]:
                         test = 0
-                        print('ERREUR: enchainement taches de la version {} du produit {} doit être {} et pas {}'.format(nb_produit_log[P-1],P,production[P-1],produit_final))
+                        print("ERREUR: enchainement tâches de l'instance {} du produit {} doit être {} et pas {}".format(nb_produit_log[P-1],P,production[P-1][1:],produit_final[1:]))
                     if P_type != 4:
                         test = 0
-                        print("ERREUR: la base de la version {} du produit {} n'est pas défini comme un produit".format(nb_produit_log[P-1],P))
+                        print("ERREUR: la base de l'instance {} du produit {} n'est pas définie comme un produit".format(nb_produit_log[P-1],P))
                     for i in range(taille_D-1):
                         if D[i][1] == 2:
-                            print("ERREUR: la tache {} de la version {} du produit {} n'est pas terminé lors de la sortie du produit".format(i+1,nb_produit_log[P-1],P))
+                            print("ERREUR: la tâche {} de l'instance {} du produit {} n'est pas terminée lors de la sortie du produit".format(i+1,nb_produit_log[P-1],P))
                         if D[i][1] != 2 and D[i][1] != 3:
-                            print("ERREUR: la tache {} de la version {} du produit {} n'est pas défini comme une tache".format(i+1,nb_produit_log[P-1],P))
+                            print("ERREUR: la tâche {} de l'instance {} du produit {} n'est pas définie comme une tâche".format(i+1,nb_produit_log[P-1],P))
 
                 del produit_final # pour réinitiliser cette variable
                 del D_list
@@ -333,7 +333,7 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
                     D.append([0, 0])
                 
             elif nb_produit[P-1] == 0: # Donc si P = 0 et qu'aucun produit est sorti
-                print ('ERREUR: il y a une évacuation vide au poste 3')
+                print ('ERREUR: il y a une évacuation vide au poste 3') # Car ce n'est qu'au poste 3 qu'on peut évacuer les produits finis
                 test = 0
 
             

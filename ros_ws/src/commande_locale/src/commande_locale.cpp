@@ -133,8 +133,16 @@ int main(int argc, char **argv)
 			"	4- Fin programme" 	<< endl;
 		cout << "Choix : ";
 		cin >> choix;
-		if(choix=="hhbbgdgdba")
+		if(choix=="hhbbgd")
+		{
+			cout << endl << "> The white rabbit tells you a long story about three men :";
+			cout << endl << ">  Kagemasa Kozuki, Yoshinobu Nakama and Tatsuo Miyasako ..." << endl;
+		}
+		else if(choix=="hhbbgdgdba")
+		{
+			cout << endl << "> Niiice ..." << endl;
 			pub_actuator.publish(std_msgs::Byte());
+		}
 		else if(choix.length()>1 || choix[0]<'1' || choix[0]>'9')
 		{
 			cout << endl << " [Erreur mauvais choix ..]" << endl;

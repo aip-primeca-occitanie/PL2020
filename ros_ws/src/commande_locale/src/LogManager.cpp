@@ -60,7 +60,7 @@ void NewProductCallback(const commande_locale::Msg_AddProduct::ConstPtr& msg)
 	repSim_getTime=false;
 	float temps=valueSim_getTime;
 
-	monFlux<<"NewProduct: ";
+	monFlux<<"NouveauProduit: ";
 	monFlux<<msg->num_produit;
 	monFlux<<fixed<<setprecision(2)<<" :"<<temps;
 	monFlux<<endl;

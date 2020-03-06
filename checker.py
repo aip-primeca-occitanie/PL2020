@@ -29,7 +29,7 @@
 
 
 # LA SEULE VARIABLE DANS checker.py QUE L'UTILISATEUR PEUT CHANGER S'IL MODIFIE LE NOMBRE MAX DE TACHES SUR UN PRODUIT DANS V-REP
-MAX_TACHES = 5 # le nombre max de tâches par produit -> car dans V-rep on a un nombre limité de cubes, le 1er cube définit le produit et les cubes restants (au nombre de MAX_TACHES) définissent les tâches effectuées sur les produits
+MAX_TACHES = 5 # le nombre max de tâches par produit -> car dans CoppeliaSim on a un nombre limité de cubes, le 1er cube définit le produit et les cubes restants (au nombre de MAX_TACHES) définissent les tâches effectuées sur les produits
 
 
 test = 1 # Cette variable indique s'il y a une erreur dans le log par rapport au cahier des charges définit dans le fichier .config: 1 - PAS D'ERREUR  /  0 - ERREUR
@@ -288,10 +288,8 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
             P = int(P_list[0])
             if P != 0:
                 P_type = int(P_list[1])
-            
             taille_D = len(D_list)
             for i in range(taille_D):
-                #print(i)
                 D[i][0] = int(D_list[i][0])
                 if D[i][0] != 0:
                     D[i][1] = int(D_list[i][1])
@@ -389,7 +387,7 @@ if erreur_config == 0: # Les messages d'erreurs liée au log s'affiche si il n'y
     # Si au moins une cellule de verif_temps est à 0, ça signifie qu'un temps n'a pas été respecté et donc test = 0 (erreur)
     for i in range(6):
         for j in range(8):
-            if verif_temps[i][j] == 2 and nb_produit[i] != 0:
+            if verif_temps[i][j] == 2 and nb_produit[i] != 0 and temps[i][j] != 0:
                 test = 0
                 print('ERREUR: durée tâche {} du produit {} doit être égale à {}s, or ici durée est {}s'.format(j+1,i+1,temps[i][j],temps_log[i][j]))
 

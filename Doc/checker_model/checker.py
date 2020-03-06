@@ -206,7 +206,7 @@ if erreur_config == 0:
 verif_config_log = [] # Matrice Nx3; sert juste a créer la matrice temps_log (comme avant la matrice verif_config qui servait à créer la matrice temps)
 temps_log = [] # Matrice 6xMAX_TACHES; contient la durée des tâches dans la simulation
 nb_produit_log = [] # Matrice 6x1; compte le nombre de produit apparu, pour ensuite vérifier si ces navettes apparus (si elles sont attendu d'après le cahier des charges) sont bien toutes sorties
-nb_produit_new = [] # Matrice 6x1; va compter le nombre de produit apparu, pour ensuite vérifier si le nombre de produit sortis correspond bien au nombre de produit apparu, et aussi pour afficher dans message d'erreur NewProduct quelle version a une erreur
+nb_produit_new = [] # Matrice 6x1; va compter le nombre de produit apparu, pour ensuite vérifier si le nombre de produit sortis correspond bien au nombre de produit apparu, et aussi pour afficher dans message d'erreur NouveauProduit quelle version a une erreur
 produit_final = [] # Ce tableau aura la forme produit_final = [P, D1, D2, D3]
 
 produit_entree = [] # Matrice nbre_apparition x 2; Affichera à la suite de la lecture du log les produits qui apparaisent sur les postes produit_entree[i] = [P, time]; donc ce tableau est dans l'ordre chronologique d'apparition des produits
@@ -262,13 +262,13 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
         if ID == "TempoT" : #identification de la ligne de Log
             P_list = list(info[1]) # Numéro du produit, exemple: 43, donc c'est la tâche 4 et le 3 indique que c'est bien une tâche fini
             P = int(P_list[0].strip('\n'))
-            #P_type = int(P_list[1]) # inutile ici car on vérifie déjà dans NewProduct et Sortie si le num du produit fini bien par 4
+            #P_type = int(P_list[1]) # inutile ici car on vérifie déjà dans NouveauProduit et Sortie si le num du produit fini bien par 4
             D_tempo=int(info[2]) # Ici ce ne sera pas 23 ou 22, mais ce sera le numéro du poste donc de 1 à 8
             T=float(info[3]) # durée de la tâche
             verif_config_log.append([P, D_tempo, T])
 
 
-        if ID == "NewProduct":
+        if ID == "NouveauProduit":
             P_list = list(info[1]) # Le produit par exmeple 24, donc c'est le produit 2 et le 4 indique que c'est bien un produit
             P = int(P_list[0]) # Avec l'exemple de la ligne au-dessus, ici ce serait '2'
             P_type = int(P_list[1]) # Et ici ce serait '4'
@@ -303,7 +303,7 @@ if erreur_config == 0: # On lit le contenu du fichier log SEULEMENT SI il n'y a 
                 nb_produit_log[P-1] = nb_produit_log[P-1] + 1
                 # durée de vie du produit
                 k = 0 # variable qui compte à quelle ligne dans produit_entree se trouve le plus ancien produit apparu
-                while(1): # On considère que c'est impossible d'avoir dans le log plus de "Sortie" que de "NewProduct". Il n'est donc pas nécessaire d'afficher une erreur sur ça car quoique fasse l'étudiant il y aura forcément plus ou le même nombre de NewProduct que de Sortie
+                while(1): # On considère que c'est impossible d'avoir dans le log plus de "Sortie" que de "NouveauProduit". Il n'est donc pas nécessaire d'afficher une erreur sur ça car quoique fasse l'étudiant il y aura forcément plus ou le même nombre de NouveauProduit que de Sortie
                     if produit_entree[k][0] == P: # lorsqu'on a trouver la ligne où se trouve le plus ancien produit apparu
                         produit_duree[P-1] = produit_duree[P-1] + (time - produit_entree[k][1]) # Somme du temps de présence du produit P
                         produit_entree[k][0] = 0.0 # Comme le produit est sortie on initialise sa ligne dans produit_entree à 0 comme ça elle ne pourra plus servir à calculer produit_duree

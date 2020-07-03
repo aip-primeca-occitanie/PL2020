@@ -1,0 +1,24 @@
+FROM aipprimecaoccitanie/coppeliasim_edu:18.04
+RUN #!/bin/sh
+ENV TZ=Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN rm /bin/sh && ln -s /bin/bash /bin/sh 
+RUN apt-get update -y \
+&& apt-get install git lsb-release curl -y \
+&& sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'\
+&& apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 \
+&& curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | apt-key add - \
+&& apt update \
+&& apt-get -y install ros-melodic-desktop-full  \
+&& echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc \
+&& source ~/.bashrc \
+&& apt install python-rosdep python-rosinstall python-rosinstall-generator python-wstool build-essential -y \
+&& rosdep init \
+#&& rosdep update \
+&& mkdir /home/cellule \      
+&& cd /home/cellule \        
+&& git clone https://github.com/aip-primeca-occitanie/aip_cellule_flexible.git \
+&& git clone https://github.com/aip-primeca-occitanie/PL2020.git \
+&& apt-get clean -y 
+ADD . /app/
+WORKDIR /home/cellule

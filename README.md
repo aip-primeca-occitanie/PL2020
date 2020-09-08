@@ -7,9 +7,9 @@ Petit guide pour lancer le projet sur votre machine : (Ubuntu 16, ROS Kinetic)
 
           sudo apt-get update
 
-- 1) Installer la librairie modbus avec 
+- 1) Installer la librairie modbus xterm et quelques bibliothèques graphique pour coppelliasim  avec 
 
-          sudo apt-get install libmodbus-dev
+          sudo apt-get install libmodbus-dev xterm libavcodec-dev libavformat-dev libswscale-dev
           
 - 2) Cloner la branche master de ce repository :
     (si git n'est pas installé, vous pouvez toujours télécharger le projet en zip et en extraire le code)

@@ -1,7 +1,7 @@
 # PL2020
 Projet de TER pour remplacer l'atelier flexible.
 
-Petit guide pour lancer le projet sur votre machine : (Ubuntu 16, ROS Kinetic)
+Petit guide pour lancer le projet sur votre machine : (Ubuntu 16,Ubuntu18 ROS Kinetic et Melodic)
 
 - 0) Il est toujours bon de faire un 
 
